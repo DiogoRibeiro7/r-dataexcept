@@ -16,7 +16,9 @@ out_dir <- file.path("docs", "reference")
 groups <- list(
   "Classed errors" = c(
     "new_dataexcept_error", "validation_error", "data_frame_errors",
-    "modelling_errors", "file_errors", "service_errors", "dataexcept_classes"
+    "modelling_errors", "data_quality_errors", "model_quality_errors",
+    "file_errors", "service_errors", "pipeline_errors", "job_errors",
+    "data_engineering_errors", "dataexcept_classes"
   ),
   "Failure metadata" = c("failure_metadata", "condition_failure"),
   "Groups and wrapping" = c("condition_group", "wrap_errors"),

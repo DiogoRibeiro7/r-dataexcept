@@ -16,6 +16,13 @@ database_connection_error(db_url, message = NULL, parent = NULL, call = NULL)
 
 query_execution_error(query, parent = NULL, call = NULL)
 
+transaction_error(
+  transaction_id = NULL,
+  message = NULL,
+  parent = NULL,
+  call = NULL
+)
+
 host_unreachable_error(host, message = NULL, parent = NULL, call = NULL)
 
 connection_timeout_error(host, timeout, parent = NULL, call = NULL)
@@ -45,6 +52,9 @@ api_error(
 
 `query`
 :   The SQL that failed.
+
+`transaction_id`
+:   Optional identifier of the transaction.
 
 `host`
 :   The host that could not be reached.
@@ -82,10 +92,18 @@ condition_to_json(err)
 
 ## See also
 
+[pipeline\_errors](pipeline_errors.md) for the other failures of calls to external
+services.
+
 Other dataexcept errors:
+[`data_engineering_errors`](data_engineering_errors.md),
 [`data_frame_errors`](data_frame_errors.md),
+[`data_quality_errors`](data_quality_errors.md),
 [`file_errors`](file_errors.md),
+[`job_errors`](job_errors.md),
+[`model_quality_errors`](model_quality_errors.md),
 [`modelling_errors`](modelling_errors.md),
+[`pipeline_errors`](pipeline_errors.md),
 [`validation_error()`](validation_error.md)
 
 

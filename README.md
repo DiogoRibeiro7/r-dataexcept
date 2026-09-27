@@ -78,9 +78,11 @@ err$found
 ```
 
 `dataexcept_classes()` lists every type: data frame errors (missing column,
-type mismatch, merge keys), data and modelling errors (loading, missing data,
-training, convergence, prediction), file, database, network and API errors.
-`new_dataexcept_error()` defines your own.
+type mismatch, merge keys), data and modelling errors (loading, training,
+convergence, prediction), data quality (format, schema, drift, leakage,
+imbalance), model quality (evaluation, cross-validation, overfitting),
+file, database, network, API and external service errors, and job and batch
+failures. `new_dataexcept_error()` defines your own.
 
 ## Failure metadata
 

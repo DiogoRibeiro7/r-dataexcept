@@ -105,11 +105,11 @@ with open("failures.jsonl") as log:
 
 | | Shared across languages | Differs |
 | --- | --- | --- |
-| `type` | Leaf types have the same names: `MissingColumnError`, `ConvergenceError`, `ApiError`, and so on. | R has two base types of its own, `DataFrameError` and `FileError`, where Python has `PandasError` and `CustomIOError`. |
+| `type` | Leaf types have the same names: `MissingColumnError`, `ConvergenceError`, `ApiError`, and so on. `dataexcept_classes()` marks each type R shares with Python. | R has two base types of its own, `DataFrameError` and `FileError`, where Python has `PandasError` and `CustomIOError`. Python's `ValidationError` is a `JobError`; R's is a direct child of `DataExceptError`. Python defines more types than R; a type R does not define is read back as a plain `dataexcept_error`. |
 | `module` | Starts with `dataexcept` for DataExcept types in both languages. | R writes `"dataexcept"`; Python writes its module path, such as `"dataexcept.pandas_exceptions"`. |
-| `message` | The same wording where the two constructors agree. | Some Python classes prefix the message with `[TypeName]`; R does not, since `type` already says it. |
+| `message` | The same wording, tested for every shared type against messages the Python package produced. | Some Python classes prefix the message with `[TypeName]`; R does not, since `type` already says it. R writes a whole number without `.0`, and a vector value as R code. |
 | `failure` | Same fields, values and class defaults. | -- |
-| `attributes` | The same field names for shared types. | Python includes a `message` attribute on some classes; R keeps the message in `message` only. |
+| `attributes` | The same field names and values for shared types. | Python includes a `message` attribute on some classes, and keeps the underlying exception in `original` or `cause`; R keeps the message in `message` only, and the underlying condition in the `cause` record only. |
 
 Consumers should key on `type` and `failure`, and should ignore fields they do
 not recognise; the schema allows a newer producer to add them.

@@ -13,17 +13,35 @@ test_that("a Python envelope becomes an R condition with the matching classes", 
   expect_identical(caught, "caught")
 })
 
-test_that("a DataExcept type R has no class for is still a dataexcept error", {
+test_that("a Python type R also defines gets its whole family of classes", {
   cnd <- envelope_to_condition(fixture("failure-metadata.json"))
   expect_s3_class(cnd, c(
-    "dataexcept_error", "dataexcept_remote_condition", "error", "condition"
+    "dataexcept_service_timeout_error", "dataexcept_external_service_error",
+    "dataexcept_pipeline_error", "dataexcept_error",
+    "dataexcept_remote_condition", "error", "condition"
   ), exact = TRUE)
   expect_identical(condition_type(cnd), "ServiceTimeoutError")
-  caught <- tryCatch(stop(cnd), dataexcept_error = function(e) is_retryable(e))
+  caught <- tryCatch(stop(cnd), dataexcept_external_service_error = function(e) is_retryable(e))
   expect_true(caught)
   expect_true(is_retryable(cnd))
   expect_identical(condition_failure(cnd)$retry_after_seconds, 2.5)
   expect_identical(cnd$service_name, "payments")
+})
+
+test_that("a DataExcept type R has no class for is still a dataexcept error", {
+  json <- paste0(
+    '{"type": "GPUOutOfMemoryError", "module": "dataexcept.datascience_exceptions.training", ',
+    '"message": "GPU OOM on cuda:0: required=12GB, available=8GB", ',
+    '"failure": {"kind": "transient", "retryable": true, "retry_after_seconds": 60}}'
+  )
+  cnd <- envelope_to_condition(json)
+  expect_s3_class(cnd, c(
+    "dataexcept_error", "dataexcept_remote_condition", "error", "condition"
+  ), exact = TRUE)
+  expect_identical(condition_type(cnd), "GPUOutOfMemoryError")
+  caught <- tryCatch(stop(cnd), dataexcept_error = function(e) is_retryable(e))
+  expect_true(caught)
+  expect_identical(condition_failure(cnd)$retry_after_seconds, 60)
 })
 
 test_that("an envelope's cause becomes the parent", {

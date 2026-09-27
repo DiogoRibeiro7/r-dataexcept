@@ -92,8 +92,13 @@ nav:
           - validation_error(): reference/validation_error.md
           - Data frame errors: reference/data_frame_errors.md
           - Data and modelling errors: reference/modelling_errors.md
+          - Data quality errors: reference/data_quality_errors.md
+          - Model quality errors: reference/model_quality_errors.md
           - File errors: reference/file_errors.md
           - Service errors: reference/service_errors.md
+          - Pipeline errors: reference/pipeline_errors.md
+          - Job errors: reference/job_errors.md
+          - Data engineering errors: reference/data_engineering_errors.md
           - dataexcept_classes(): reference/dataexcept_classes.md
       - Failure metadata:
           - failure_metadata(): reference/failure_metadata.md

@@ -42,17 +42,64 @@ class_registry <- function() {
     ModelTrainingError = class_entry("dataexcept_model_training_error", "DataScienceError"),
     ConvergenceError = class_entry("dataexcept_convergence_error", "ModelTrainingError"),
     PredictionError = class_entry("dataexcept_prediction_error", "DataScienceError"),
+    TrainingTimeoutError = class_entry("dataexcept_training_timeout_error", "ModelTrainingError"),
+    DataFormatError = class_entry("dataexcept_data_format_error", "DataScienceError"),
+    SchemaMismatchError = class_entry("dataexcept_schema_mismatch_error", "DataScienceError"),
+    DataDriftError = class_entry("dataexcept_data_drift_error", "DataScienceError"),
+    DataLeakageError = class_entry("dataexcept_data_leakage_error", "DataScienceError"),
+    DataImbalanceError = class_entry("dataexcept_data_imbalance_error", "DataScienceError"),
+    OutlierDetectionError = class_entry("dataexcept_outlier_detection_error", "DataScienceError"),
+    ModelEvaluationError = class_entry("dataexcept_model_evaluation_error", "DataScienceError"),
+    CrossValidationError = class_entry("dataexcept_cross_validation_error", "DataScienceError"),
+    HyperparameterError = class_entry("dataexcept_hyperparameter_error", "DataScienceError"),
+    ModelSerializationError = class_entry(
+      "dataexcept_model_serialization_error", "DataScienceError"
+    ),
+    OverfittingError = class_entry("dataexcept_overfitting_error", "DataScienceError"),
+    UnderfittingError = class_entry("dataexcept_underfitting_error", "DataScienceError"),
+    ResourceLimitError = class_entry("dataexcept_resource_limit_error", "DataScienceError"),
     FileError = class_entry("dataexcept_file_error", "DataExceptError", python = FALSE),
     FileReadError = class_entry("dataexcept_file_read_error", "FileError"),
     FileWriteError = class_entry("dataexcept_file_write_error", "FileError"),
     DatabaseError = class_entry("dataexcept_database_error", "DataExceptError"),
     DatabaseConnectionError = class_entry("dataexcept_database_connection_error", "DatabaseError"),
     QueryExecutionError = class_entry("dataexcept_query_execution_error", "DatabaseError"),
+    TransactionError = class_entry("dataexcept_transaction_error", "DatabaseError"),
     NetworkError = class_entry("dataexcept_network_error", "DataExceptError"),
     HostUnreachableError = class_entry("dataexcept_host_unreachable_error", "NetworkError"),
     ConnectionTimeoutError = class_entry("dataexcept_connection_timeout_error", "NetworkError"),
     PipelineError = class_entry("dataexcept_pipeline_error", "DataExceptError"),
     ApiError = class_entry("dataexcept_api_error", "PipelineError"),
+    ExternalServiceError = class_entry("dataexcept_external_service_error", "PipelineError"),
+    ServiceTimeoutError = class_entry("dataexcept_service_timeout_error", "ExternalServiceError"),
+    ServiceAuthenticationError = class_entry(
+      "dataexcept_service_authentication_error", "ExternalServiceError",
+      failure = permanent()
+    ),
+    ServiceAuthorizationError = class_entry(
+      "dataexcept_service_authorization_error", "ExternalServiceError",
+      failure = permanent()
+    ),
+    RetryLimitExceededError = class_entry("dataexcept_retry_limit_exceeded_error", "PipelineError"),
+    StorageError = class_entry("dataexcept_storage_error", "PipelineError"),
+    JobError = class_entry("dataexcept_job_error", "DataExceptError"),
+    AuthenticationError = class_entry(
+      "dataexcept_authentication_error", "JobError",
+      failure = permanent()
+    ),
+    AuthorizationError = class_entry(
+      "dataexcept_authorization_error", "JobError",
+      failure = permanent()
+    ),
+    ConfigurationError = class_entry("dataexcept_configuration_error", "JobError"),
+    ResourceNotFoundError = class_entry("dataexcept_resource_not_found_error", "JobError"),
+    OperationTimeoutError = class_entry("dataexcept_operation_timeout_error", "JobError"),
+    DataEngineeringError = class_entry("dataexcept_data_engineering_error", "DataExceptError"),
+    DataTransformationError = class_entry(
+      "dataexcept_data_transformation_error", "DataEngineeringError"
+    ),
+    ETLJobError = class_entry("dataexcept_etl_job_error", "DataEngineeringError"),
+    BatchProcessingError = class_entry("dataexcept_batch_processing_error", "DataEngineeringError"),
 
     # R-only: several failures reported as one, written as the envelope's
     # exception group.

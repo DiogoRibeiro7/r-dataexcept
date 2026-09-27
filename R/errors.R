@@ -292,6 +292,7 @@ file_error <- function(type, prefix, path, parent, call) {
 #'
 #' @param db_url The database connection URL.
 #' @param query The SQL that failed.
+#' @param transaction_id Optional identifier of the transaction.
 #' @param host The host that could not be reached.
 #' @param timeout The timeout that elapsed, in seconds.
 #' @param endpoint The API endpoint URL.
@@ -299,6 +300,8 @@ file_error <- function(type, prefix, path, parent, call) {
 #' @inheritParams validation_error
 #' @return A condition inheriting from `dataexcept_database_error`,
 #'   `dataexcept_network_error` or `dataexcept_pipeline_error`.
+#' @seealso [pipeline_errors] for the other failures of calls to external
+#'   services.
 #' @family dataexcept errors
 #' @name service_errors
 #' @examples
@@ -334,6 +337,23 @@ query_execution_error <- function(query, parent = NULL, call = NULL) {
   }
   make_condition("QueryExecutionError", message,
     fields = list(query = query),
+    parent = parent, call = call
+  )
+}
+
+#' @rdname service_errors
+#' @export
+transaction_error <- function(transaction_id = NULL, message = NULL, parent = NULL, call = NULL) {
+  check_string(transaction_id, "transaction_id", allow_null = TRUE)
+  check_string(message, "message", allow_null = TRUE)
+  if (is.null(message)) {
+    message <- "Database transaction failed"
+    if (!is.null(transaction_id) && nzchar(transaction_id)) {
+      message <- sprintf("%s (id=%s)", message, transaction_id)
+    }
+  }
+  make_condition("TransactionError", message,
+    fields = list(transaction_id = transaction_id),
     parent = parent, call = call
   )
 }

@@ -4,6 +4,7 @@
 \alias{service_errors}
 \alias{database_connection_error}
 \alias{query_execution_error}
+\alias{transaction_error}
 \alias{host_unreachable_error}
 \alias{connection_timeout_error}
 \alias{api_error}
@@ -12,6 +13,13 @@
 database_connection_error(db_url, message = NULL, parent = NULL, call = NULL)
 
 query_execution_error(query, parent = NULL, call = NULL)
+
+transaction_error(
+  transaction_id = NULL,
+  message = NULL,
+  parent = NULL,
+  call = NULL
+)
 
 host_unreachable_error(host, message = NULL, parent = NULL, call = NULL)
 
@@ -35,6 +43,8 @@ api_error(
 \item{call}{The call to report, or \code{NULL}.}
 
 \item{query}{The SQL that failed.}
+
+\item{transaction_id}{Optional identifier of the transaction.}
 
 \item{host}{The host that could not be reached.}
 
@@ -68,10 +78,18 @@ err <- with_failure_metadata(err, failure_metadata("transient", TRUE, 30))
 condition_to_json(err)
 }
 \seealso{
+\link{pipeline_errors} for the other failures of calls to external
+services.
+
 Other dataexcept errors: 
+\code{\link{data_engineering_errors}},
 \code{\link{data_frame_errors}},
+\code{\link{data_quality_errors}},
 \code{\link{file_errors}},
+\code{\link{job_errors}},
+\code{\link{model_quality_errors}},
 \code{\link{modelling_errors}},
+\code{\link{pipeline_errors}},
 \code{\link{validation_error}()}
 }
 \concept{dataexcept errors}

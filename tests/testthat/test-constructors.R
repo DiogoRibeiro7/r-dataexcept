@@ -32,14 +32,44 @@ test_that("every registered error type has a working constructor", {
     host_unreachable_error("api.example.com"),
     connection_timeout_error("api.example.com", 30),
     api_error("https://api.example.com/v1", status_code = 503L),
-    condition_group(list(root))
+    condition_group(list(root)),
+    training_timeout_error("xgboost", 3600),
+    data_format_error(c("csv", "parquet"), "xlsx"),
+    schema_mismatch_error("id: integer", "id: character"),
+    data_drift_error("income", 0.42),
+    data_leakage_error("target_mean", "cross-validation"),
+    data_imbalance_error(0.05, 0.2),
+    outlier_detection_error("iqr"),
+    model_evaluation_error("auc", NaN),
+    cross_validation_error(5L),
+    hyperparameter_error("max_depth", -1),
+    model_serialization_error("model.rds", parent = root),
+    overfitting_error(0.99, 0.71),
+    underfitting_error(0.52, 0.7),
+    resource_limit_error("memory", "16GB"),
+    transaction_error("tx-42"),
+    external_service_error("rates-api", status_code = 503L),
+    service_timeout_error("payments", 30),
+    service_authentication_error("rates-api"),
+    service_authorization_error("rates-api"),
+    retry_limit_exceeded_error("fetch_rates", 5L),
+    storage_error("s3://reports/q3.parquet", "write"),
+    authentication_error("analyst"),
+    authorization_error("analyst", "write:reports"),
+    configuration_error("timeout"),
+    resource_not_found_error("Dataset", "sales"),
+    operation_timeout_error("refresh", 600),
+    data_transformation_error("normalise"),
+    etl_job_error("daily_sales"),
+    batch_processing_error("b-7", parent = root)
   )
   types <- vapply(conditions, function(x) x$.dataexcept$type, character(1))
   registered <- dataexcept_classes()
   error_types <- registered$type[registered$kind == "error" &
     !registered$type %in% c(
       "DataExceptError", "DataFrameError", "DataScienceError", "FileError",
-      "DatabaseError", "NetworkError", "PipelineError", "EnvelopeError"
+      "DatabaseError", "NetworkError", "PipelineError", "JobError",
+      "DataEngineeringError", "EnvelopeError"
     )]
   expect_setequal(types, error_types)
   for (cnd in conditions) {
@@ -187,4 +217,106 @@ test_that("dataexcept_classes() describes a consistent hierarchy", {
   expect_identical(
     classes$failure_kind[classes$type == "ValidationError"], "permanent"
   )
+})
+
+test_that("families catch their new members", {
+  caught <- function(cnd, class) {
+    tryCatch(stop(cnd), error = function(e) inherits(e, class))
+  }
+  expect_true(caught(training_timeout_error("glm", 60), "dataexcept_model_training_error"))
+  expect_true(caught(service_timeout_error("payments"), "dataexcept_external_service_error"))
+  expect_true(caught(service_timeout_error("payments"), "dataexcept_pipeline_error"))
+  expect_true(caught(configuration_error("timeout"), "dataexcept_job_error"))
+  expect_true(caught(etl_job_error("daily"), "dataexcept_data_engineering_error"))
+  expect_true(caught(transaction_error(), "dataexcept_database_error"))
+  expect_true(caught(data_drift_error("x", 1), "dataexcept_data_science_error"))
+  # Unlike Python, where ValidationError is a JobError.
+  expect_false(caught(validation_error("age", -1), "dataexcept_job_error"))
+})
+
+test_that("credentials and permissions are permanent failures", {
+  for (cnd in list(
+    authentication_error("analyst"),
+    authorization_error("analyst", "read"),
+    service_authentication_error("api"),
+    service_authorization_error("api")
+  )) {
+    expect_identical(condition_failure(cnd)$kind, "permanent")
+    expect_false(is_retryable(cnd))
+  }
+  expect_true(is.na(is_retryable(service_timeout_error("api", 5))))
+})
+
+test_that("optional parts of the new messages are left out when not given", {
+  expect_identical(
+    conditionMessage(service_timeout_error("payments")),
+    "Operation timed out on service 'payments'."
+  )
+  expect_identical(
+    conditionMessage(transaction_error("")),
+    "Database transaction failed"
+  )
+  expect_identical(
+    conditionMessage(outlier_detection_error("iqr", details = "")),
+    "Outlier detection failed using method 'iqr'"
+  )
+  expect_identical(
+    conditionMessage(model_serialization_error("m.rds")),
+    "Failed to serialize to 'm.rds'"
+  )
+  expect_identical(
+    conditionMessage(etl_job_error("daily", message = "daily load failed")),
+    "daily load failed"
+  )
+})
+
+test_that("numbers in messages are written as Python writes them", {
+  metric <- function(value) conditionMessage(model_evaluation_error("m", value))
+  expect_identical(metric(Inf), "Failed to compute metric 'm', got inf")
+  expect_identical(metric(-Inf), "Failed to compute metric 'm', got -inf")
+  expect_identical(metric(1e5), "Failed to compute metric 'm', got 100000")
+  expect_identical(metric(1e-5), "Failed to compute metric 'm', got 1e-05")
+  expect_identical(metric(1e16), "Failed to compute metric 'm', got 1e+16")
+  expect_match(conditionMessage(data_drift_error("x", NaN)), "score=nan$")
+  expect_match(conditionMessage(data_imbalance_error(0, -Inf)), "ratio=0.000 < threshold=-inf$")
+  expect_match(conditionMessage(cross_validation_error(5L)), "on 5 folds$")
+})
+
+test_that("a value in a message is quoted as a name is", {
+  expect_identical(
+    conditionMessage(validation_error("country", "Atlantis")),
+    "Validation failed for field 'country': 'Atlantis'"
+  )
+  expect_identical(
+    conditionMessage(validation_error("n", 3L)),
+    "Validation failed for field 'n': 3"
+  )
+  expect_identical(
+    conditionMessage(hyperparameter_error("layers", c(64, 32))),
+    "Invalid hyperparameter 'layers': c(64, 32)"
+  )
+  expect_identical(
+    conditionMessage(hyperparameter_error("verbose", NA)),
+    "Invalid hyperparameter 'verbose': NA"
+  )
+})
+
+test_that("the new constructors check their arguments", {
+  expect_error(data_format_error("csv", 1), "`found_format` must be a single string")
+  expect_error(data_format_error(1, "csv"), "`expected_formats` must be a character vector")
+  expect_error(data_drift_error("x", NA_real_), "`drift_score` must be a single number")
+  expect_error(data_drift_error("x", "0.4"), "`drift_score` must be a single number")
+  expect_error(data_imbalance_error(c(0.1, 0.2), 0.3), "`ratio` must be a single number")
+  expect_error(model_evaluation_error("auc", TRUE), "`value` must be a single number")
+  expect_error(cross_validation_error(2.5), "`folds` must be a non-negative whole number")
+  expect_error(training_timeout_error("glm", -1), "`timeout` must be a finite, non-negative number")
+  expect_error(service_timeout_error("x", "30"), "`timeout_seconds`")
+  expect_error(external_service_error("x", status_code = "503"), "`status_code`")
+  expect_error(retry_limit_exceeded_error("x", -1), "`retries`")
+  expect_error(storage_error("s3://b/k", 1), "`operation` must be a single string")
+  expect_error(authorization_error("analyst", NULL), "`permission` must be a single string")
+  expect_error(resource_not_found_error("Dataset", 42), "`identifier` must be a single string")
+  expect_error(transaction_error(42), "`transaction_id` must be a single string or NULL")
+  expect_error(batch_processing_error("b", parent = "boom"), "condition object")
+  expect_error(model_serialization_error("m.rds", parent = "boom"), "condition object")
 })

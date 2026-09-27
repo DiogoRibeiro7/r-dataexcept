@@ -53,6 +53,20 @@ check_seconds <- function(x, arg, allow_null = FALSE) {
   invisible(x)
 }
 
+# A single real number. NaN and the infinities are allowed -- a metric that
+# could not be computed is NaN, and that is often the failure being reported --
+# but NA, which says nothing, is not.
+check_number <- function(x, arg, allow_null = FALSE) {
+  if (allow_null && is.null(x)) {
+    return(invisible(x))
+  }
+  if (!is.numeric(x) || length(x) != 1L || (is.na(x) && !is.nan(x))) {
+    what <- if (allow_null) "a single number or NULL" else "a single number"
+    stop(sprintf("`%s` must be %s.", arg, what), call. = FALSE)
+  }
+  invisible(x)
+}
+
 check_condition <- function(x, arg, allow_null = TRUE) {
   if (allow_null && is.null(x)) {
     return(invisible(x))
@@ -64,16 +78,46 @@ check_condition <- function(x, arg, allow_null = TRUE) {
 }
 
 # A short, single-line rendering of an arbitrary value for use inside a
-# message, in the spirit of Python's repr().
+# message, in the spirit of Python's repr(). A string is quoted the way names
+# are, with single quotes, and a number is written by format_number().
 format_value <- function(x, width = 60L) {
-  text <- tryCatch(
-    paste(deparse(x, width.cutoff = 500L, nlines = 1L), collapse = " "),
-    error = function(e) sprintf("<%s>", class(x)[1L])
-  )
+  number <- is.numeric(x) && length(x) == 1L && !is.object(x) && (!is.na(x) || is.nan(x))
+  text <- if (is_string(x)) {
+    encodeString(x, quote = "'")
+  } else if (number) {
+    format_number(x)
+  } else {
+    tryCatch(
+      paste(deparse(x, width.cutoff = 500L, nlines = 1L), collapse = " "),
+      error = function(e) sprintf("<%s>", class(x)[1L])
+    )
+  }
   if (nchar(text) > width) {
     text <- paste0(substr(text, 1L, width - 3L), "...")
   }
   text
+}
+
+# A number in a message, written as the Python package writes it: whole
+# numbers without a decimal point or exponent, up to 15 significant digits
+# otherwise, and "nan", "inf" and "-inf" for the values that are not finite.
+# `digits` gives a fixed number of decimal places instead, as Python's
+# `{value:.3f}` does.
+format_number <- function(x, digits = NULL) {
+  x <- as.double(x)
+  if (is.nan(x)) {
+    return("nan")
+  }
+  if (is.infinite(x)) {
+    return(if (x > 0) "inf" else "-inf")
+  }
+  if (!is.null(digits)) {
+    return(sprintf("%.*f", as.integer(digits), x))
+  }
+  if (x == trunc(x) && abs(x) < 1e16) {
+    return(sprintf("%.0f", x))
+  }
+  format(x, digits = 15L)
 }
 
 quote_name <- function(x) {

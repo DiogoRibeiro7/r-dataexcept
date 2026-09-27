@@ -23,6 +23,37 @@ The changes in each version, from the package's `NEWS.md`.
   included, is read back with the class `dataexcept_condition_group`. An empty
   `exceptions` array is now kept when the condition is written back.
 
+### More condition types
+
+Twenty-nine types from the Python package, with its names, fields, messages
+and default failure metadata. Each is tested against the envelope the Python
+package writes for the same arguments.
+
+- Data quality: `data_format_error()`, `schema_mismatch_error()`,
+  `data_drift_error()`, `data_leakage_error()`, `data_imbalance_error()`,
+  `outlier_detection_error()`.
+- Model quality: `model_evaluation_error()`, `cross_validation_error()`,
+  `hyperparameter_error()`, `training_timeout_error()`, `overfitting_error()`,
+  `underfitting_error()`, `model_serialization_error()`,
+  `resource_limit_error()`.
+- Pipelines and external services: `external_service_error()`,
+  `service_timeout_error()`, `service_authentication_error()`,
+  `service_authorization_error()`, `retry_limit_exceeded_error()`,
+  `storage_error()`, and `transaction_error()` for databases.
+- Jobs, a new family caught by `dataexcept_job_error`:
+  `authentication_error()`, `authorization_error()`, `configuration_error()`,
+  `resource_not_found_error()`, `operation_timeout_error()`.
+- Data engineering, a new family caught by
+  `dataexcept_data_engineering_error`: `data_transformation_error()`,
+  `etl_job_error()`, `batch_processing_error()`.
+- Refused credentials and permissions are permanent and not retryable, as in
+  Python; the other new types are `"unknown"`.
+- An envelope of one of these types, written by Python, is now read back with
+  the type's R classes instead of plain `dataexcept_error`.
+- A string value in a default message is quoted as names are, with single
+  quotes (`Validation failed for field 'country': 'Atlantis'`), and an integer
+  is written without its `L` suffix, as the Python package writes them.
+
 ## 0.2.0
 
 ### Observability
