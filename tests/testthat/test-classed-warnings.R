@@ -60,6 +60,7 @@ test_that("a classed warning keeps the original message, call and parent", {
 })
 
 test_that("recognition holds in another session language", {
+  skip_if(getRversion() < "4.2.0", "Sys.setLanguage() needs R 4.2 or later")
   old <- Sys.setLanguage("de")
   on.exit(Sys.setLanguage(old), add = TRUE)
   skip_if(

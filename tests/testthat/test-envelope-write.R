@@ -152,7 +152,8 @@ test_that("text is redacted on the way out, including paths", {
 })
 
 test_that("JSON output is strict and numbers round-trip", {
-  cnd <- new_dataexcept_error("x", a = 0.1 + 0.2, b = 1 / 3, c = 1e-20, d = 30,
+  cnd <- new_dataexcept_error("x",
+    a = 0.1 + 0.2, b = 1 / 3, c = 1e-20, d = 30,
     e = -0.5, f = 123456789012, g = 2^60, h = 5L, s = "quote \" and \\ and \n",
     type = "X", class = "x_error"
   )
@@ -201,7 +202,8 @@ test_that("every Python reference fixture round-trips exactly", {
 
 test_that("R envelopes round-trip through the reader", {
   cnd <- with_failure_metadata(
-    api_error("https://h/v1?api_key=x", status_code = 503L,
+    api_error("https://h/v1?api_key=x",
+      status_code = 503L,
       parent = simpleError("connection reset")
     ),
     failure_metadata("transient", TRUE, 2.5)

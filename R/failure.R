@@ -40,8 +40,9 @@ failure_metadata <- function(kind = "unknown",
       call. = FALSE
     )
   }
-  if (!is.null(retryable) &&
-    !(is.logical(retryable) && length(retryable) == 1L && !is.na(retryable))) {
+  valid_retryable <- is.null(retryable) ||
+    (is.logical(retryable) && length(retryable) == 1L && !is.na(retryable))
+  if (!valid_retryable) {
     stop("`retryable` must be TRUE, FALSE or NULL.", call. = FALSE)
   }
   check_seconds(retry_after_seconds, "retry_after_seconds", allow_null = TRUE)

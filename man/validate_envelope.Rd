@@ -5,13 +5,15 @@
 \alias{is_envelope}
 \title{Check that a payload is a valid envelope}
 \usage{
-validate_envelope(x)
+validate_envelope(x, max_depth = 32L)
 
-is_envelope(x)
+is_envelope(x, max_depth = 32L)
 }
 \arguments{
 \item{x}{An envelope: a JSON string, or a list as returned by
 \code{\link[=condition_to_envelope]{condition_to_envelope()}} or \code{jsonlite::parse_json()}.}
+
+\item{max_depth}{The deepest chain of nested records to accept.}
 }
 \value{
 \code{validate_envelope()} returns \code{x} invisibly when it is valid and

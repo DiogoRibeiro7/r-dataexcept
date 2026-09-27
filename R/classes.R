@@ -20,6 +20,11 @@ class_entry <- function(class, parent = NULL, kind = "error",
 
 permanent <- function() failure_metadata("permanent", retryable = FALSE)
 
+# The classed warnings are R-only and all children of DataExceptWarning.
+warning_entry <- function(class) {
+  class_entry(class, "DataExceptWarning", kind = "warning", python = FALSE)
+}
+
 class_registry <- function() {
   list(
     DataExceptError = class_entry("dataexcept_error"),
@@ -27,31 +32,25 @@ class_registry <- function() {
       "dataexcept_validation_error", "DataExceptError",
       failure = permanent()
     ),
-
     DataFrameError = class_entry("dataexcept_data_frame_error", "DataExceptError", python = FALSE),
     MissingColumnError = class_entry("dataexcept_missing_column_error", "DataFrameError"),
     DtypeMismatchError = class_entry("dataexcept_dtype_mismatch_error", "DataFrameError"),
     MergeKeyError = class_entry("dataexcept_merge_key_error", "DataFrameError"),
-
     DataScienceError = class_entry("dataexcept_data_science_error", "DataExceptError"),
     DataLoadingError = class_entry("dataexcept_data_loading_error", "DataScienceError"),
     MissingDataError = class_entry("dataexcept_missing_data_error", "DataScienceError"),
     ModelTrainingError = class_entry("dataexcept_model_training_error", "DataScienceError"),
     ConvergenceError = class_entry("dataexcept_convergence_error", "ModelTrainingError"),
     PredictionError = class_entry("dataexcept_prediction_error", "DataScienceError"),
-
     FileError = class_entry("dataexcept_file_error", "DataExceptError", python = FALSE),
     FileReadError = class_entry("dataexcept_file_read_error", "FileError"),
     FileWriteError = class_entry("dataexcept_file_write_error", "FileError"),
-
     DatabaseError = class_entry("dataexcept_database_error", "DataExceptError"),
     DatabaseConnectionError = class_entry("dataexcept_database_connection_error", "DatabaseError"),
     QueryExecutionError = class_entry("dataexcept_query_execution_error", "DatabaseError"),
-
     NetworkError = class_entry("dataexcept_network_error", "DataExceptError"),
     HostUnreachableError = class_entry("dataexcept_host_unreachable_error", "NetworkError"),
     ConnectionTimeoutError = class_entry("dataexcept_connection_timeout_error", "NetworkError"),
-
     PipelineError = class_entry("dataexcept_pipeline_error", "DataExceptError"),
     ApiError = class_entry("dataexcept_api_error", "PipelineError"),
 
@@ -65,16 +64,16 @@ class_registry <- function() {
     # Warnings: R-only. They classify base R and stats warnings that arrive
     # with nothing but a message; see with_classed_warnings().
     DataExceptWarning = class_entry("dataexcept_warning", kind = "warning", python = FALSE),
-    ConvergenceWarning = class_entry("dataexcept_convergence_warning", "DataExceptWarning", "warning", python = FALSE),
-    SeparationWarning = class_entry("dataexcept_separation_warning", "DataExceptWarning", "warning", python = FALSE),
-    BoundaryFitWarning = class_entry("dataexcept_boundary_fit_warning", "DataExceptWarning", "warning", python = FALSE),
-    RankDeficientPredictionWarning = class_entry("dataexcept_rank_deficient_prediction_warning", "DataExceptWarning", "warning", python = FALSE),
-    ApproximationWarning = class_entry("dataexcept_approximation_warning", "DataExceptWarning", "warning", python = FALSE),
-    ZeroVarianceWarning = class_entry("dataexcept_zero_variance_warning", "DataExceptWarning", "warning", python = FALSE),
-    CoercionWarning = class_entry("dataexcept_coercion_warning", "DataExceptWarning", "warning", python = FALSE),
-    RecyclingWarning = class_entry("dataexcept_recycling_warning", "DataExceptWarning", "warning", python = FALSE),
-    NaNProducedWarning = class_entry("dataexcept_nan_produced_warning", "DataExceptWarning", "warning", python = FALSE),
-    NonNumericArgumentWarning = class_entry("dataexcept_non_numeric_argument_warning", "DataExceptWarning", "warning", python = FALSE)
+    ConvergenceWarning = warning_entry("dataexcept_convergence_warning"),
+    SeparationWarning = warning_entry("dataexcept_separation_warning"),
+    BoundaryFitWarning = warning_entry("dataexcept_boundary_fit_warning"),
+    RankDeficientPredictionWarning = warning_entry("dataexcept_rank_deficient_prediction_warning"),
+    ApproximationWarning = warning_entry("dataexcept_approximation_warning"),
+    ZeroVarianceWarning = warning_entry("dataexcept_zero_variance_warning"),
+    CoercionWarning = warning_entry("dataexcept_coercion_warning"),
+    RecyclingWarning = warning_entry("dataexcept_recycling_warning"),
+    NaNProducedWarning = warning_entry("dataexcept_nan_produced_warning"),
+    NonNumericArgumentWarning = warning_entry("dataexcept_non_numeric_argument_warning")
   )
 }
 
@@ -90,7 +89,7 @@ type_classes <- function(type) {
   while (!is.null(type)) {
     entry <- registry[[type]]
     if (is.null(entry)) {
-      stop(sprintf("Unknown dataexcept type '%s'.", type), call. = FALSE)
+      stop(sprintf("Unknown dataexcept type '%s'.", type), call. = FALSE) # nocov
     }
     classes <- c(classes, entry$class)
     type <- entry$parent

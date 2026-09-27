@@ -46,7 +46,8 @@ check_seconds <- function(x, arg, allow_null = FALSE) {
   }
   ok <- is.numeric(x) && length(x) == 1L && !is.na(x) && is.finite(x) && x >= 0
   if (!ok) {
-    what <- if (allow_null) "a finite, non-negative number or NULL" else "a finite, non-negative number"
+    what <- "a finite, non-negative number"
+    if (allow_null) what <- paste(what, "or NULL")
     stop(sprintf("`%s` must be %s.", arg, what), call. = FALSE)
   }
   invisible(x)
@@ -93,8 +94,8 @@ format_keys <- function(x) {
 # `cause` records, so only the condition's own message is taken.
 condition_text <- function(cnd) {
   text <- NULL
-  if (inherits(cnd, c("rlang_error", "rlang_warning", "rlang_message")) &&
-    requireNamespace("rlang", quietly = TRUE)) {
+  from_rlang <- inherits(cnd, c("rlang_error", "rlang_warning", "rlang_message"))
+  if (from_rlang && requireNamespace("rlang", quietly = TRUE)) {
     text <- tryCatch(rlang::cnd_message(cnd, inherit = FALSE), error = function(e) NULL)
   }
   if (is.null(text)) {
@@ -103,5 +104,18 @@ condition_text <- function(cnd) {
   if (!is_string(text)) {
     text <- if (is.character(text)) paste(text, collapse = "\n") else ""
   }
-  sub("\n$", "", text)
+  sub("\n$", "", valid_utf8(text))
+}
+
+# Text as valid UTF-8. A message can carry bytes that are not valid in any
+# encoding -- read from a file, or passed up from C -- and string functions
+# refuse such input, so each invalid byte is replaced before anything else
+# touches the text.
+valid_utf8 <- function(text) {
+  text <- enc2utf8(as.character(text))
+  bad <- !validUTF8(text)
+  if (any(bad)) {
+    text[bad] <- iconv(text[bad], "UTF-8", "UTF-8", sub = "?")
+  }
+  text
 }

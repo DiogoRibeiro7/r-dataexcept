@@ -10,12 +10,9 @@ max_vector_length <- 100L
 
 # Text leaving the package: URLs redacted with their paths, and valid UTF-8.
 export_text <- function(text) {
-  text <- enc2utf8(as.character(text))
-  bad <- !validUTF8(text)
-  if (any(bad)) {
-    text[bad] <- iconv(text[bad], "UTF-8", "UTF-8", sub = "?")
-  }
-  vapply(text, redact_urls_in_text, character(1), keep_path = FALSE, USE.NAMES = FALSE)
+  vapply(valid_utf8(text), redact_urls_in_text, character(1),
+    keep_path = FALSE, USE.NAMES = FALSE
+  )
 }
 
 describe_value <- function(x) {
@@ -119,12 +116,8 @@ json_safe <- function(x, depth = 0L) {
       names(values) <- export_text(keys)
       return(values)
     }
-    if (is.null(keys) && length(x) == 0L) {
-      return(list())
-    }
-    if (!is.null(keys) && length(x) == 0L) {
-      return(structure(list(), names = character()))
-    }
+    # An empty named list is an object (handled above); anything partly
+    # named becomes an array.
     return(unname(values))
   }
   describe_value(x)
@@ -195,10 +188,10 @@ write_json <- function(x, pretty = FALSE, indent = 0L) {
     ))
   }
   if (length(x) != 1L) {
-    stop("Internal error: write_json() received a vector of length != 1.", call. = FALSE)
+    stop("Internal error: write_json() received a vector of length != 1.", call. = FALSE) # nocov
   }
   if (is.na(x)) {
-    return("null")
+    return("null") # nocov: json_safe() has already turned NA into NULL
   }
   if (is.logical(x)) {
     return(if (x) "true" else "false")
