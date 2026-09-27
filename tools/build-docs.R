@@ -28,7 +28,8 @@ groups <- list(
   ),
   "Observability" = c(
     "operation_context", "condition_to_event", "condition_to_otel_attributes",
-    "record_otel_exception", "operation_context_from_otel"
+    "record_otel_exception", "operation_context_from_otel", "condition_to_pino",
+    "pino_schema"
   ),
   "Classed warnings" = "with_classed_warnings",
   "Redaction" = "redact_url",

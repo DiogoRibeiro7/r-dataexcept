@@ -1,0 +1,29 @@
+{
+  "type": "ExceptionGroup",
+  "module": "builtins",
+  "message": "parallel failures (2 sub-exceptions)",
+  "errors": [
+    {
+      "type": "ExceptionGroup",
+      "module": "builtins",
+      "message": "row failures (2 sub-exceptions)",
+      "errors": [
+        {
+          "type": "ValueError",
+          "module": "builtins",
+          "message": "bad row"
+        },
+        {
+          "type": "KeyError",
+          "module": "builtins",
+          "message": "'id'"
+        }
+      ]
+    },
+    {
+      "type": "OSError",
+      "module": "builtins",
+      "message": "disk unavailable"
+    }
+  ]
+}

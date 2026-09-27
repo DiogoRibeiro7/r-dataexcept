@@ -83,6 +83,7 @@ nav:
       - Envelopes: guide/envelopes.md
       - Working with Python: guide/python.md
       - Observability: guide/observability.md
+      - Logging for Pino: guide/pino.md
       - Classed warnings: guide/warnings.md
       - Redaction: guide/redaction.md
   - API reference:
@@ -117,6 +118,8 @@ nav:
           - condition_to_otel_attributes(): reference/condition_to_otel_attributes.md
           - record_otel_exception(): reference/record_otel_exception.md
           - operation_context_from_otel(): reference/operation_context_from_otel.md
+          - condition_to_pino(): reference/condition_to_pino.md
+          - pino_schema(): reference/pino_schema.md
       - Classed warnings:
           - with_classed_warnings(): reference/with_classed_warnings.md
       - Redaction:

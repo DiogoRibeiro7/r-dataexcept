@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diogoribeiro7.github.io/DataExcept/schema/pino-1.0.0.json",
+  "title": "DataExcept Pino error profile",
+  "description": "The value DataExcept projects onto Pino's error key, produced by dataexcept.envelope_to_pino() and dataexcept.exception_to_pino(). It is a projection of the DataExcept envelope, not a replacement for it: identity, attributes, failure metadata and the whole cause/context/member tree survive, named the way a Node consumer expects to find them. A node is one of the same three kinds as an envelope node.",
+  "$comment": "Pino profile version 1.0.0, projected from envelope schema 1.0.0. Under the 1.x stability policy a later version may add fields; it does not change what an established field means.",
+  "$ref": "#/$defs/node",
+  "$defs": {
+    "node": {
+      "description": "Any node of a projected error tree. The three kinds are mutually exclusive, so a consumer can tell them apart by shape alone.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/truncationMarker"
+        },
+        {
+          "$ref": "#/$defs/cycleRecord"
+        },
+        {
+          "$ref": "#/$defs/errorRecord"
+        }
+      ]
+    },
+    "truncationMarker": {
+      "description": "Replaces a child past the envelope's depth budget. Carried through unchanged: a projection that invented a type and message here would be reporting an error that never existed.",
+      "type": "object",
+      "required": [
+        "truncated"
+      ],
+      "properties": {
+        "truncated": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "cycleRecord": {
+      "description": "Stands in for an error already on the path from the root, carrying identity and message only so that following `cause` always terminates.",
+      "type": "object",
+      "required": [
+        "type",
+        "module",
+        "message",
+        "cycle"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/errorType"
+        },
+        "module": {
+          "$ref": "#/$defs/errorModule"
+        },
+        "message": {
+          "$ref": "#/$defs/errorMessage"
+        },
+        "cycle": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "errorRecord": {
+      "description": "One error, rendered in full. Producers may add fields in a later profile version, so consumers must ignore fields they do not know.",
+      "type": "object",
+      "required": [
+        "type",
+        "module",
+        "message"
+      ],
+      "not": {
+        "$comment": "A repeat is a cycleRecord and a cut-off child is a truncationMarker; neither marker field belongs on a record rendered in full.",
+        "anyOf": [
+          {
+            "required": [
+              "cycle"
+            ]
+          },
+          {
+            "required": [
+              "truncated"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/errorType"
+        },
+        "module": {
+          "$ref": "#/$defs/errorModule"
+        },
+        "message": {
+          "$ref": "#/$defs/errorMessage"
+        },
+        "stack": {
+          "description": "A real stack representation, present only when the producer was given one. DataExcept never fabricates a Python traceback or a JavaScript stack, so absence means none was available -- not that the error has none.",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "Public instance attributes of the originating exception, JSON-safe. Kept nested rather than spread onto the error, because spreading would let an attribute called type, message or stack overwrite the fields Pino consumers key on.",
+          "type": "object"
+        },
+        "failure": {
+          "description": "Machine-readable recovery metadata, carried through from the envelope unchanged.",
+          "type": "object",
+          "required": [
+            "kind",
+            "retryable",
+            "retry_after_seconds"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "transient",
+                "permanent",
+                "unknown"
+              ]
+            },
+            "retryable": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "retry_after_seconds": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "cause": {
+          "description": "The explicitly chained error. Named for JavaScript's own `Error.cause`, which is what a Node consumer already walks.",
+          "$ref": "#/$defs/node"
+        },
+        "context": {
+          "description": "The error being handled when this one was raised. JavaScript has no equivalent, so the DataExcept name is kept rather than folded into `cause`, which would claim a causal link the language did not.",
+          "$ref": "#/$defs/node"
+        },
+        "errors": {
+          "description": "Members of an exception group. Named `errors` to match JavaScript's AggregateError, which is the shape a Node consumer handles concurrent failures with; this is the envelope's `exceptions` field.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      }
+    },
+    "errorType": {
+      "description": "The exception class name, unqualified. Pino's own error serializer emits the constructor name under this key, so a consumer needs no special case to read it.",
+      "type": "string"
+    },
+    "errorModule": {
+      "description": "The module the exception class is defined in. With type it identifies the class across the language boundary.",
+      "type": "string"
+    },
+    "errorMessage": {
+      "description": "The rendered message, with credential-bearing URLs redacted.",
+      "type": "string"
+    }
+  }
+}

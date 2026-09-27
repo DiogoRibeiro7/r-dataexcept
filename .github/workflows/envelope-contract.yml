@@ -1,8 +1,9 @@
 # Two checks that the R package keeps to the contract the Python DataExcept
 # package publishes.
 #
-# * schema: every envelope R writes is validated against envelope-1.0.0.json
-#   by an independent JSON Schema validator.
+# * schema: every envelope R writes is validated against envelope-1.0.0.json,
+#   and its Pino projection against pino-1.0.0.json, by an independent JSON
+#   Schema validator.
 # * upstream: the schema, the reference fixtures and the redaction parity
 #   cases are regenerated from the Python package's main branch. If anything
 #   differs from what is committed here, the Python side has changed and the
@@ -39,10 +40,10 @@ jobs:
 
       - run: pip install jsonschema
 
-      - name: Write envelopes from R
+      - name: Write envelopes and Pino projections from R
         run: Rscript tools/export-envelopes.R envelopes
 
-      - name: Validate them against the published schema
+      - name: Validate them against the published schemas
         run: python tools/validate-envelopes.py envelopes
 
   upstream:

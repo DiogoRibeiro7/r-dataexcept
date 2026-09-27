@@ -7,12 +7,15 @@ Lifecycle
 MkDocs
 ORCID
 OpenTelemetry
+Pino
+Pino's
 R's
 Wahrscheinlichkeiten
 aufgetreten
 backend's
 dataexcept's
 glm
+js
 jsonlite
 lme
 lme4
@@ -23,6 +26,7 @@ oder
 otel
 otel's
 otelsdk
+pino
 retryable
 rlang
 rlang's

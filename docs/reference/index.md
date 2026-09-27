@@ -54,6 +54,8 @@ same text is available with `?function_name`.
 | [OpenTelemetry attributes for a condition](condition_to_otel_attributes.md) | `condition_to_otel_attributes()` |
 | [Record a condition on an OpenTelemetry span](record_otel_exception.md) | `record_otel_exception()` |
 | [Correlate an operation context with the active OpenTelemetry span](operation_context_from_otel.md) | `operation_context_from_otel()` |
+| [Write a condition in the shape Pino logs errors](condition_to_pino.md) | `condition_to_pino()`, `condition_to_pino_json()`, `envelope_to_pino()` |
+| [The Pino profile JSON Schema](pino_schema.md) | `pino_schema()` |
 
 ## Classed warnings
 

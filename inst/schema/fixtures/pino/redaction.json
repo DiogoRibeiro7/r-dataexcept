@@ -1,0 +1,19 @@
+{
+  "type": "ApiError",
+  "module": "dataexcept.pipeline_exceptions",
+  "message": "API call failed: https://***:***@api.example.com/***?token=*** (status 502)",
+  "attributes": {
+    "endpoint": "https://***:***@api.example.com/***?token=***",
+    "status_code": 502
+  },
+  "failure": {
+    "kind": "unknown",
+    "retryable": null,
+    "retry_after_seconds": null
+  },
+  "cause": {
+    "type": "OSError",
+    "module": "builtins",
+    "message": "connection refused for https://***:***@api.example.com/***?token=***"
+  }
+}

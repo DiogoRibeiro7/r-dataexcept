@@ -22,7 +22,8 @@ It writes these files under tests/testthat/fixtures/:
   The R tests call the matching R constructor with the same arguments and
   require the same type, message, failure metadata and attributes.
 
-It also copies the schema and the reference envelope fixtures into
+It also copies the envelope and Pino schemas and the reference fixtures --
+each envelope, and the Python package's Pino projection of it -- into
 inst/schema/, so the R package tests against what the Python package emits.
 """
 
@@ -345,8 +346,13 @@ def main(python_repo: str) -> None:
 
     schema_dir = python_root / "docs" / "schema"
     shutil.copy(schema_dir / "envelope-1.0.0.json", ROOT / "inst" / "schema")
+    shutil.copy(schema_dir / "pino-1.0.0.json", ROOT / "inst" / "schema")
     for fixture in sorted((schema_dir / "fixtures").glob("*.json")):
         shutil.copy(fixture, ROOT / "inst" / "schema" / "fixtures")
+    pino_fixtures = ROOT / "inst" / "schema" / "fixtures" / "pino"
+    pino_fixtures.mkdir(exist_ok=True)
+    for fixture in sorted((schema_dir / "fixtures" / "pino").glob("*.json")):
+        shutil.copy(fixture, pino_fixtures)
 
     OUT.mkdir(parents=True, exist_ok=True)
     redaction = [

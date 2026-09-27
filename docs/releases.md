@@ -71,6 +71,19 @@ package writes for the same arguments.
 - Each rule is tested against the real warning, raised by the function that
   raises it; lme4 and survival join `Suggests` for those tests.
 
+### Pino
+
+- `condition_to_pino()` and `condition_to_pino_json()` write a condition in
+  the shape Pino logs errors: the Pino profile the Python package publishes,
+  a projection of the envelope in which group members are `errors`,
+  attributes stay nested, and `stack` appears only when there is a real one
+  -- an rlang backtrace, with `include_stack = TRUE`.
+- `envelope_to_pino()` projects an envelope already in hand, as JSON or as a
+  list.
+- `pino_schema()` returns the profile's JSON Schema, which ships with the
+  package together with the Python package's projection of every reference
+  envelope. The tests require R to reproduce each one exactly.
+
 ## 0.2.0
 
 ### Observability

@@ -1,0 +1,48 @@
+{
+  "type": "ValidationError",
+  "module": "dataexcept.exceptions.validation",
+  "message": "level 2",
+  "attributes": {
+    "field": "age",
+    "value": -1,
+    "message": "level 2"
+  },
+  "failure": {
+    "kind": "permanent",
+    "retryable": false,
+    "retry_after_seconds": null
+  },
+  "cause": {
+    "type": "ValidationError",
+    "module": "dataexcept.exceptions.validation",
+    "message": "level 1",
+    "attributes": {
+      "field": "age",
+      "value": -1,
+      "message": "level 1"
+    },
+    "failure": {
+      "kind": "permanent",
+      "retryable": false,
+      "retry_after_seconds": null
+    },
+    "cause": {
+      "type": "ValidationError",
+      "module": "dataexcept.exceptions.validation",
+      "message": "level 0",
+      "attributes": {
+        "field": "age",
+        "value": -1,
+        "message": "level 0"
+      },
+      "failure": {
+        "kind": "permanent",
+        "retryable": false,
+        "retry_after_seconds": null
+      },
+      "cause": {
+        "truncated": true
+      }
+    }
+  }
+}

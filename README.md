@@ -182,6 +182,11 @@ dataexcept keeps credentials out of the trace: the otel SDK records an
 exception by printing the condition, unredacted, and dataexcept's attributes
 replace those fields.
 
+For a Node.js service that logs with Pino, `condition_to_pino_json()` writes
+the failure in the shape Pino logs errors -- the Pino profile the Python
+package publishes -- so an R job's failures read like any other in the same
+log stream.
+
 ## Classed warnings from base R
 
 ```r
@@ -200,14 +205,21 @@ fit <- withCallingHandlers(
 The same code works in a German session, where the warning reads
 *glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1
 aufgetreten*: each warning is compared with its template translated through the
-catalogue R used to write it. `classed_warning_rules()` lists what is
-recognised. A handler can also fail closed, turning non-convergence into a
-`convergence_error()` with the warning as its cause.
+catalogue R used to write it. Besides base R and stats, the rules cover
+survival's Cox models and lme4's convergence checks, and a warning that
+carries values, such as the iterations `kmeans()` ran, has them as fields.
+`classed_warning_rules()` lists what is recognised. A handler can also fail
+closed, turning non-convergence into a `convergence_error()` with the warning
+as its cause.
 
 ## How the R and Python packages stay in step
 
 - The schema and the reference fixtures in `inst/schema/` are the Python
-  package's. The tests read every fixture into R and write it back unchanged.
+  package's. The tests read every fixture into R and write it back unchanged,
+  and project every one to the Pino profile exactly as Python does.
+- Every condition type R shares with Python is built in both languages with
+  the same arguments, and must agree on type, message, failure metadata and
+  attributes.
 - Redaction is tested against the Python implementation's own output on a set
   of awkward URLs, and must match it character for character.
 - `validate_envelope()` is tested against the verdicts of a JSON Schema
