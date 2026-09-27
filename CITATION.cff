@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "dataexcept: Structured, Classed Failures that Cross Language Boundaries"
+type: software
+authors:
+  - family-names: Ribeiro
+    given-names: Diogo
+    email: dfr@esmad.ipp.pt
+    orcid: "https://orcid.org/0009-0001-2022-7072"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/DiogoRibeiro7/r-dataexcept"
+keywords:
+  - R
+  - error handling
+  - conditions
+  - observability
+  - data pipelines

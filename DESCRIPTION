@@ -1,0 +1,33 @@
+Package: dataexcept
+Title: Structured, Classed Failures that Cross Language Boundaries
+Version: 0.1.0
+Authors@R: person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt",
+    role = c("aut", "cre", "cph"),
+    comment = c(ORCID = "0009-0001-2022-7072"))
+Description: Classed error conditions for data and modelling workflows that
+    carry structured fields and machine-readable recovery metadata (whether a
+    failure is transient or permanent, and whether a retry can succeed), and
+    that serialise to the language-neutral failure envelope published by the
+    'DataExcept' 'Python' package, so failures written by 'R' and 'Python'
+    code share one format. Envelopes from either language can be read back
+    into 'R' conditions. Credentials in URLs are redacted before they reach a
+    condition or an envelope. A companion layer gives classes to the warnings
+    base 'R' and 'stats' signal with only a message, recognising them through
+    the translated message catalogue so the match holds in any session
+    language.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Depends: R (>= 4.1)
+Imports:
+    jsonlite,
+    stats,
+    utils
+Suggests:
+    rlang,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://github.com/DiogoRibeiro7/r-dataexcept
+BugReports: https://github.com/DiogoRibeiro7/r-dataexcept/issues

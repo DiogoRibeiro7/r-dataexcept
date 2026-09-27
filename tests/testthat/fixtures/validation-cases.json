@@ -1,0 +1,147 @@
+[
+  {
+    "name": "minimal record",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}",
+    "valid": true
+  },
+  {
+    "name": "record with unknown field",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"future_field\": 1}",
+    "valid": true
+  },
+  {
+    "name": "record with failure",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"unknown\", \"retryable\": null, \"retry_after_seconds\": null}}",
+    "valid": true
+  },
+  {
+    "name": "failure with delay",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"transient\", \"retryable\": true, \"retry_after_seconds\": 2.5}}",
+    "valid": true
+  },
+  {
+    "name": "nested cause and context",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}, \"context\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}}}",
+    "valid": true
+  },
+  {
+    "name": "group",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"exceptions\": [{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}, {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"exceptions\": [{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}]}]}",
+    "valid": true
+  },
+  {
+    "name": "empty group",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"exceptions\": []}",
+    "valid": true
+  },
+  {
+    "name": "cycle record",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cycle\": true}",
+    "valid": true
+  },
+  {
+    "name": "truncation marker",
+    "payload": "{\"truncated\": true}",
+    "valid": true
+  },
+  {
+    "name": "cause is a marker",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"truncated\": true}}",
+    "valid": true
+  },
+  {
+    "name": "missing module",
+    "payload": "{\"type\": \"ValueError\", \"message\": \"bad row\"}",
+    "valid": false
+  },
+  {
+    "name": "numeric type",
+    "payload": "{\"type\": 1, \"module\": \"builtins\", \"message\": \"bad row\"}",
+    "valid": false
+  },
+  {
+    "name": "null message",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": null}",
+    "valid": false
+  },
+  {
+    "name": "truncated false",
+    "payload": "{\"truncated\": false}",
+    "valid": false
+  },
+  {
+    "name": "marker with extra field",
+    "payload": "{\"truncated\": true, \"type\": \"ValueError\"}",
+    "valid": false
+  },
+  {
+    "name": "cycle with attributes",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cycle\": true, \"attributes\": {}}",
+    "valid": false
+  },
+  {
+    "name": "cycle false",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cycle\": false}",
+    "valid": false
+  },
+  {
+    "name": "record with truncated",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"truncated\": true}",
+    "valid": false
+  },
+  {
+    "name": "failure missing field",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"unknown\", \"retryable\": null}}",
+    "valid": false
+  },
+  {
+    "name": "failure bad kind",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"fatal\", \"retryable\": null, \"retry_after_seconds\": null}}",
+    "valid": false
+  },
+  {
+    "name": "failure string retryable",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"unknown\", \"retryable\": \"yes\", \"retry_after_seconds\": null}}",
+    "valid": false
+  },
+  {
+    "name": "failure negative delay",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": {\"kind\": \"unknown\", \"retryable\": null, \"retry_after_seconds\": -1}}",
+    "valid": false
+  },
+  {
+    "name": "failure null",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"failure\": null}",
+    "valid": false
+  },
+  {
+    "name": "attributes array",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"attributes\": [1, 2]}",
+    "valid": false
+  },
+  {
+    "name": "cause not object",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": \"boom\"}",
+    "valid": false
+  },
+  {
+    "name": "exceptions object",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"exceptions\": {\"a\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}}}",
+    "valid": false
+  },
+  {
+    "name": "bad group member",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"exceptions\": [{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}, {\"type\": \"X\"}]}",
+    "valid": false
+  },
+  {
+    "name": "deep invalid cause",
+    "payload": "{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\", \"cause\": {\"message\": \"x\"}}}}",
+    "valid": false
+  },
+  {
+    "name": "top-level array",
+    "payload": "[{\"type\": \"ValueError\", \"module\": \"builtins\", \"message\": \"bad row\"}]",
+    "valid": false
+  }
+]

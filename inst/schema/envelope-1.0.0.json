@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+  "title": "DataExcept exception envelope",
+  "description": "The language-neutral contract for payloads produced by dataexcept.exception_to_dict() and dataexcept.exception_to_json(). An envelope node is one of three kinds: an exception record, the cycle record that stands in for an exception already on the path from the root, or the marker that replaces a child past the max_depth budget. Envelopes are strict JSON: no NaN, no Infinity, no traceback frames and no private attributes.",
+  "$comment": "Envelope schema version 1.0.0. Under the 1.x stability policy a later version may add fields; it does not change what an established field means.",
+  "$ref": "#/$defs/envelope",
+  "$defs": {
+    "envelope": {
+      "description": "Any node of an envelope tree. The three kinds are mutually exclusive, so a consumer can tell them apart by shape alone.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/truncationMarker"
+        },
+        {
+          "$ref": "#/$defs/cycleRecord"
+        },
+        {
+          "$ref": "#/$defs/exceptionRecord"
+        }
+      ]
+    },
+    "truncationMarker": {
+      "description": "Replaces a child exception once the shared max_depth budget is exhausted. It carries nothing else: the record it stands for was never rendered.",
+      "type": "object",
+      "required": [
+        "truncated"
+      ],
+      "properties": {
+        "truncated": {
+          "description": "Always true. The field is absent rather than false on a record that was rendered in full.",
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "cycleRecord": {
+      "description": "Stands in for an exception already on the path from the root. It carries identity and message only -- never a cause, context, group members or attributes -- so following a chain always terminates.",
+      "type": "object",
+      "required": [
+        "type",
+        "module",
+        "message",
+        "cycle"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/exceptionType"
+        },
+        "module": {
+          "$ref": "#/$defs/exceptionModule"
+        },
+        "message": {
+          "$ref": "#/$defs/exceptionMessage"
+        },
+        "cycle": {
+          "description": "Always true. The field is absent, rather than false, on a record that is not a repeat.",
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "exceptionRecord": {
+      "description": "One exception, rendered in full. Producers may add fields in a later envelope version, so consumers must ignore fields they do not know.",
+      "type": "object",
+      "required": [
+        "type",
+        "module",
+        "message"
+      ],
+      "not": {
+        "$comment": "A repeat is a cycleRecord and a cut-off child is a truncationMarker. Both are stricter about what they may carry, so neither marker field may appear on a record rendered in full -- otherwise a consumer keying on one of them would misclassify this node.",
+        "anyOf": [
+          {
+            "required": [
+              "cycle"
+            ]
+          },
+          {
+            "required": [
+              "truncated"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/exceptionType"
+        },
+        "module": {
+          "$ref": "#/$defs/exceptionModule"
+        },
+        "message": {
+          "$ref": "#/$defs/exceptionMessage"
+        },
+        "attributes": {
+          "description": "Public instance attributes, in a JSON-safe form. Omitted when the exception has none or when the producer was asked not to include them. Names beginning with an underscore are never exported. Values that cannot be represented degrade to a description of themselves rather than being dropped.",
+          "type": "object"
+        },
+        "failure": {
+          "$ref": "#/$defs/failure"
+        },
+        "cause": {
+          "description": "The explicitly chained exception, from `raise ... from ...`.",
+          "$ref": "#/$defs/envelope"
+        },
+        "context": {
+          "description": "The implicitly chained exception, from raising inside an except block. Absent when the producer suppressed the context.",
+          "$ref": "#/$defs/envelope"
+        },
+        "exceptions": {
+          "description": "Members of an exception group, kept as a tree rather than flattened into the message. Present only for a group; absent, rather than empty, for an ordinary exception.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/envelope"
+          }
+        }
+      }
+    },
+    "exceptionType": {
+      "description": "The exception class name, unqualified.",
+      "type": "string"
+    },
+    "exceptionModule": {
+      "description": "The module the exception class is defined in. With type it identifies the class; it is not an import instruction.",
+      "type": "string"
+    },
+    "exceptionMessage": {
+      "description": "The rendered exception message, with credential-bearing URLs redacted.",
+      "type": "string"
+    },
+    "failure": {
+      "description": "Machine-readable recovery metadata. Present on exceptions the producing library classifies, absent on third-party ones. It describes the failure; it does not prescribe a retry policy.",
+      "type": "object",
+      "required": [
+        "kind",
+        "retryable",
+        "retry_after_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "description": "Whether the condition is known to be transient, permanent for the same operation and payload, or unclassified.",
+          "enum": [
+            "transient",
+            "permanent",
+            "unknown"
+          ]
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation can succeed. Null when no classification is warranted, which is deliberately distinct from false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "retry_after_seconds": {
+          "description": "How long to wait before a retry, when the backend said. Finite and non-negative, or null.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

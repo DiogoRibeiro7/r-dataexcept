@@ -1,0 +1,36 @@
+{
+  "type": "ValidationError",
+  "module": "dataexcept.exceptions.validation",
+  "message": "outer",
+  "failure": {
+    "kind": "permanent",
+    "retryable": false,
+    "retry_after_seconds": null
+  },
+  "attributes": {
+    "field": "age",
+    "value": -1,
+    "message": "outer"
+  },
+  "cause": {
+    "type": "ValidationError",
+    "module": "dataexcept.exceptions.validation",
+    "message": "inner",
+    "failure": {
+      "kind": "permanent",
+      "retryable": false,
+      "retry_after_seconds": null
+    },
+    "attributes": {
+      "field": "age",
+      "value": -1,
+      "message": "inner"
+    },
+    "cause": {
+      "type": "ValidationError",
+      "module": "dataexcept.exceptions.validation",
+      "message": "outer",
+      "cycle": true
+    }
+  }
+}

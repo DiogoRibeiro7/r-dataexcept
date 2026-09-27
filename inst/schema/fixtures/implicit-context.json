@@ -1,0 +1,20 @@
+{
+  "type": "ValidationError",
+  "module": "dataexcept.exceptions.validation",
+  "message": "Column is required",
+  "failure": {
+    "kind": "permanent",
+    "retryable": false,
+    "retry_after_seconds": null
+  },
+  "attributes": {
+    "field": "customer_id",
+    "value": null,
+    "message": "Column is required"
+  },
+  "context": {
+    "type": "KeyError",
+    "module": "builtins",
+    "message": "'customer_id'"
+  }
+}

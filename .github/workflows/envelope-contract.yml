@@ -1,0 +1,74 @@
+# Two checks that the R package keeps to the contract the Python DataExcept
+# package publishes.
+#
+# * schema: every envelope R writes is validated against envelope-1.0.0.json
+#   by an independent JSON Schema validator.
+# * upstream: the schema, the reference fixtures and the redaction parity
+#   cases are regenerated from the Python package's main branch. If anything
+#   differs from what is committed here, the Python side has changed and the
+#   R package needs to follow.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+name: envelope-contract
+
+permissions: read-all
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: local::., any::rlang
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install jsonschema
+
+      - name: Write envelopes from R
+        run: Rscript tools/export-envelopes.R envelopes
+
+      - name: Validate them against the published schema
+        run: python tools/validate-envelopes.py envelopes
+
+  upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: DiogoRibeiro7/DataExcept
+          path: upstream
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install jsonschema
+
+      - name: Regenerate the cross-language fixtures from DataExcept main
+        run: python tools/generate-test-fixtures.py upstream
+
+      - name: Fail if the Python package has moved
+        run: |
+          changes="$(git status --porcelain -- inst/schema tests/testthat/fixtures)"
+          if [ -n "$changes" ]; then
+            echo "$changes"
+            git diff -- inst/schema tests/testthat/fixtures
+            exit 1
+          fi

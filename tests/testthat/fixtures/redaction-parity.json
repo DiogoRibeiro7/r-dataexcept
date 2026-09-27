@@ -1,0 +1,170 @@
+[
+  {
+    "case": "https://user:pass@example.com/path?x=1",
+    "url": "https://***:***@example.com/path?x=1",
+    "url_nopath": "https://***:***@example.com/***?x=1",
+    "text": "https://***:***@example.com/path?x=1",
+    "text_nopath": "https://***:***@example.com/***?x=1"
+  },
+  {
+    "case": "https://api.example.com/v1/orders?page=2&api_key=abc123",
+    "url": "https://api.example.com/v1/orders?page=2&api_key=***",
+    "url_nopath": "https://api.example.com/***?page=2&api_key=***",
+    "text": "https://api.example.com/v1/orders?page=2&api_key=***",
+    "text_nopath": "https://api.example.com/***?page=2&api_key=***"
+  },
+  {
+    "case": "https://api.example.com/v1/orders?page=2&keyword=monkey&design=x",
+    "url": "https://api.example.com/v1/orders?page=2&keyword=monkey&design=x",
+    "url_nopath": "https://api.example.com/***?page=2&keyword=monkey&design=x",
+    "text": "https://api.example.com/v1/orders?page=2&keyword=monkey&design=x",
+    "text_nopath": "https://api.example.com/***?page=2&keyword=monkey&design=x"
+  },
+  {
+    "case": "https://api.example.com/cb#access_token=abc&state=xyz",
+    "url": "https://api.example.com/cb#access_token=***&state=xyz",
+    "url_nopath": "https://api.example.com/***#access_token=***&state=xyz",
+    "text": "https://api.example.com/cb#access_token=***&state=xyz",
+    "text_nopath": "https://api.example.com/***#access_token=***&state=xyz"
+  },
+  {
+    "case": "https://host/p?accessToken=abc&X-Amz-Signature=deadbeef&X-Amz-Date=2026",
+    "url": "https://host/p?accessToken=***&X-Amz-Signature=***&X-Amz-Date=2026",
+    "url_nopath": "https://host/***?accessToken=***&X-Amz-Signature=***&X-Amz-Date=2026",
+    "text": "https://host/p?accessToken=***&X-Amz-Signature=***&X-Amz-Date=2026",
+    "text_nopath": "https://host/***?accessToken=***&X-Amz-Signature=***&X-Amz-Date=2026"
+  },
+  {
+    "case": "https://host/p?code=123&client_id=abc&nonce=1",
+    "url": "https://host/p?code=123&client_id=abc&nonce=1",
+    "url_nopath": "https://host/***?code=123&client_id=abc&nonce=1",
+    "text": "https://host/p?code=123&client_id=abc&nonce=1",
+    "text_nopath": "https://host/***?code=123&client_id=abc&nonce=1"
+  },
+  {
+    "case": "postgresql://analyst:s3cret@db.internal:5432/sales",
+    "url": "postgresql://***:***@db.internal:5432/sales",
+    "url_nopath": "postgresql://***:***@db.internal:5432/***",
+    "text": "postgresql://***:***@db.internal:5432/sales",
+    "text_nopath": "postgresql://***:***@db.internal:5432/***"
+  },
+  {
+    "case": "sqlite:///tmp/db.sqlite",
+    "url": "sqlite:///tmp/db.sqlite",
+    "url_nopath": "sqlite:///tmp/db.sqlite",
+    "text": "sqlite:///tmp/db.sqlite",
+    "text_nopath": "sqlite:///tmp/db.sqlite"
+  },
+  {
+    "case": "file:///etc/passwd",
+    "url": "file:///etc/passwd",
+    "url_nopath": "file:///etc/passwd",
+    "text": "file:///etc/passwd",
+    "text_nopath": "file:///etc/passwd"
+  },
+  {
+    "case": "HTTPS://User:Pw@Example.com/Path?Token=1",
+    "url": "https://***:***@Example.com/Path?Token=***",
+    "url_nopath": "https://***:***@Example.com/***?Token=***",
+    "text": "https://***:***@Example.com/Path?Token=***",
+    "text_nopath": "https://***:***@Example.com/***?Token=***"
+  },
+  {
+    "case": "https://host/p?token=a%20b&q=hello+world&x=%E2%9C%93",
+    "url": "https://host/p?token=***&q=hello+world&x=%E2%9C%93",
+    "url_nopath": "https://host/***?token=***&q=hello+world&x=%E2%9C%93",
+    "text": "https://host/p?token=***&q=hello+world&x=%E2%9C%93",
+    "text_nopath": "https://host/***?token=***&q=hello+world&x=%E2%9C%93"
+  },
+  {
+    "case": "https://host/p?flag&token=zzz",
+    "url": "https://host/p?flag=&token=***",
+    "url_nopath": "https://host/***?flag=&token=***",
+    "text": "https://host/p?flag=&token=***",
+    "text_nopath": "https://host/***?flag=&token=***"
+  },
+  {
+    "case": "https://host/p?a=1&&token=2",
+    "url": "https://host/p?a=1&token=***",
+    "url_nopath": "https://host/***?a=1&token=***",
+    "text": "https://host/p?a=1&token=***",
+    "text_nopath": "https://host/***?a=1&token=***"
+  },
+  {
+    "case": "https://hooks.slack.com/services/T000/B000/XXXXXXXX",
+    "url": "https://hooks.slack.com/services/T000/B000/XXXXXXXX",
+    "url_nopath": "https://hooks.slack.com/***",
+    "text": "https://hooks.slack.com/services/T000/B000/XXXXXXXX",
+    "text_nopath": "https://hooks.slack.com/***"
+  },
+  {
+    "case": "https://example.com",
+    "url": "https://example.com",
+    "url_nopath": "https://example.com",
+    "text": "https://example.com",
+    "text_nopath": "https://example.com"
+  },
+  {
+    "case": "https://example.com/?",
+    "url": "https://example.com/?",
+    "url_nopath": "https://example.com/?",
+    "text": "https://example.com/?",
+    "text_nopath": "https://example.com/?"
+  },
+  {
+    "case": "see https://h/p?token=SECRET: retry",
+    "url": "see https://h/p?token=SECRET: retry",
+    "url_nopath": "see https://h/p?token=SECRET: retry",
+    "text": "see https://h/p?token=***: retry",
+    "text_nopath": "see https://h/***?token=***: retry"
+  },
+  {
+    "case": "feature_https://u:p@h/x done.",
+    "url": "feature_https://u:p@h/x done.",
+    "url_nopath": "feature_https://u:p@h/x done.",
+    "text": "feature_https://***:***@h/x done.",
+    "text_nopath": "feature_https://***:***@h/*** done."
+  },
+  {
+    "case": "urls: (https://a:b@h/x), [https://h/y?sig=1]; \"https://h/z?password=p\" end!",
+    "url": "urls: (https://a:b@h/x), [https://h/y?sig=1]; \"https://h/z?password=p\" end!",
+    "url_nopath": "urls: (https://a:b@h/x), [https://h/y?sig=1]; \"https://h/z?password=p\" end!",
+    "text": "urls: (https://***:***@h/x), [https://h/y?sig=***]; \"https://h/z?password=***\" end!",
+    "text_nopath": "urls: (https://***:***@h/***), [https://h/***?sig=***]; \"https://h/***?password=***\" end!"
+  },
+  {
+    "case": "no url here",
+    "url": "no url here",
+    "url_nopath": "no url here",
+    "text": "no url here",
+    "text_nopath": "no url here"
+  },
+  {
+    "case": "mailto:someone@example.com",
+    "url": "mailto:someone@example.com",
+    "url_nopath": "mailto:someone@example.com",
+    "text": "mailto:someone@example.com",
+    "text_nopath": "mailto:someone@example.com"
+  },
+  {
+    "case": "https://h/p?pass_phrase=1&passphrase=2&authors=3&my_session_id=4",
+    "url": "https://h/p?pass_phrase=1&passphrase=***&authors=3&my_session_id=***",
+    "url_nopath": "https://h/***?pass_phrase=1&passphrase=***&authors=3&my_session_id=***",
+    "text": "https://h/p?pass_phrase=1&passphrase=***&authors=3&my_session_id=***",
+    "text_nopath": "https://h/***?pass_phrase=1&passphrase=***&authors=3&my_session_id=***"
+  },
+  {
+    "case": "https://h/p?SAS=1&sig=2&Signature=3&jwt=4&bearer=5",
+    "url": "https://h/p?SAS=***&sig=***&Signature=***&jwt=***&bearer=***",
+    "url_nopath": "https://h/***?SAS=***&sig=***&Signature=***&jwt=***&bearer=***",
+    "text": "https://h/p?SAS=***&sig=***&Signature=***&jwt=***&bearer=***",
+    "text_nopath": "https://h/***?SAS=***&sig=***&Signature=***&jwt=***&bearer=***"
+  },
+  {
+    "case": "two: https://a:b@h1/x and https://h2/y?secret=s",
+    "url": "two: https://a:b@h1/x and https://h2/y?secret=s",
+    "url_nopath": "two: https://a:b@h1/x and https://h2/y?secret=s",
+    "text": "two: https://***:***@h1/x and https://h2/y?secret=***",
+    "text_nopath": "two: https://***:***@h1/*** and https://h2/***?secret=***"
+  }
+]
