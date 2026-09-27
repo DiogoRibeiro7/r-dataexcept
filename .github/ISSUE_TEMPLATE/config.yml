@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation and usage
+    url: https://diogoribeiro7.github.io/r-dataexcept/
+    about: The user guide and API reference answer most questions about using dataexcept.
+  - name: The envelope schema
+    url: https://github.com/DiogoRibeiro7/DataExcept/issues
+    about: The envelope contract belongs to the Python DataExcept package. Propose schema changes there.
+  - name: Report a security vulnerability
+    url: https://github.com/DiogoRibeiro7/r-dataexcept/security/advisories/new
+    about: Report privately. Please do not open a public issue.

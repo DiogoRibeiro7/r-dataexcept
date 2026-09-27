@@ -1,0 +1,62 @@
+name: Bug report
+description: Something in dataexcept does not behave as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do not use this form for security
+        issues — see [SECURITY.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: >
+        The smallest snippet that shows the problem, ideally made with
+        `reprex::reprex()`. If an envelope is involved, include the JSON.
+      render: r
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Error or output
+      description: The full error message, warning or unexpected output.
+      render: text
+
+  - type: input
+    id: version
+    attributes:
+      label: dataexcept version
+      description: '`packageVersion("dataexcept")`'
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: r-version
+    attributes:
+      label: R version
+      description: '`R.version.string`'
+      placeholder: "R version 4.5.1 (2025-06-13)"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system and session language
+      description: The language matters for classed warnings; `Sys.getenv("LANGUAGE")` and `Sys.getlocale("LC_MESSAGES")`.
+      placeholder: "Ubuntu 24.04, de_DE.UTF-8"
+    validations:
+      required: true

@@ -26,12 +26,24 @@ recognising warnings in another language switches the session to German and
 is skipped where R's German message translations are unavailable, for example
 in the C locale.
 
-Before a pull request, run the full check:
+Before a pull request, run the checks CI runs:
+
+| Command | What it enforces |
+| --- | --- |
+| `devtools::test()` | The test suite |
+| `lintr::lint_package()` | The rules in `.lintr`: tidyverse style, 100-column limit |
+| `styler::style_pkg(dry = "fail")` | Tidyverse formatting |
+| `spelling::spell_check_package()` | British English; accepted words live in `inst/WORDLIST` |
+| `covr::package_coverage()` | Coverage, which CI requires to stay at or above 95% |
+| `R CMD check --as-cran` | Everything CRAN checks, run on a built tarball |
 
 ```bash
 R CMD build .
 R CMD check --as-cran dataexcept_*.tar.gz
 ```
+
+[CONTRIBUTING.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CONTRIBUTING.md)
+covers the rest of what a pull request needs, and how releases are made.
 
 ## Documentation
 
@@ -76,8 +88,11 @@ Python side has changed.
 | Workflow | Runs |
 | --- | --- |
 | `R-CMD-check.yml` | `R CMD check` on macOS, Windows and Ubuntu, R devel to 4.1. |
+| `test-coverage.yml` | Measures coverage with covr, writes a per-file table to the run summary, and fails below 95%. |
+| `lint.yml` | lintr, styler and the spelling check; any finding fails the job. |
 | `envelope-contract.yml` | Writes envelopes from R and validates them with Python's `jsonschema`; weekly, checks for drift from the Python package. |
 | `docs.yml` | Regenerates the reference, builds the site with `--strict`, and deploys it to GitHub Pages from `main`. |
+| `release.yml` | On a `v*.*.*` tag: checks the tag against `DESCRIPTION` and `CITATION.cff`, runs `R CMD check --as-cran`, and publishes a GitHub release with the tarball and the version's `NEWS.md` section. |
 
 ## Adding a condition type
 
