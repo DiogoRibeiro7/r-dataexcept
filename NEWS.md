@@ -1,28 +1,3 @@
-# dataexcept (development version)
-
-- An envelope from a DataExcept module whose type R has no class for, such as
-  Python's `ServiceTimeoutError`, is now read as a `dataexcept_error`, so a
-  `dataexcept_error` handler catches it and `is_retryable()` reads its failure
-  record. Every DataExcept exception derives from `DataExceptError`.
-- New `condition_type()` returns the envelope type of any condition, including
-  one read from an envelope.
-- Reading untrusted envelopes is bounded. `envelope_to_condition()`,
-  `validate_envelope()` and `is_envelope()` gain `max_depth` (default 32): a
-  deeper chain of records is rejected before it is walked, and JSON nested
-  deeper than an envelope could need is rejected before it is parsed. A
-  100,000-level payload previously exhausted the C stack; it is now refused
-  with a `dataexcept_envelope_error`.
-- A condition whose message contains bytes that are not valid UTF-8 no longer
-  makes `condition_to_json()` fail. Invalid bytes are replaced, at
-  construction and on export, so the envelope is always valid JSON.
-- The test that switches the session language is skipped on R < 4.2, where
-  `Sys.setLanguage()` does not exist.
-- A documentation site, built with MkDocs Material and deployed to GitHub
-  Pages, with the API reference generated from the help pages.
-- The repository has contributing, security and conduct policies, issue and
-  pull-request templates, lint, style, spelling and coverage checks in CI, and
-  a tag-driven release workflow.
-
 # dataexcept 0.1.0
 
 First release.
@@ -50,11 +25,23 @@ First release.
 ## The envelope
 
 - `condition_to_envelope()` and `condition_to_json()` write any condition,
-  with its chain of causes, as a DataExcept envelope (schema 1.0.0).
+  with its chain of causes, as a DataExcept envelope (schema 1.0.0). Text is
+  always valid UTF-8: bytes that are not are replaced, at construction and on
+  export.
 - `envelope_to_condition()` reads an envelope from either language back into
-  an R condition, mapping DataExcept types onto the R classes.
+  an R condition, mapping DataExcept types onto the R classes. A type from a
+  DataExcept module that R has no class for, such as Python's
+  `ServiceTimeoutError`, is still a `dataexcept_error`, so a
+  `dataexcept_error` handler catches it and `is_retryable()` reads its failure
+  record.
+- `condition_type()` returns the envelope type of any condition, including one
+  read from an envelope.
 - `validate_envelope()` and `is_envelope()` check a payload against the
   schema's rules. `envelope_schema()` returns the schema.
+- Reading untrusted envelopes is bounded by `max_depth` (default 32): a deeper
+  chain of records is rejected before it is walked, and JSON nested deeper than
+  an envelope could need is rejected before it is parsed, with a
+  `dataexcept_envelope_error`.
 - All eight of the Python package's reference fixtures round-trip exactly.
 
 ## Redaction
@@ -71,3 +58,13 @@ First release.
   coercion, recycling, `NaN` production and non-numeric arguments -- as classed
   warnings, recognised in any session language. `classed_warning_rules()`
   lists them.
+
+## Documentation and project
+
+- A documentation site, built with MkDocs Material and deployed to GitHub
+  Pages, with the API reference generated from the help pages:
+  <https://diogoribeiro7.github.io/r-dataexcept/>.
+- Contributing, security and conduct policies, issue and pull-request
+  templates, and CI for `R CMD check` (R 4.1 to devel on three platforms),
+  lint, style, spelling, coverage, the envelope contract and the documentation
+  site. Releases are cut by pushing a version tag.
