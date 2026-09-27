@@ -1,0 +1,189 @@
+[
+  {
+    "name": "validation with a full context",
+    "context": {
+      "system": "api",
+      "component": "accounts",
+      "operation": "POST /users/{id}",
+      "request_id": "req-42",
+      "job_id": "job-7",
+      "correlation_id": "corr-9",
+      "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+      "span_id": "00f067aa0ba902b7"
+    },
+    "event": {
+      "event": "exception",
+      "exception": {
+        "type": "ValidationError",
+        "module": "dataexcept.exceptions.validation",
+        "message": "Validation failed for field 'age': -1",
+        "failure": {
+          "kind": "permanent",
+          "retryable": false,
+          "retry_after_seconds": null
+        },
+        "attributes": {
+          "field": "age",
+          "value": -1,
+          "message": "Validation failed for field 'age': -1"
+        }
+      },
+      "operation": {
+        "system": "api",
+        "component": "accounts",
+        "operation": "POST /users/{id}",
+        "request_id": "req-42",
+        "job_id": "job-7",
+        "correlation_id": "corr-9",
+        "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+        "span_id": "00f067aa0ba902b7"
+      }
+    },
+    "otel": {
+      "exception.type": "dataexcept.exceptions.validation.ValidationError",
+      "exception.message": "Validation failed for field 'age': -1",
+      "dataexcept.failure.kind": "permanent",
+      "dataexcept.failure.retryable": false,
+      "dataexcept.operation.system": "api",
+      "dataexcept.operation.component": "accounts",
+      "dataexcept.operation.operation": "POST /users/{id}",
+      "dataexcept.operation.request_id": "req-42",
+      "dataexcept.operation.job_id": "job-7",
+      "dataexcept.operation.correlation_id": "corr-9",
+      "dataexcept.envelope.schema": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+      "dataexcept.envelope": "{\"attributes\":{\"field\":\"age\",\"message\":\"Validation failed for field 'age': -1\",\"value\":-1},\"failure\":{\"kind\":\"permanent\",\"retry_after_seconds\":null,\"retryable\":false},\"message\":\"Validation failed for field 'age': -1\",\"module\":\"dataexcept.exceptions.validation\",\"type\":\"ValidationError\"}"
+    }
+  },
+  {
+    "name": "transient failure with a delay",
+    "context": {
+      "system": "worker",
+      "operation": "billing.settle_invoice",
+      "job_id": "job-42"
+    },
+    "event": {
+      "event": "exception",
+      "exception": {
+        "type": "ServiceTimeoutError",
+        "module": "dataexcept.pipeline_exceptions",
+        "message": "Operation timed out after 30.0s on service 'payments'.",
+        "failure": {
+          "kind": "transient",
+          "retryable": true,
+          "retry_after_seconds": 5.0
+        },
+        "attributes": {
+          "timeout_seconds": 30.0,
+          "service_name": "payments",
+          "status_code": null,
+          "response": null
+        }
+      },
+      "operation": {
+        "system": "worker",
+        "operation": "billing.settle_invoice",
+        "job_id": "job-42"
+      }
+    },
+    "otel": {
+      "exception.type": "dataexcept.pipeline_exceptions.ServiceTimeoutError",
+      "exception.message": "Operation timed out after 30.0s on service 'payments'.",
+      "dataexcept.failure.kind": "transient",
+      "dataexcept.failure.retryable": true,
+      "dataexcept.failure.retry_after_seconds": 5.0,
+      "dataexcept.operation.system": "worker",
+      "dataexcept.operation.operation": "billing.settle_invoice",
+      "dataexcept.operation.job_id": "job-42",
+      "dataexcept.envelope.schema": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+      "dataexcept.envelope": "{\"attributes\":{\"response\":null,\"service_name\":\"payments\",\"status_code\":null,\"timeout_seconds\":30.0},\"failure\":{\"kind\":\"transient\",\"retry_after_seconds\":5.0,\"retryable\":true},\"message\":\"Operation timed out after 30.0s on service 'payments'.\",\"module\":\"dataexcept.pipeline_exceptions\",\"type\":\"ServiceTimeoutError\"}"
+    }
+  },
+  {
+    "name": "third-party exception without failure metadata",
+    "context": {},
+    "event": {
+      "event": "exception",
+      "exception": {
+        "type": "KeyError",
+        "module": "builtins",
+        "message": "'customer_id'"
+      }
+    },
+    "otel": {
+      "exception.type": "builtins.KeyError",
+      "exception.message": "'customer_id'",
+      "dataexcept.envelope.schema": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+      "dataexcept.envelope": "{\"message\":\"'customer_id'\",\"module\":\"builtins\",\"type\":\"KeyError\"}"
+    }
+  },
+  {
+    "name": "credentials in the context and the chain",
+    "context": {
+      "system": "https://user:secret@example.com/private?token=hidden",
+      "correlation_id": "corr-1"
+    },
+    "event": {
+      "event": "exception",
+      "exception": {
+        "type": "ApiError",
+        "module": "dataexcept.pipeline_exceptions",
+        "message": "API call failed: https://***:***@api.example.com/***?token=*** (status 502)",
+        "failure": {
+          "kind": "unknown",
+          "retryable": null,
+          "retry_after_seconds": null
+        },
+        "attributes": {
+          "endpoint": "https://***:***@api.example.com/***?token=***",
+          "status_code": 502
+        },
+        "cause": {
+          "type": "OSError",
+          "module": "builtins",
+          "message": "connection refused for https://***:***@api.example.com/***?token=***"
+        }
+      },
+      "operation": {
+        "system": "https://***:***@example.com/***?token=***",
+        "correlation_id": "corr-1"
+      }
+    },
+    "otel": {
+      "exception.type": "dataexcept.pipeline_exceptions.ApiError",
+      "exception.message": "API call failed: https://***:***@api.example.com/***?token=*** (status 502)",
+      "dataexcept.failure.kind": "unknown",
+      "dataexcept.operation.system": "https://***:***@example.com/***?token=***",
+      "dataexcept.operation.correlation_id": "corr-1",
+      "dataexcept.envelope.schema": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+      "dataexcept.envelope": "{\"attributes\":{\"endpoint\":\"https://***:***@api.example.com/***?token=***\",\"status_code\":502},\"cause\":{\"message\":\"connection refused for https://***:***@api.example.com/***?token=***\",\"module\":\"builtins\",\"type\":\"OSError\"},\"failure\":{\"kind\":\"unknown\",\"retry_after_seconds\":null,\"retryable\":null},\"message\":\"API call failed: https://***:***@api.example.com/***?token=*** (status 502)\",\"module\":\"dataexcept.pipeline_exceptions\",\"type\":\"ApiError\"}"
+    }
+  },
+  {
+    "name": "missing column with no context",
+    "context": null,
+    "event": {
+      "event": "exception",
+      "exception": {
+        "type": "MissingColumnError",
+        "module": "dataexcept.pandas_exceptions",
+        "message": "[MissingColumnError] Missing required column 'customer_id' in DataFrame 'orders'",
+        "failure": {
+          "kind": "unknown",
+          "retryable": null,
+          "retry_after_seconds": null
+        },
+        "attributes": {
+          "column": "customer_id",
+          "dataframe": "orders"
+        }
+      }
+    },
+    "otel": {
+      "exception.type": "dataexcept.pandas_exceptions.MissingColumnError",
+      "exception.message": "[MissingColumnError] Missing required column 'customer_id' in DataFrame 'orders'",
+      "dataexcept.failure.kind": "unknown",
+      "dataexcept.envelope.schema": "https://diogoribeiro7.github.io/DataExcept/schema/envelope-1.0.0.json",
+      "dataexcept.envelope": "{\"attributes\":{\"column\":\"customer_id\",\"dataframe\":\"orders\"},\"failure\":{\"kind\":\"unknown\",\"retry_after_seconds\":null,\"retryable\":null},\"message\":\"[MissingColumnError] Missing required column 'customer_id' in DataFrame 'orders'\",\"module\":\"dataexcept.pandas_exceptions\",\"type\":\"MissingColumnError\"}"
+    }
+  }
+]

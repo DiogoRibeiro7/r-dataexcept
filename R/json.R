@@ -201,3 +201,18 @@ write_json <- function(x, pretty = FALSE, indent = 0L) {
   }
   json_escape(as.character(x))
 }
+
+# Object keys sorted at every level, as Python's json.dumps(sort_keys = TRUE)
+# writes them, so a document embedded in a span attribute is byte-stable
+# whichever language produced it.
+sort_json_keys <- function(x) {
+  if (!is.list(x)) {
+    return(x)
+  }
+  keys <- names(x)
+  if (!is.null(keys)) {
+    x <- x[order(keys, method = "radix")]
+  }
+  x[] <- lapply(x, sort_json_keys)
+  x
+}

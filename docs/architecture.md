@@ -26,6 +26,10 @@ flowchart LR
     E --> LOG
 ```
 
+Failure events add an operation context to the envelope, and OpenTelemetry
+attributes project the same envelope onto a span; see
+[Observability](guide/observability.md). Neither changes the envelope.
+
 ## A condition, inside
 
 A dataexcept condition is a plain R condition, a list with a class vector:

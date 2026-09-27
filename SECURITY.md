@@ -95,6 +95,15 @@ parent), review what they carry, or pass the text through
   you pass. A data frame or matrix is written to an envelope as a description of
   its shape, but a short vector is written as values.
 
+### Traces
+
+The otel SDK records an exception by printing the condition and deparsing its
+call, without redaction. `record_otel_exception()` replaces those attributes
+with redacted ones, and by setting the span's status it stops the SDK from
+recording the same failure again when it escapes the span. An error that
+escapes a span without passing through `record_otel_exception()` is recorded
+by the SDK as it is; that is outside what dataexcept can reach.
+
 ### Reading untrusted envelopes
 
 `envelope_to_condition()` and the validators are designed to be safe on input
