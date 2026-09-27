@@ -33,6 +33,16 @@ same text is available with `?function_name`.
 | [Check that a payload is a valid envelope](validate_envelope.md) | `validate_envelope()`, `is_envelope()` |
 | [The envelope JSON Schema](envelope_schema.md) | `envelope_schema()`, `envelope_schema_version()`, `envelope_schema_id()` |
 
+## Observability
+
+| Topic | Functions |
+| --- | --- |
+| [Describe where an operation is running](operation_context.md) | `operation_context()`, `operation_index_fields()` |
+| [A failure event for logs and observability tools](condition_to_event.md) | `condition_to_event()`, `condition_to_event_json()` |
+| [OpenTelemetry attributes for a condition](condition_to_otel_attributes.md) | `condition_to_otel_attributes()` |
+| [Record a condition on an OpenTelemetry span](record_otel_exception.md) | `record_otel_exception()` |
+| [Correlate an operation context with the active OpenTelemetry span](operation_context_from_otel.md) | `operation_context_from_otel()` |
+
 ## Classed warnings
 
 | Topic | Functions |

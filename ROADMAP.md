@@ -5,17 +5,18 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 
 ## 0.2.0
 
-- [ ] **Operation context.** Attach system, component, operation and job
-  identifiers to a failure, as the Python `OperationContext` does, so an R job
-  and a Python job report failures under the same identifiers.
-- [ ] **OpenTelemetry.** Map a condition onto span attributes and record it as
-  an exception event through the r-lib `otel` API, as an optional dependency.
+- [x] **Operation context.** `operation_context()` and failure events, as the
+  Python `OperationContext` and `exception_to_observability_event()` do.
+- [x] **OpenTelemetry.** `condition_to_otel_attributes()`,
+  `record_otel_exception()` and `operation_context_from_otel()`, through the
+  r-lib `otel` API as an optional dependency.
 - [ ] **More warning rules**, driven by use. Candidates: `nls` and `optim`
   convergence diagnostics (which arrive as return codes, not warnings), `lme4`
   singular fits, and `survival` convergence warnings. Each rule needs a test
   that triggers the real warning.
-- [ ] A vignette on mixed R/Python pipelines: writing envelopes from R,
-  reading Python's, and handling both with the same code.
+- [x] A guide to mixed R/Python pipelines: writing envelopes from R, reading
+  Python's, and handling both with the same code (the "Working with Python"
+  page of the documentation site).
 
 ## Before CRAN
 

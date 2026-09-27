@@ -13,6 +13,10 @@ It writes two files under tests/testthat/fixtures/:
 * validation-cases.json -- envelope payloads, valid and invalid, each with the
   verdict of a JSON Schema draft 2020-12 validator against
   envelope-1.0.0.json. The R tests require validate_envelope() to agree.
+* observability-parity.json -- failure events and OpenTelemetry attributes
+  the Python package produces for a set of exceptions and operation
+  contexts. The R tests read each envelope back and require
+  condition_to_event() and condition_to_otel_attributes() to agree.
 
 It also copies the schema and the reference envelope fixtures into
 inst/schema/, so the R package tests against what the Python package emits.
@@ -100,6 +104,74 @@ VALIDATION_CASES = {
 }
 
 
+# (exception factory, OperationContext arguments). Contexts carry URL-shaped
+# values so that redaction is part of what is compared.
+def observability_cases():
+    from dataexcept import (
+        ApiError,
+        FailureMetadata,
+        MissingColumnError,
+        ServiceTimeoutError,
+        ValidationError,
+    )
+
+    def raised(factory):
+        try:
+            raise factory()
+        except BaseException as exc:  # noqa: BLE001 - any exception is a case
+            return exc
+
+    def chained():
+        try:
+            raise OSError("connection refused for https://user:pw@api.example.com/v1?token=t")
+        except OSError as cause:
+            try:
+                raise ApiError("https://user:pw@api.example.com/v1?token=t", 502) from cause
+            except ApiError as exc:
+                return exc
+
+    return {
+        "validation with a full context": (
+            raised(lambda: ValidationError("age", -1)),
+            {
+                "system": "api",
+                "component": "accounts",
+                "operation": "POST /users/{id}",
+                "request_id": "req-42",
+                "job_id": "job-7",
+                "correlation_id": "corr-9",
+                "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+                "span_id": "00f067aa0ba902b7",
+            },
+        ),
+        "transient failure with a delay": (
+            raised(
+                lambda: ServiceTimeoutError("payments", timeout_seconds=30.0).with_failure_metadata(
+                    FailureMetadata(
+                        failure_kind="transient", retryable=True, retry_after_seconds=5.0
+                    )
+                )
+            ),
+            {"system": "worker", "operation": "billing.settle_invoice", "job_id": "job-42"},
+        ),
+        "third-party exception without failure metadata": (
+            raised(lambda: KeyError("customer_id")),
+            {},
+        ),
+        "credentials in the context and the chain": (
+            chained(),
+            {
+                "system": "https://user:secret@example.com/private?token=hidden",
+                "correlation_id": "corr-1",
+            },
+        ),
+        "missing column with no context": (
+            raised(lambda: MissingColumnError("customer_id", dataframe="orders")),
+            None,
+        ),
+    }
+
+
 def main(python_repo: str) -> None:
     python_root = Path(python_repo).resolve()
     sys.path.insert(0, str(python_root))
@@ -137,6 +209,31 @@ def main(python_repo: str) -> None:
     ]
     (OUT / "validation-cases.json").write_text(
         json.dumps(validation, indent=2) + "\n", encoding="utf-8"
+    )
+
+    from dataexcept import OperationContext, exception_to_observability_event
+    from dataexcept.opentelemetry import exception_to_otel_attributes
+
+    observability = []
+    for name, (exc, context_args) in observability_cases().items():
+        context = None if context_args is None else OperationContext(**context_args)
+        observability.append(
+            {
+                "name": name,
+                "context": context_args,
+                "event": exception_to_observability_event(exc, operation_context=context),
+                # The stack trace is Python's own traceback, which R cannot and
+                # should not reproduce; everything else must agree.
+                "otel": exception_to_otel_attributes(
+                    exc,
+                    operation_context=context,
+                    include_stacktrace=False,
+                    include_envelope=True,
+                ),
+            }
+        )
+    (OUT / "observability-parity.json").write_text(
+        json.dumps(observability, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
 

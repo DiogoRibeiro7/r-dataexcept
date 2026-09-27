@@ -23,6 +23,10 @@ groups <- list(
     "condition_to_envelope", "envelope_to_condition", "validate_envelope",
     "envelope_schema"
   ),
+  "Observability" = c(
+    "operation_context", "condition_to_event", "condition_to_otel_attributes",
+    "record_otel_exception", "operation_context_from_otel"
+  ),
   "Classed warnings" = "with_classed_warnings",
   "Redaction" = "redact_url",
   "Package" = "dataexcept-package"

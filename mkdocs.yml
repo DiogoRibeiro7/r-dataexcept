@@ -81,6 +81,7 @@ nav:
       - Failure metadata: guide/failure-metadata.md
       - Envelopes: guide/envelopes.md
       - Working with Python: guide/python.md
+      - Observability: guide/observability.md
       - Classed warnings: guide/warnings.md
       - Redaction: guide/redaction.md
   - API reference:
@@ -101,6 +102,12 @@ nav:
           - envelope_to_condition(): reference/envelope_to_condition.md
           - validate_envelope(): reference/validate_envelope.md
           - envelope_schema(): reference/envelope_schema.md
+      - Observability:
+          - operation_context(): reference/operation_context.md
+          - condition_to_event(): reference/condition_to_event.md
+          - condition_to_otel_attributes(): reference/condition_to_otel_attributes.md
+          - record_otel_exception(): reference/record_otel_exception.md
+          - operation_context_from_otel(): reference/operation_context_from_otel.md
       - Classed warnings:
           - with_classed_warnings(): reference/with_classed_warnings.md
       - Redaction:

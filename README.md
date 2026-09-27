@@ -31,6 +31,8 @@ does not exist yet:
 - **A shared vocabulary of errors** with structured fields and recovery
   metadata: whether a failure is transient or permanent, and whether a retry
   can succeed.
+- **Failure events and traces.** Operation context, JSON failure events for
+  logs, and OpenTelemetry recording, all in the Python package's format.
 
 Credentials in URLs are removed before they reach a condition or an envelope,
 using the same rules as the Python package.
@@ -151,6 +153,32 @@ tryCatch(stop(cnd), dataexcept_data_frame_error = function(e) e$column)
 Written back, a condition read this way reproduces its envelope exactly, and
 `validate_envelope()` checks a payload against the schema's rules without
 needing a JSON Schema validator.
+
+## Observability
+
+An operation context records where a failure happened, separately from what
+failed, with the fields and rules of the Python package's `OperationContext`.
+`condition_to_event_json()` writes both as one line of JSON for a log:
+
+```r
+context <- operation_context(system = "batch", operation = "settle_invoices", job_id = "job-42")
+
+tryCatch(
+  settle_invoices(),
+  dataexcept_error = function(e) {
+    cat(condition_to_event_json(e, operation_context = context), "\n", file = stderr())
+    stop(e)
+  }
+)
+```
+
+With the r-lib [otel](https://otel.r-lib.org/) package, `record_otel_exception()`
+records a failure on the active span, with the attribute names the Python
+package uses, and `operation_context_from_otel()` puts the span's trace and
+span IDs into the context so logs and traces correlate. Recording through
+dataexcept keeps credentials out of the trace: the otel SDK records an
+exception by printing the condition, unredacted, and dataexcept's attributes
+replace those fields.
 
 ## Classed warnings from base R
 
