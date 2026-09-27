@@ -43,7 +43,7 @@ Documentation: <https://diogoribeiro7.github.io/r-dataexcept/>
 
 ```r
 # install.packages("pak")
-pak::pak("DiogoRibeiro7/r-dataexcept@v0.1.0")   # the latest release
+pak::pak("DiogoRibeiro7/r-dataexcept@v0.2.0")   # the latest release
 pak::pak("DiogoRibeiro7/r-dataexcept")          # the development version
 ```
 

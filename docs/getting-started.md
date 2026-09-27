@@ -7,7 +7,7 @@ development version:
 
 ```r
 # install.packages("pak")
-pak::pak("DiogoRibeiro7/r-dataexcept@v0.1.0")
+pak::pak("DiogoRibeiro7/r-dataexcept@v0.2.0")
 pak::pak("DiogoRibeiro7/r-dataexcept")
 ```
 
