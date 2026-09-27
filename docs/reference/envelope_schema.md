@@ -30,7 +30,7 @@ envelope_schema_id()
 ## Details
 
 A copy of the schema ships with this package, together with the reference
-fixtures the Python package generates from its own serializer; the test
+fixtures the Python package generates with its own writer; the test
 suite reads every fixture and writes it back unchanged.
 
 ## Examples

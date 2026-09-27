@@ -74,7 +74,7 @@ types of [`dtype_mismatch_error()`](data_frame_errors.md).
 Values that JSON cannot represent degrade to a description of themselves
 rather than disappearing: a data frame becomes `"<data.frame: 150 rows x 5 columns>"`, a function `"<function>"`, a vector longer than 100 elements a
 description of its type and length, and `NaN` or `Inf` the strings `"nan"`
-or `"inf"`, as the Python serializer writes them. `NA` becomes `null`.
+or `"inf"`, as the Python package writes them. `NA` becomes `null`.
 
 ## Examples
 
