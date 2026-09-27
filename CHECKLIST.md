@@ -107,7 +107,7 @@ oversights.
       `CITATION.cff`, `R CMD check --as-cran`, GitHub release with the tarball
       and the version's `NEWS.md` section
 - [x] Citation metadata: `CITATION.cff` (validated) and `inst/CITATION`
-- [ ] First tagged release
+- [x] First tagged release: [v0.1.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.1.0), published by the release workflow
 - [ ] Zenodo DOI
 - [ ] CRAN submission
 - [ ] R-universe listing

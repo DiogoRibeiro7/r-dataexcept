@@ -2,12 +2,18 @@
 
 ## Installation
 
-dataexcept is installed from GitHub:
+dataexcept is installed from GitHub, either the latest release or the
+development version:
 
 ```r
 # install.packages("pak")
+pak::pak("DiogoRibeiro7/r-dataexcept@v0.1.0")
 pak::pak("DiogoRibeiro7/r-dataexcept")
 ```
+
+Each release is also on the
+[releases page](https://github.com/DiogoRibeiro7/r-dataexcept/releases) as a
+source tarball, for `install.packages(path, repos = NULL)`.
 
 It needs R 4.1 or later and imports only jsonlite. rlang is optional: when it is
 installed, rlang errors serialise with their own message and their parent chain.

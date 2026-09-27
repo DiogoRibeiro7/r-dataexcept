@@ -343,6 +343,17 @@ cat(length(parsed), "reference pages written to", out_dir, "\n")
 
 # Releases: NEWS.md with each heading moved down a level under a page title.
 news <- readLines("NEWS.md", encoding = "UTF-8", warn = FALSE)
+# The development heading is added straight after a release, before anything
+# is under it; leave it off the page until it has entries.
+dev <- which(news == "# dataexcept (development version)")
+if (length(dev) == 1L) {
+  following <- news[-seq_len(dev)]
+  next_heading <- which(grepl("^# ", following))[1L]
+  body <- if (is.na(next_heading)) following else following[seq_len(next_heading - 1L)]
+  if (!any(nzchar(trimws(body)))) {
+    news <- news[-seq(dev, dev + length(body))]
+  }
+}
 in_code <- FALSE
 for (i in seq_along(news)) {
   if (startsWith(news[[i]], "```")) in_code <- !in_code
