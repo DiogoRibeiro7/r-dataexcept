@@ -134,8 +134,11 @@ merge_key_error <- function(left_keys, right_keys, parent = NULL, call = NULL) {
 #' @family dataexcept errors
 #' @name modelling_errors
 #' @examples
-#' fit_or_fail <- function(formula, data) {
-#'   fit <- suppressWarnings(glm(formula, family = binomial, data = data))
+#' fit_or_fail <- function(formula, data, maxit = 25) {
+#'   fit <- suppressWarnings(glm(formula,
+#'     family = binomial, data = data,
+#'     control = glm.control(maxit = maxit)
+#'   ))
 #'   if (!fit$converged) {
 #'     stop(convergence_error("glm", iterations = fit$iter))
 #'   }
@@ -144,7 +147,7 @@ merge_key_error <- function(left_keys, right_keys, parent = NULL, call = NULL) {
 #'
 #' separated <- data.frame(y = c(0, 0, 1, 1), x = 1:4)
 #' tryCatch(
-#'   fit_or_fail(y ~ x, separated),
+#'   fit_or_fail(y ~ x, separated, maxit = 5),
 #'   dataexcept_model_training_error = function(e) e$iterations
 #' )
 NULL

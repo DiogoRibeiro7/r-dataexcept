@@ -10,7 +10,10 @@
 #' the envelope names a dataexcept type, the condition also gets that type's R
 #' classes, whichever language wrote it: a Python `MissingColumnError` becomes
 #' a `dataexcept_missing_column_error`, so an R handler written for local
-#' failures catches remote ones too.
+#' failures catches remote ones too. A type from a DataExcept module that R has
+#' no class for, such as Python's `ServiceTimeoutError`, is still a
+#' `dataexcept_error`, since every DataExcept exception derives from
+#' `DataExceptError`; [condition_type()] gives its type.
 #'
 #' The envelope's attributes become fields (`cnd$column`), except any that
 #' would collide with `message`, `call` or `parent`. Its `cause` becomes
@@ -282,8 +285,18 @@ node_to_condition <- function(node) {
     ))
   }
 
-  entry <- if (is_dataexcept_module(node$module)) registry_entry(node$type) else NULL
-  classes <- if (is.null(entry)) character() else type_classes(node$type)
+  from_dataexcept <- is_dataexcept_module(node$module)
+  entry <- if (from_dataexcept) registry_entry(node$type) else NULL
+  classes <- if (!is.null(entry)) {
+    type_classes(node$type)
+  } else if (from_dataexcept) {
+    # A DataExcept type R has no class for -- a Python ServiceTimeoutError,
+    # say. Every DataExcept exception derives from DataExceptError, so it is
+    # still a dataexcept error, and a dataexcept_error handler catches it.
+    "dataexcept_error"
+  } else {
+    character()
+  }
 
   attributes <- node$attributes
   fields <- list()

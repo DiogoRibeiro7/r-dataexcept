@@ -25,7 +25,10 @@ The condition always has class \code{dataexcept_remote_condition}, plus \code{er
 the envelope names a dataexcept type, the condition also gets that type's R
 classes, whichever language wrote it: a Python \code{MissingColumnError} becomes
 a \code{dataexcept_missing_column_error}, so an R handler written for local
-failures catches remote ones too.
+failures catches remote ones too. A type from a DataExcept module that R has
+no class for, such as Python's \code{ServiceTimeoutError}, is still a
+\code{dataexcept_error}, since every DataExcept exception derives from
+\code{DataExceptError}; \code{\link[=condition_type]{condition_type()}} gives its type.
 
 The envelope's attributes become fields (\code{cnd$column}), except any that
 would collide with \code{message}, \code{call} or \code{parent}. Its \code{cause} becomes

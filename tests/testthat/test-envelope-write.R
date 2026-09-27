@@ -28,6 +28,12 @@ test_that("key order matches the Python serializer", {
   )
 })
 
+test_that("condition_type() names the envelope type", {
+  expect_identical(condition_type(missing_column_error("x")), "MissingColumnError")
+  expect_identical(condition_type(simpleError("x")), "simpleError")
+  expect_error(condition_type("x"), "condition object")
+})
+
 test_that("unclassified conditions have no failure record", {
   env <- condition_to_envelope(simpleError("boom"))
   expect_identical(env, list(type = "simpleError", module = "base", message = "boom"))

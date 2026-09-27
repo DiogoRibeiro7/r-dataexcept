@@ -94,6 +94,16 @@ condition_to_json <- function(cnd, include_attributes = TRUE, max_depth = 8L,
   json
 }
 
+#' @rdname condition_to_envelope
+#' @name condition_type
+#' @usage condition_type(cnd)
+#' @return `condition_type()` returns the `type` a condition is written with:
+#'   the dataexcept type when there is one -- including the type of a
+#'   condition read from an envelope -- and otherwise the condition's most
+#'   specific R class.
+#' @export condition_type
+NULL
+
 # Fields that are part of the condition's machinery rather than its content,
 # including rlang's.
 non_attribute_fields <- c(

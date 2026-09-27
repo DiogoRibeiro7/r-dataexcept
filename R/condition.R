@@ -146,9 +146,9 @@ redact_field <- function(value, keep_path = TRUE) {
   value
 }
 
-# The envelope type of any condition: the dataexcept type when there is one,
-# otherwise the most specific R class, which is what an R handler matches on.
+# Documented with condition_to_envelope(), in R/envelope.R.
 condition_type <- function(cnd) {
+  check_condition(cnd, "cnd", allow_null = FALSE)
   type <- cnd$.dataexcept$type
   if (is_string(type)) {
     return(type)

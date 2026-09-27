@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/R-CMD-check.yml)
 [![envelope-contract](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/envelope-contract.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/envelope-contract.yml)
+[![docs](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/docs.yml/badge.svg)](https://diogoribeiro7.github.io/r-dataexcept/)
 <!-- badges: end -->
 
 Structured, classed failures for R data and modelling code, in a format shared
@@ -28,6 +29,8 @@ does not exist yet:
 
 Credentials in URLs are removed before they reach a condition or an envelope,
 using the same rules as the Python package.
+
+Documentation: <https://diogoribeiro7.github.io/r-dataexcept/>
 
 ## Installation
 

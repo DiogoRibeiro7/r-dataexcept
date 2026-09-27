@@ -68,8 +68,11 @@ from \code{dataexcept_model_training_error}, so a handler for training failures
 catches non-convergence too.
 }
 \examples{
-fit_or_fail <- function(formula, data) {
-  fit <- suppressWarnings(glm(formula, family = binomial, data = data))
+fit_or_fail <- function(formula, data, maxit = 25) {
+  fit <- suppressWarnings(glm(formula,
+    family = binomial, data = data,
+    control = glm.control(maxit = maxit)
+  ))
   if (!fit$converged) {
     stop(convergence_error("glm", iterations = fit$iter))
   }
@@ -78,7 +81,7 @@ fit_or_fail <- function(formula, data) {
 
 separated <- data.frame(y = c(0, 0, 1, 1), x = 1:4)
 tryCatch(
-  fit_or_fail(y ~ x, separated),
+  fit_or_fail(y ~ x, separated, maxit = 5),
   dataexcept_model_training_error = function(e) e$iterations
 )
 }

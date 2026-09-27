@@ -4,4 +4,4 @@
 .Ruserdata
 *.Rcheck/
 dataexcept_*.tar.gz
-docs/
+site/

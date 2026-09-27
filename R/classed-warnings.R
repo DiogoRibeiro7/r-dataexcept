@@ -132,9 +132,12 @@ match_warning_rule <- function(message) {
 #'
 #' # Or fail closed: turn non-convergence into an error.
 #' try(withCallingHandlers(
-#'   with_classed_warnings(glm(y ~ x, family = binomial, data = separated)),
+#'   with_classed_warnings(glm(y ~ x,
+#'     family = binomial, data = separated,
+#'     control = glm.control(maxit = 5)
+#'   )),
 #'   dataexcept_convergence_warning = function(w) {
-#'     stop(convergence_error("glm", iterations = 25L, parent = w))
+#'     stop(convergence_error("glm", iterations = 5L, parent = w))
 #'   }
 #' ))
 #'

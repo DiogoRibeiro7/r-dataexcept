@@ -1,0 +1,104 @@
+/* dataexcept documentation: dark-first layout on top of Material. */
+
+.md-grid {
+  max-width: 76rem;
+}
+
+/* Landing page hero */
+
+.md-typeset .dx-hero {
+  margin: 0 0 2rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(
+      125deg,
+      rgba(82, 109, 255, 0.18),
+      rgba(31, 178, 181, 0.08) 70%
+    ),
+    var(--md-code-bg-color);
+}
+
+.md-typeset .dx-hero h1 {
+  max-width: 18ch;
+  margin: 0 0 0.5em;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset .dx-hero p {
+  max-width: 62ch;
+  font-size: 1.05rem;
+}
+
+.md-typeset .dx-hero .md-button {
+  margin: 0.35rem 0.45rem 0 0;
+}
+
+.md-typeset .dx-hero .dx-kicker {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-accent-fg-color);
+}
+
+/* Three-card feature row */
+
+.md-typeset .dx-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 1.6rem 0 2.2rem;
+}
+
+.md-typeset .dx-cards > div {
+  padding: 0.2rem 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.55rem;
+}
+
+.md-typeset .dx-cards h3 {
+  margin: 0.8rem 0 0.4rem;
+}
+
+@media screen and (max-width: 44rem) {
+  .md-typeset .dx-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reference pages: argument lists read as a table of terms. */
+
+.md-typeset dl dt code {
+  font-weight: 600;
+}
+
+.md-typeset dl dd {
+  margin-top: 0.15rem;
+}
+
+/* The outlined button takes the primary colour, which is too dark to read on
+   the slate background; use the text colour there, and the accent on hover. */
+
+[data-md-color-scheme="slate"] .md-typeset .dx-hero .md-button:not(.md-button--primary) {
+  color: var(--md-default-fg-color);
+  border-color: var(--md-default-fg-color--lighter);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .dx-hero .md-button:not(.md-button--primary):is(:hover, :focus) {
+  color: var(--md-accent-bg-color);
+  background-color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+}
+
+/* Keep field names in the first column of a table on one line. */
+
+.md-typeset table:not([class]) td:first-child code {
+  white-space: nowrap;
+}

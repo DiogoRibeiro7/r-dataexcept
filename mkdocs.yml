@@ -1,0 +1,121 @@
+site_name: dataexcept
+site_description: Structured, classed failures for R data and modelling code, in a format shared with the Python DataExcept package.
+site_author: Diogo Ribeiro
+site_url: https://diogoribeiro7.github.io/r-dataexcept/
+
+repo_url: https://github.com/DiogoRibeiro7/r-dataexcept
+repo_name: DiogoRibeiro7/r-dataexcept
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2026 Diogo Ribeiro &mdash; MIT licensed
+
+strict: true
+
+exclude_docs: |
+  requirements.txt
+
+theme:
+  name: material
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - User guide:
+      - Classed errors: guide/errors.md
+      - Failure metadata: guide/failure-metadata.md
+      - Envelopes: guide/envelopes.md
+      - Working with Python: guide/python.md
+      - Classed warnings: guide/warnings.md
+      - Redaction: guide/redaction.md
+  - API reference:
+      - Overview: reference/index.md
+      - Classed errors:
+          - new_dataexcept_error(): reference/new_dataexcept_error.md
+          - validation_error(): reference/validation_error.md
+          - Data frame errors: reference/data_frame_errors.md
+          - Data and modelling errors: reference/modelling_errors.md
+          - File errors: reference/file_errors.md
+          - Service errors: reference/service_errors.md
+          - dataexcept_classes(): reference/dataexcept_classes.md
+      - Failure metadata:
+          - failure_metadata(): reference/failure_metadata.md
+          - condition_failure(): reference/condition_failure.md
+      - Envelopes:
+          - condition_to_json(): reference/condition_to_envelope.md
+          - envelope_to_condition(): reference/envelope_to_condition.md
+          - validate_envelope(): reference/validate_envelope.md
+          - envelope_schema(): reference/envelope_schema.md
+      - Classed warnings:
+          - with_classed_warnings(): reference/with_classed_warnings.md
+      - Redaction:
+          - redact_url(): reference/redact_url.md
+      - Package:
+          - Package overview: reference/dataexcept-package.md
+  - Architecture: architecture.md
+  - Development: development.md
+  - Releases: releases.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/DiogoRibeiro7/r-dataexcept
+      name: dataexcept on GitHub
+    - icon: fontawesome/brands/python
+      link: https://diogoribeiro7.github.io/DataExcept/
+      name: The Python DataExcept package

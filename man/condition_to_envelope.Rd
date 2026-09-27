@@ -3,6 +3,7 @@
 \name{condition_to_envelope}
 \alias{condition_to_envelope}
 \alias{condition_to_json}
+\alias{condition_type}
 \title{Write a condition as a DataExcept envelope}
 \usage{
 condition_to_envelope(cnd, include_attributes = TRUE, max_depth = 8L)
@@ -13,6 +14,8 @@ condition_to_json(
   max_depth = 8L,
   pretty = FALSE
 )
+
+condition_type(cnd)
 }
 \arguments{
 \item{cnd}{A condition object.}
@@ -29,6 +32,11 @@ beyond this depth is replaced by the truncation marker
 \code{condition_to_envelope()} returns the envelope as a list (JSON
 objects as named lists, arrays as unnamed lists, \code{null} as \code{NULL}).
 \code{condition_to_json()} returns a single string.
+
+\code{condition_type()} returns the \code{type} a condition is written with:
+the dataexcept type when there is one -- including the type of a
+condition read from an envelope -- and otherwise the condition's most
+specific R class.
 }
 \description{
 \code{condition_to_envelope()} renders a condition, and the chain of conditions

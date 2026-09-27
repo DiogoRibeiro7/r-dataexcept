@@ -31,6 +31,7 @@ envelope (\code{\link[=redact_url]{redact_url()}}).
 Useful links:
 \itemize{
   \item \url{https://github.com/DiogoRibeiro7/r-dataexcept}
+  \item \url{https://diogoribeiro7.github.io/r-dataexcept/}
   \item Report bugs at \url{https://github.com/DiogoRibeiro7/r-dataexcept/issues}
 }
 
