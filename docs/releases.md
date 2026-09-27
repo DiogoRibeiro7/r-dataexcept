@@ -54,6 +54,23 @@ package writes for the same arguments.
   quotes (`Validation failed for field 'country': 'Atlantis'`), and an integer
   is written without its `L` suffix, as the Python package writes them.
 
+### More classed warnings
+
+- Templates can carry values. A rule's template may be a format string, such
+  as `"did not converge in %d iterations"`; the values its placeholders match
+  are stored on the classed warning and written to the envelope as
+  attributes. Plural messages are matched in every form of the session
+  language, and translations that reorder their values are read in their own
+  order. `classed_warning_rules()` gains a `fields` column.
+- New rules: `kmeans()` and `medpolish()` stopping at the iteration limit,
+  `arima()` when `optim()` does not converge, rank tests that cannot compute
+  an exact p-value because of ties or zeroes (`cor.test()`, `wilcox.test()`,
+  `ansari.test()`, `ks.test()`), survival's Cox model warnings (an infinite
+  coefficient, running out of iterations), and lme4's convergence checks and
+  singular fits.
+- Each rule is tested against the real warning, raised by the function that
+  raises it; lme4 and survival join `Suggests` for those tests.
+
 ## 0.2.0
 
 ### Observability

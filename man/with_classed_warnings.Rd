@@ -21,7 +21,7 @@ classed_warning_rules()
 \code{with_classed_warnings()} returns the value of \code{expr}.
 \code{classify_warning()} returns the classed warning, or \code{NULL} when no rule
 matches. \code{classed_warning_rules()} returns a data frame with one row per
-recognised message template.
+recognised message template, and in \code{fields} the values it carries.
 }
 \description{
 \code{with_classed_warnings()} evaluates \code{expr} and re-signals the base R and
@@ -38,10 +38,18 @@ they can be handled by class instead of by matching their text:
 Recognition does not depend on the session language. A warning is compared
 with its template translated through R's own message catalogue, the one R
 used to write the warning, so the same code works in an English, German or
-Portuguese session.
+Portuguese session. Templates with values are format strings, matched with
+their placeholders as slots, and plural messages are matched in every form
+of the language.
+
+Besides base R and stats, the rules cover the convergence warnings of
+survival's Cox and parametric models and of lme4's mixed models.
 
 Each classed warning keeps the original message and call, stores the
-original warning in \code{parent}, and records the matching rule in \code{rule}.
+original warning in \code{parent}, and records the matching rule in \code{rule}. A
+warning that carries values -- the iterations \code{kmeans()} ran, the code
+\code{optim()} returned in \code{arima()}, the gradient lme4 measured -- has them as
+fields too, named in the \code{fields} column of \code{classed_warning_rules()}.
 Warnings no rule matches pass through untouched, as does everything else
 \code{expr} signals. Written to an envelope, a classed warning has a \code{type} such
 as \code{"SeparationWarning"} and the original \code{simpleWarning} as its \code{cause}.
