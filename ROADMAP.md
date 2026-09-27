@@ -19,7 +19,8 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 
 ## Before CRAN
 
-- [ ] `R CMD check --as-cran` clean on every CI flavour and on win-builder.
+- [x] `R CMD check --as-cran` clean on every CI flavour.
+- [ ] win-builder (R-devel on Windows).
 - [x] A documentation site (MkDocs Material, deployed to GitHub Pages) with
   the reference generated from the help pages.
 - [x] Contributing, security and conduct policies; lint, style, spelling and

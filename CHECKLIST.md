@@ -1,7 +1,7 @@
 # Package Quality Checklist
 
 An audit of this repository against a general R packaging checklist, current
-as of 0.1.0.9000 (2026-09-27). Unticked boxes are genuinely not done, not
+as of 0.1.0 (2026-09-27). Unticked boxes are genuinely not done, not
 oversights.
 
 ---
@@ -81,9 +81,7 @@ oversights.
       weekly drift check against the Python package's `main`
 - [x] Documentation built with `--strict` and deployed to GitHub Pages
 - [x] Dependabot for GitHub Actions and the documentation toolchain
-- [ ] CI observed green on GitHub. The workflows have not run yet: GitHub did
-      not start the jobs because of an account billing problem. Everything
-      above was verified locally.
+- [x] CI green on GitHub on every platform, R version and workflow
 
 ## 8. Security
 
