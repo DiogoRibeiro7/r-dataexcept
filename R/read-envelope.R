@@ -23,31 +23,34 @@
 #' reproduces the envelope it came from, including its attributes, failure
 #' record, context, group members and cycle and truncation markers.
 #'
+#' Envelopes may come from outside the process, so reading is bounded: a
+#' chain of causes, contexts or group members nested more than `max_depth`
+#' levels deep is rejected before it is walked, and JSON text nested deeper
+#' than the envelope could legitimately need is rejected before it is parsed.
+#' Envelopes written with either package's default depth (8) are far inside
+#' the limit.
+#'
 #' @param x An envelope: a JSON string, or a list as returned by
 #'   [condition_to_envelope()] or `jsonlite::parse_json()`.
+#' @param max_depth The deepest chain of nested records to accept.
 #' @return A condition object.
 #' @seealso [validate_envelope()], which this function applies first.
 #' @export
 #' @examples
-#' json <- '{
-#'   "type": "MissingColumnError",
-#'   "module": "dataexcept.pandas_exceptions",
-#'   "message": "Missing required column \'customer_id\'",
-#'   "failure": {"kind": "unknown", "retryable": null, "retry_after_seconds": null},
-#'   "attributes": {"column": "customer_id", "dataframe": null}
-#' }'
+#' # An envelope written by the Python package, one of the reference
+#' # fixtures shipped with dataexcept.
+#' path <- system.file("schema", "fixtures", "ordinary-exception.json", package = "dataexcept")
+#' json <- paste(readLines(path), collapse = "\n")
+#' cat(json)
+#'
 #' cnd <- envelope_to_condition(json)
 #' class(cnd)
-#' cnd$column
+#' cnd$field
+#' is_retryable(cnd)
 #'
-#' tryCatch(stop(cnd), dataexcept_data_frame_error = function(e) "caught")
-envelope_to_condition <- function(x) {
-  node <- parse_envelope(x)
-  problems <- envelope_problems(node, "$")
-  if (length(problems) > 0L) {
-    stop(envelope_error(problems))
-  }
-  node_to_condition(node)
+#' tryCatch(stop(cnd), dataexcept_validation_error = function(e) "caught")
+envelope_to_condition <- function(x, max_depth = 32L) {
+  node_to_condition(checked_envelope(x, max_depth))
 }
 
 #' Check that a payload is a valid envelope
@@ -72,25 +75,35 @@ envelope_to_condition <- function(x) {
 #' is_envelope('{"type": "ValueError", "message": "bad row"}')
 #'
 #' try(validate_envelope('{"truncated": true, "type": "ValueError"}'))
-validate_envelope <- function(x) {
-  node <- parse_envelope(x)
-  problems <- envelope_problems(node, "$")
-  if (length(problems) > 0L) {
-    stop(envelope_error(problems))
-  }
+validate_envelope <- function(x, max_depth = 32L) {
+  checked_envelope(x, max_depth)
   invisible(x)
 }
 
 #' @rdname validate_envelope
 #' @export
-is_envelope <- function(x) {
+is_envelope <- function(x, max_depth = 32L) {
+  check_count(max_depth, "max_depth")
   tryCatch(
     {
-      node <- parse_envelope(x)
-      length(envelope_problems(node, "$")) == 0L
+      checked_envelope(x, max_depth)
+      TRUE
     },
     dataexcept_envelope_error = function(e) FALSE
   )
+}
+
+# Parse and validate, returning the parsed node or signalling an envelope
+# error that lists every problem.
+checked_envelope <- function(x, max_depth) {
+  check_count(max_depth, "max_depth")
+  max_depth <- as.integer(max_depth)
+  node <- parse_envelope(x, max_depth)
+  problems <- envelope_problems(node, "$", depth = 0L, max_depth = max_depth)
+  if (length(problems) > 0L) {
+    stop(envelope_error(problems))
+  }
+  node
 }
 
 envelope_error <- function(problems, parent = NULL) {
@@ -107,10 +120,31 @@ envelope_error <- function(problems, parent = NULL) {
   )
 }
 
-parse_envelope <- function(x) {
+# The deepest JSON nesting of a text, counted without parsing it: string
+# literals are blanked out, then brackets are counted. A record at chain depth
+# d sits at JSON depth d + 1, a group adds an array level per record, and a
+# record's own attributes add at most ten more (the writers truncate values
+# at depth 8), so 2 * max_depth + 16 is the most a valid envelope can need.
+json_nesting <- function(text) {
+  blanked <- gsub("\"(?:[^\"\\\\]++|\\\\.)*+\"", "\"\"", text, perl = TRUE)
+  brackets <- regmatches(blanked, gregexpr("[][{}]", blanked))[[1L]]
+  if (length(brackets) == 0L) {
+    return(0L)
+  }
+  max(cumsum(ifelse(brackets %in% c("{", "["), 1L, -1L)))
+}
+
+parse_envelope <- function(x, max_depth) {
   if (is.character(x)) {
     if (length(x) != 1L || is.na(x)) {
       stop(envelope_error("the JSON text must be a single string"))
+    }
+    limit <- 2L * max_depth + 16L
+    if (json_nesting(x) > limit) {
+      stop(envelope_error(sprintf(
+        "the JSON text is nested more than %d levels deep, deeper than max_depth = %d allows",
+        limit, max_depth
+      )))
     }
     return(tryCatch(
       jsonlite::parse_json(x, simplifyVector = FALSE),
@@ -162,20 +196,22 @@ failure_problems <- function(failure, path) {
       "%s: `%s` is required", path, missing
     ))
   }
-  if ("kind" %in% names(failure) &&
-    !(is_json_string(failure$kind) && failure$kind %in% failure_kinds)) {
+  kind <- failure$kind
+  if ("kind" %in% names(failure) && !(is_json_string(kind) && kind %in% failure_kinds)) {
     problems <- c(problems, sprintf(
       "%s.kind: must be \"transient\", \"permanent\" or \"unknown\"", path
     ))
   }
-  if ("retryable" %in% names(failure) && !is.null(failure$retryable) &&
-    !is_json_bool(failure$retryable)) {
+  retryable <- failure$retryable
+  if (!is.null(retryable) && !is_json_bool(retryable)) {
     problems <- c(problems, sprintf("%s.retryable: must be true, false or null", path))
   }
   seconds <- failure$retry_after_seconds
-  if ("retry_after_seconds" %in% names(failure) && !is.null(seconds) &&
-    !(is.numeric(seconds) && length(seconds) == 1L && !is.na(seconds) &&
-      is.finite(seconds) && seconds >= 0)) {
+  is_seconds <- function(x) {
+    is.numeric(x) && length(x) == 1L && !is.na(x) && is.finite(x) && x >= 0
+  }
+  valid_seconds <- is.null(seconds) || is_seconds(seconds)
+  if (!valid_seconds) {
     problems <- c(problems, sprintf(
       "%s.retry_after_seconds: must be a non-negative number or null", path
     ))
@@ -183,7 +219,10 @@ failure_problems <- function(failure, path) {
   problems
 }
 
-envelope_problems <- function(node, path) {
+envelope_problems <- function(node, path, depth, max_depth) {
+  if (depth > max_depth) {
+    return(sprintf("%s: records are nested more than max_depth = %d levels deep", path, max_depth))
+  }
   if (!is_json_object(node)) {
     return(sprintf("%s: must be a JSON object", path))
   }
@@ -228,7 +267,9 @@ envelope_problems <- function(node, path) {
   }
   for (field in c("cause", "context")) {
     if (field %in% keys) {
-      problems <- c(problems, envelope_problems(node[[field]], paste0(path, ".", field)))
+      problems <- c(problems, envelope_problems(
+        node[[field]], paste0(path, ".", field), depth + 1L, max_depth
+      ))
     }
   }
   if ("exceptions" %in% keys) {
@@ -238,7 +279,7 @@ envelope_problems <- function(node, path) {
     } else {
       for (i in seq_along(members)) {
         problems <- c(problems, envelope_problems(
-          members[[i]], sprintf("%s.exceptions[%d]", path, i - 1L)
+          members[[i]], sprintf("%s.exceptions[%d]", path, i - 1L), depth + 1L, max_depth
         ))
       }
     }

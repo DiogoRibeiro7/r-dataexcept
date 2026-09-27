@@ -2,8 +2,13 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/R-CMD-check.yml)
+[![test-coverage](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/lint.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/lint.yml)
 [![envelope-contract](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/envelope-contract.yml/badge.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/envelope-contract.yml)
 [![docs](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/docs.yml/badge.svg)](https://diogoribeiro7.github.io/r-dataexcept/)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R >= 4.1](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3.svg)](https://www.r-project.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 <!-- badges: end -->
 
 Structured, classed failures for R data and modelling code, in a format shared
@@ -197,6 +202,25 @@ rlang provides classed errors, chained causes and backtraces, and dataexcept
 works with it: an rlang error serialises like any other condition, with its
 parent chain as the envelope's causes. dataexcept does not replace rlang; it
 adds the cross-language format and the vocabulary.
+
+## Contributing
+
+Bug reports, condition types and warning rules are welcome. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the development setup and the checks a
+pull request needs, and [SECURITY.md](SECURITY.md) for reporting a
+vulnerability privately.
+
+Please note that this project is released with a
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in it you
+agree to abide by its terms.
+
+## Citation
+
+```r
+citation("dataexcept")
+```
+
+Citation metadata is also available in [CITATION.cff](CITATION.cff).
 
 ## License
 

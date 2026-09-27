@@ -1,0 +1,14 @@
+# Normalise line endings; R CMD check and the shell scripts expect LF.
+* text=auto eol=lf
+
+# Generated files: collapsed in pull-request diffs and left out of language
+# statistics. Edit the sources instead (roxygen comments, NEWS.md,
+# tools/build-docs.R, the Python package's fixtures).
+man/*.Rd                    linguist-generated=true
+NAMESPACE                   linguist-generated=true
+docs/reference/*.md         linguist-generated=true
+docs/releases.md            linguist-generated=true
+tests/testthat/fixtures/*   linguist-generated=true
+
+# The envelope schema and fixtures are the Python package's, vendored.
+inst/schema/**              linguist-vendored=true

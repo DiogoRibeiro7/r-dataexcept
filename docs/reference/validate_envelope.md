@@ -14,9 +14,9 @@ not know are accepted, because a newer producer may add them.
 ## Usage
 
 ```r
-validate_envelope(x)
+validate_envelope(x, max_depth = 32L)
 
-is_envelope(x)
+is_envelope(x, max_depth = 32L)
 ```
 
 ## Arguments
@@ -24,6 +24,9 @@ is_envelope(x)
 `x`
 :   An envelope: a JSON string, or a list as returned by
     [`condition_to_envelope()`](condition_to_envelope.md) or `jsonlite::parse_json()`.
+
+`max_depth`
+:   The deepest chain of nested records to accept.
 
 ## Value
 

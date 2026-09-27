@@ -12,7 +12,7 @@ re-signalled.
 ## Usage
 
 ```r
-envelope_to_condition(x)
+envelope_to_condition(x, max_depth = 32L)
 ```
 
 ## Arguments
@@ -20,6 +20,9 @@ envelope_to_condition(x)
 `x`
 :   An envelope: a JSON string, or a list as returned by
     [`condition_to_envelope()`](condition_to_envelope.md) or `jsonlite::parse_json()`.
+
+`max_depth`
+:   The deepest chain of nested records to accept.
 
 ## Value
 
@@ -45,21 +48,28 @@ Written back with [`condition_to_envelope()`](condition_to_envelope.md), a condi
 reproduces the envelope it came from, including its attributes, failure
 record, context, group members and cycle and truncation markers.
 
+Envelopes may come from outside the process, so reading is bounded: a
+chain of causes, contexts or group members nested more than `max_depth`
+levels deep is rejected before it is walked, and JSON text nested deeper
+than the envelope could legitimately need is rejected before it is parsed.
+Envelopes written with either package's default depth (8) are far inside
+the limit.
+
 ## Examples
 
 ```r
-json <- '{
-  "type": "MissingColumnError",
-  "module": "dataexcept.pandas_exceptions",
-  "message": "Missing required column \'customer_id\'",
-  "failure": {"kind": "unknown", "retryable": null, "retry_after_seconds": null},
-  "attributes": {"column": "customer_id", "dataframe": null}
-}'
+# An envelope written by the Python package, one of the reference
+# fixtures shipped with dataexcept.
+path <- system.file("schema", "fixtures", "ordinary-exception.json", package = "dataexcept")
+json <- paste(readLines(path), collapse = "\n")
+cat(json)
+
 cnd <- envelope_to_condition(json)
 class(cnd)
-cnd$column
+cnd$field
+is_retryable(cnd)
 
-tryCatch(stop(cnd), dataexcept_data_frame_error = function(e) "caught")
+tryCatch(stop(cnd), dataexcept_validation_error = function(e) "caught")
 ```
 
 ## See also

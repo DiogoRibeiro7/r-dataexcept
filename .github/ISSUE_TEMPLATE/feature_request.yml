@@ -1,0 +1,50 @@
+name: Feature request
+description: Suggest a condition type, a warning rule, or a change to an existing one.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: >
+        Describe the failure you are trying to represent or handle, not the API
+        you have in mind. What do you do today instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      description: How would it look at the call site?
+      render: r
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of change is this?
+      options:
+        - A new condition type
+        - A new classed warning rule
+        - A change to an existing condition
+        - Envelopes and interoperability with Python
+        - Redaction
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: warning-text
+    attributes:
+      label: For a warning rule, the exact warning
+      description: >
+        The warning message as R prints it, and the code that produces it. A
+        rule is only added with a test that triggers the real warning.
+      render: text
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Including defining it yourself with `new_dataexcept_error()`.

@@ -1,10 +1,17 @@
 ^.*\.Rproj$
+^CHECKLIST\.md$
 ^CITATION\.cff$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
 ^LICENSE\.md$
 ^README\.Rmd$
 ^ROADMAP\.md$
+^SECURITY\.md$
 ^\.Rproj\.user$
+^\.editorconfig$
+^\.gitattributes$
 ^\.github$
+^\.lintr$
 ^_pkgdown\.yml$
 ^cran-comments\.md$
 ^docs$

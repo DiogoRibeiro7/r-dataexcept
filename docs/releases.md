@@ -12,8 +12,22 @@ The changes in each version, from the package's `NEWS.md`.
   record. Every DataExcept exception derives from `DataExceptError`.
 - New `condition_type()` returns the envelope type of any condition, including
   one read from an envelope.
+- Reading untrusted envelopes is bounded. `envelope_to_condition()`,
+  `validate_envelope()` and `is_envelope()` gain `max_depth` (default 32): a
+  deeper chain of records is rejected before it is walked, and JSON nested
+  deeper than an envelope could need is rejected before it is parsed. A
+  100,000-level payload previously exhausted the C stack; it is now refused
+  with a `dataexcept_envelope_error`.
+- A condition whose message contains bytes that are not valid UTF-8 no longer
+  makes `condition_to_json()` fail. Invalid bytes are replaced, at
+  construction and on export, so the envelope is always valid JSON.
+- The test that switches the session language is skipped on R < 4.2, where
+  `Sys.setLanguage()` does not exist.
 - A documentation site, built with MkDocs Material and deployed to GitHub
   Pages, with the API reference generated from the help pages.
+- The repository has contributing, security and conduct policies, issue and
+  pull-request templates, lint, style, spelling and coverage checks in CI, and
+  a tag-driven release workflow.
 
 ## 0.1.0
 

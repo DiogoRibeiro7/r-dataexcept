@@ -76,7 +76,7 @@ types of \code{\link[=dtype_mismatch_error]{dtype_mismatch_error()}}.
 Values that JSON cannot represent degrade to a description of themselves
 rather than disappearing: a data frame becomes \code{"<data.frame: 150 rows x 5 columns>"}, a function \code{"<function>"}, a vector longer than 100 elements a
 description of its type and length, and \code{NaN} or \code{Inf} the strings \code{"nan"}
-or \code{"inf"}, as the Python serializer writes them. \code{NA} becomes \code{null}.
+or \code{"inf"}, as the Python package writes them. \code{NA} becomes \code{null}.
 }
 \examples{
 cnd <- tryCatch(

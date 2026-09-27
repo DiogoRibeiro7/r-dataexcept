@@ -214,10 +214,13 @@ url_in_text_pattern <- paste0(
 #' @rdname redact_url
 #' @export
 redact_urls_in_text <- function(text, keep_path = TRUE) {
-  if (!is_string(text) || !grepl("://", text, fixed = TRUE)) {
+  if (!is_string(text)) {
     return(text)
   }
-  text <- enc2utf8(text)
+  text <- valid_utf8(text)
+  if (!grepl("://", text, fixed = TRUE)) {
+    return(text)
+  }
   matches <- gregexpr(url_in_text_pattern, text, perl = TRUE)
   if (matches[[1L]][1L] == -1L) {
     return(text)

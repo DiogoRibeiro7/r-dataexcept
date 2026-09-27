@@ -1,0 +1,55 @@
+# Test coverage with covr. The job fails below the threshold, and writes a
+# per-file table to the run summary.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+name: test-coverage
+
+permissions: read-all
+
+env:
+  COVERAGE_THRESHOLD: 95
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
+
+      - name: Measure coverage
+        run: |
+          cov <- covr::package_coverage(quiet = FALSE)
+          total <- covr::percent_coverage(cov)
+          by_file <- covr::tally_coverage(cov, by = "line")
+          files <- aggregate(value ~ filename, by_file, function(v) 100 * mean(v > 0))
+          files <- files[order(files$value), ]
+          lines <- c(
+            sprintf("## Test coverage: %.1f%%", total),
+            "",
+            "| File | Coverage |",
+            "| --- | ---: |",
+            sprintf("| `%s` | %.1f%% |", files$filename, files$value)
+          )
+          summary_file <- Sys.getenv("GITHUB_STEP_SUMMARY")
+          if (nzchar(summary_file)) cat(lines, sep = "\n", file = summary_file, append = TRUE)
+          cat(lines, sep = "\n")
+          threshold <- as.numeric(Sys.getenv("COVERAGE_THRESHOLD"))
+          if (total < threshold) {
+            message(sprintf("Coverage %.1f%% is below the %.0f%% threshold.", total, threshold))
+            quit(status = 1)
+          }
+        shell: Rscript {0}

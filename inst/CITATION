@@ -1,0 +1,13 @@
+bibentry(
+  bibtype = "Manual",
+  title = "{dataexcept}: Structured, Classed Failures that Cross Language Boundaries",
+  author = person("Diogo", "Ribeiro", comment = c(ORCID = "0009-0001-2022-7072")),
+  year = "2026",
+  note = sprintf("R package version %s", meta$Version),
+  url = "https://github.com/DiogoRibeiro7/r-dataexcept",
+  textVersion = paste0(
+    "Ribeiro, D. (2026). dataexcept: Structured, Classed Failures that Cross ",
+    "Language Boundaries. R package version ", meta$Version, ". ",
+    "https://github.com/DiogoRibeiro7/r-dataexcept"
+  )
+)

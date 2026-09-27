@@ -131,3 +131,32 @@ test_that("the error message lists at most ten problems", {
   expect_length(err$problems, 36L)
   expect_match(conditionMessage(err), "and 26 more", fixed = TRUE)
 })
+
+deep_chain <- function(n) {
+  paste0(
+    strrep('{"type": "E", "module": "m", "message": "x", "cause": ', n),
+    '{"truncated": true}',
+    strrep("}", n)
+  )
+}
+
+test_that("reading is bounded on deeply nested input", {
+  expect_s3_class(envelope_to_condition(deep_chain(32)), "dataexcept_remote_condition")
+
+  err <- expect_error(envelope_to_condition(deep_chain(33)), class = "dataexcept_envelope_error")
+  expect_match(err$problems, "nested more than max_depth = 32", fixed = TRUE)
+
+  # Far too deep to walk: rejected before the text is parsed.
+  err <- expect_error(envelope_to_condition(deep_chain(5000)), class = "dataexcept_envelope_error")
+  expect_match(err$problems, "nested more than 80 levels deep", fixed = TRUE)
+  expect_false(is_envelope(deep_chain(5000)))
+
+  expect_true(is_envelope(deep_chain(40), max_depth = 40L))
+  expect_error(is_envelope(deep_chain(2), max_depth = -1), "non-negative")
+})
+
+test_that("the nesting count ignores brackets inside strings", {
+  json <- '{"type": "E", "module": "m", "message": "[[[[{{{{\\"]]]]"}'
+  expect_identical(json_nesting(json), 1L)
+  expect_true(is_envelope(json, max_depth = 0L))
+})

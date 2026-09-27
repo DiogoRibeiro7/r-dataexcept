@@ -143,3 +143,26 @@ validate_envelope('{"truncated": true, "type": "ValueError"}')
 A payload that fails is reported as a `dataexcept_envelope_error`, which lists
 every problem in its `problems` field and is classified as permanent: reading
 the same bytes again cannot succeed.
+
+## Untrusted input
+
+Envelopes often come from another process, so reading them is bounded. A
+chain of causes, contexts or group members nested more than `max_depth`
+levels deep (default 32) is rejected before it is walked, and JSON text nested
+deeper than a valid envelope could need is rejected before it is parsed:
+
+```r
+deep <- paste0(
+  strrep('{"type": "E", "module": "m", "message": "x", "cause": ', 5000),
+  '{"truncated": true}',
+  strrep("}", 5000)
+)
+is_envelope(deep)
+#> [1] FALSE
+```
+
+Envelopes written with either package's default depth of 8 are far inside the
+limit. Nothing in an envelope is evaluated, and its `type` and `module` never
+become R classes except through dataexcept's own registry. See the project's
+[security policy](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/SECURITY.md)
+for what redaction does and does not cover.

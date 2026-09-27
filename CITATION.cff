@@ -2,17 +2,25 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "dataexcept: Structured, Classed Failures that Cross Language Boundaries"
 type: software
+abstract: >-
+  An R package of classed error conditions for data and modelling code that
+  carry structured fields and machine-readable recovery metadata, and that
+  serialise to the language-neutral failure envelope published by the Python
+  DataExcept package, so failures from R and Python share one format.
 authors:
   - family-names: Ribeiro
     given-names: Diogo
     email: dfr@esmad.ipp.pt
     orcid: "https://orcid.org/0009-0001-2022-7072"
+    affiliation: "Faculty of Media Arts and Design, Technical University of Porto"
 version: 0.1.0
 license: MIT
 repository-code: "https://github.com/DiogoRibeiro7/r-dataexcept"
+url: "https://diogoribeiro7.github.io/r-dataexcept/"
 keywords:
   - R
   - error handling
   - conditions
   - observability
   - data pipelines
+  - interoperability

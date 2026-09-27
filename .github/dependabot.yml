@@ -1,0 +1,47 @@
+version: 2
+
+updates:
+  # GitHub Actions. R package dependencies are resolved at check time by
+  # r-lib/actions, so the workflows are the only pinned versions to maintain.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps)"
+    # One pull request for all action bumps. Separate per-action pull requests
+    # edit adjacent lines of the same workflow and conflict with each other as
+    # soon as one of them merges.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # The documentation site's Python dependencies. Major versions are held
+  # back: MkDocs 2 is incompatible with Material for MkDocs.
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+    labels:
+      - "dependencies"
+      - "documentation"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      docs:
+        patterns:
+          - "*"

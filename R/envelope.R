@@ -36,7 +36,7 @@
 #' rather than disappearing: a data frame becomes `"<data.frame: 150 rows x 5
 #' columns>"`, a function `"<function>"`, a vector longer than 100 elements a
 #' description of its type and length, and `NaN` or `Inf` the strings `"nan"`
-#' or `"inf"`, as the Python serializer writes them. `NA` becomes `null`.
+#' or `"inf"`, as the Python package writes them. `NA` becomes `null`.
 #'
 #' @param cnd A condition object.
 #' @param include_attributes Include the `attributes` field?
@@ -67,8 +67,9 @@
 #' str(condition_to_envelope(cnd), max.level = 2)
 condition_to_envelope <- function(cnd, include_attributes = TRUE, max_depth = 8L) {
   check_condition(cnd, "cnd", allow_null = FALSE)
-  if (!is.logical(include_attributes) || length(include_attributes) != 1L ||
-    is.na(include_attributes)) {
+  valid_flag <- is.logical(include_attributes) && length(include_attributes) == 1L &&
+    !is.na(include_attributes)
+  if (!valid_flag) {
     stop("`include_attributes` must be TRUE or FALSE.", call. = FALSE)
   }
   check_count(max_depth, "max_depth")
@@ -118,10 +119,8 @@ condition_attributes <- function(cnd) {
   }
   fields <- unclass(cnd)
   keep <- names(fields)
-  keep <- keep[nzchar(keep) &
-    !keep %in% non_attribute_fields &
-    !startsWith(keep, ".") &
-    !startsWith(keep, "_")]
+  private <- startsWith(keep, ".") | startsWith(keep, "_")
+  keep <- keep[nzchar(keep) & !keep %in% non_attribute_fields & !private]
   if (length(keep) == 0L) {
     return(NULL)
   }
@@ -170,8 +169,9 @@ envelope_record <- function(cnd, include_attributes, max_depth, depth) {
   }
 
   members <- state$exceptions
-  if (is.list(members) && length(members) > 0L &&
-    all(vapply(members, inherits, logical(1), "condition"))) {
+  is_group <- is.list(members) && length(members) > 0L &&
+    all(vapply(members, inherits, logical(1), "condition"))
+  if (is_group) {
     record$exceptions <- unname(lapply(members, child))
   }
   if (inherits(cnd$parent, "condition")) {
