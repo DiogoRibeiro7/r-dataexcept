@@ -15,7 +15,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -23,7 +23,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::lintr, any::styler, any::spelling, local::.
+          # styler needs roxygen2 to style roxygen examples that contain a
+          # backslash or %; without it those files fail to style at all.
+          extra-packages: any::lintr, any::styler, any::roxygen2, any::spelling, local::.
           needs: lint
 
       - name: Lint
@@ -37,17 +39,29 @@ jobs:
 
       - name: Check formatting
         run: |
-          changed <- styler::style_pkg(dry = "on", include_roxygen_examples = TRUE)
-          files <- changed$file[changed$changed]
-          if (length(files) > 0L) {
-            cat("Not styled with styler::style_pkg():", files, sep = "\n  ")
-            quit(status = 1)
+          result <- styler::style_pkg(dry = "on", include_roxygen_examples = TRUE)
+          # A file styler could not process has changed = NA; report it as
+          # such, not as unstyled. Each finding becomes an annotation.
+          failed <- result$file[is.na(result$changed)]
+          unstyled <- result$file[result$changed %in% TRUE]
+          for (f in failed) {
+            cat(sprintf("::error file=%s::styler could not process this file\n", f))
           }
+          for (f in unstyled) {
+            cat(sprintf("::error file=%s::Not styled; run styler::style_pkg()\n", f))
+          }
+          if (length(failed) + length(unstyled) > 0L) quit(status = 1)
         shell: Rscript {0}
 
       - name: Check spelling
         run: |
           problems <- spelling::spell_check_package()
           print(problems)
+          for (i in seq_len(nrow(problems))) {
+            cat(sprintf(
+              "::error::Unknown word '%s' in %s. Fix it, or add it to inst/WORDLIST.\n",
+              problems$word[i], paste(problems$found[[i]], collapse = ", ")
+            ))
+          }
           if (nrow(problems) > 0L) quit(status = 1)
         shell: Rscript {0}
