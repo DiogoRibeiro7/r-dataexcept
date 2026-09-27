@@ -261,7 +261,7 @@ overfitting_error <- function(train_metric, val_metric, parent = NULL, call = NU
   make_condition("OverfittingError",
     sprintf(
       "Overfitting detected: train=%s, val=%s",
-      format_number(train_metric), format_number(val_metric)
+      format_number(train_metric, float = TRUE), format_number(val_metric, float = TRUE)
     ),
     fields = list(train_metric = train_metric, val_metric = val_metric),
     parent = parent, call = call
@@ -278,7 +278,7 @@ underfitting_error <- function(train_metric, threshold, parent = NULL, call = NU
   make_condition("UnderfittingError",
     sprintf(
       "Underfitting detected: training metric %s < threshold %s",
-      format_number(train_metric), format_number(threshold)
+      format_number(train_metric, float = TRUE), format_number(threshold, float = TRUE)
     ),
     fields = list(train_metric = train_metric, threshold = threshold),
     parent = parent, call = call

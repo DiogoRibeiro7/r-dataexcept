@@ -180,7 +180,7 @@ template_forms <- function(template, domain) {
   unique(forms)
 }
 
-placeholder_pattern <- "%(?:([0-9]+)\\$)?[-+ #0]*[0-9]*(?:\\.[0-9]+)?([a-zA-Z%])"
+placeholder_pattern <- "%(?:([0-9]+)\\$)?[-+ #0]*([0-9]*)(?:\\.[0-9]+)?(?:ll|l|h)?([a-zA-Z%])"
 
 escape_regex <- function(text) {
   gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", text)
@@ -209,13 +209,15 @@ format_regex <- function(format) {
   sequential <- 0L
   for (i in seq_along(starts)) {
     regex <- paste0(regex, escape_regex(substr(format, last + 1L, starts[i] - 1L)))
-    conversion <- capture(i, 2L)
+    conversion <- capture(i, 3L)
     if (conversion == "%") {
       regex <- paste0(regex, "%")
     } else {
       sequential <- sequential + 1L
       position <- if (capture_lengths[i, 1L] > 0L) as.integer(capture(i, 1L)) else sequential
-      regex <- paste0(regex, conversion_regex(conversion))
+      # A field width pads the value with spaces.
+      padding <- if (capture_lengths[i, 2L] > 0L) " *" else ""
+      regex <- paste0(regex, padding, conversion_regex(conversion))
       positions <- c(positions, position)
       conversions <- c(conversions, conversion)
     }
@@ -237,7 +239,11 @@ conversion_regex <- function(conversion) {
 convert_capture <- function(text, conversion) {
   switch(conversion,
     d = ,
-    i = as.integer(text),
+    i = {
+      # Beyond the integer range, a count is kept as a double.
+      value <- suppressWarnings(as.integer(text))
+      if (is.na(value)) as.numeric(text) else value
+    },
     s = text,
     suppressWarnings(as.numeric(text))
   )

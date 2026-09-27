@@ -26,8 +26,10 @@
 validation_error <- function(field, value, message = NULL, parent = NULL, call = NULL) {
   check_string(field, "field")
   check_string(message, "message", allow_null = TRUE)
-  message <- message %||%
+  message <- message_or(
+    message,
     sprintf("Validation failed for field %s: %s", quote_name(field), format_value(value))
+  )
   make_condition("ValidationError", message,
     fields = list(field = field, value = value),
     parent = parent, call = call
@@ -320,7 +322,7 @@ database_connection_error <- function(db_url, message = NULL, parent = NULL, cal
   check_string(message, "message", allow_null = TRUE)
   db_url <- redact_url(db_url)
   make_condition("DatabaseConnectionError",
-    message %||% sprintf("Failed to connect to database at %s", quote_name(db_url)),
+    message_or(message, sprintf("Failed to connect to database at %s", quote_name(db_url))),
     fields = list(db_url = db_url),
     parent = parent, call = call
   )
@@ -346,7 +348,7 @@ query_execution_error <- function(query, parent = NULL, call = NULL) {
 transaction_error <- function(transaction_id = NULL, message = NULL, parent = NULL, call = NULL) {
   check_string(transaction_id, "transaction_id", allow_null = TRUE)
   check_string(message, "message", allow_null = TRUE)
-  if (is.null(message)) {
+  if (is.null(message) || !nzchar(message)) {
     message <- "Database transaction failed"
     if (!is.null(transaction_id) && nzchar(transaction_id)) {
       message <- sprintf("%s (id=%s)", message, transaction_id)
@@ -364,7 +366,7 @@ host_unreachable_error <- function(host, message = NULL, parent = NULL, call = N
   check_string(host, "host")
   check_string(message, "message", allow_null = TRUE)
   make_condition("HostUnreachableError",
-    message %||% sprintf("Host %s is unreachable", quote_name(host)),
+    message_or(message, sprintf("Host %s is unreachable", quote_name(host))),
     fields = list(host = host),
     parent = parent, call = call
   )
@@ -393,7 +395,7 @@ api_error <- function(endpoint, status_code = NULL, message = NULL,
   check_count(status_code, "status_code", allow_null = TRUE)
   check_string(message, "message", allow_null = TRUE)
   endpoint <- redact_url(endpoint)
-  if (is.null(message)) {
+  if (is.null(message) || !nzchar(message)) {
     message <- sprintf("API call failed: %s", endpoint)
     if (!is.null(status_code)) {
       message <- sprintf("%s (status %s)", message, format(status_code))

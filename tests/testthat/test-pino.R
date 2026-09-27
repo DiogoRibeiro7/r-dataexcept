@@ -117,6 +117,17 @@ test_that("an rlang backtrace is the stack, and a call is not", {
   expect_null(condition_to_pino(base, include_stack = TRUE)$stack)
 })
 
+test_that("a backtrace is written without terminal colours", {
+  skip_if_not_installed("rlang")
+  skip_if_not_installed("cli")
+  old <- options(cli.num_colors = 256L)
+  on.exit(options(old), add = TRUE)
+  cnd <- tryCatch((function() rlang::abort("boom"))(), error = identity)
+  stack <- condition_to_pino(cnd, include_stack = TRUE)$stack
+  expect_false(grepl("\033", stack, fixed = TRUE))
+  expect_identical(getOption("cli.num_colors"), 256L)
+})
+
 test_that("a backtrace that cannot be formatted is left out", {
   skip_if_not_installed("rlang")
   cnd <- simpleError("x")

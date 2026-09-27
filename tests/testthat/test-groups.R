@@ -369,6 +369,18 @@ test_that("wrap_errors() takes any constructor that returns a condition", {
   expect_s3_class(err, "myapp_plain")
 })
 
+test_that("wrap_errors() stores a call argument rather than running it", {
+  runs <- 0L
+  read_orders <- function(path) {
+    runs <<- runs + 1L
+    wrap_errors(stop("boom"), file_read_error, path = path, call = sys.call())
+  }
+  err <- tryCatch(read_orders("orders.csv"), error = identity)
+  expect_s3_class(err, "dataexcept_file_read_error")
+  expect_identical(conditionCall(err), quote(read_orders("orders.csv")))
+  expect_identical(runs, 1L)
+})
+
 test_that("wrap_errors() does not wrap an error twice", {
   err <- tryCatch(
     wrap_errors(stop("root"), file_read_error, path = "x"),

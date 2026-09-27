@@ -50,9 +50,15 @@ package writes for the same arguments.
   Python; the other new types are `"unknown"`.
 - An envelope of one of these types, written by Python, is now read back with
   the type's R classes instead of plain `dataexcept_error`.
-- A string value in a default message is quoted as names are, with single
-  quotes (`Validation failed for field 'country': 'Atlantis'`), and an integer
-  is written without its `L` suffix, as the Python package writes them.
+- Values in default messages are written as the Python package writes them:
+  a string in quotes (`Validation failed for field 'country': 'Atlantis'`), in
+  any locale; an integer without its `L` suffix; a fraction in the fewest
+  digits that read back exactly. A URL in a value is redacted before a long
+  value is shortened, so shortening cannot hide credentials from redaction.
+- An empty `message` falls back to the default message in the constructors
+  whose Python class does the same (`validation_error()`, `api_error()`,
+  `database_connection_error()`, `host_unreachable_error()` and most of the
+  new job and pipeline errors).
 
 ### More classed warnings
 
@@ -78,6 +84,9 @@ package writes for the same arguments.
   a projection of the envelope in which group members are `errors`,
   attributes stay nested, and `stack` appears only when there is a real one
   -- an rlang backtrace, with `include_stack = TRUE`.
+- Backtraces are written without terminal colour codes, here and in
+  `record_otel_exception()`'s `exception.stacktrace`, whatever colour support
+  the session has.
 - `envelope_to_pino()` projects an envelope already in hand, as JSON or as a
   list.
 - `pino_schema()` returns the profile's JSON Schema, which ships with the

@@ -74,12 +74,14 @@ check_condition <- function(x, arg, allow_null = TRUE) {
 }
 
 # A short, single-line rendering of an arbitrary value for use inside a
-# message, in the spirit of Python's repr(). A string is quoted the way names
-# are, with single quotes, and a number is written by format_number().
+# message, in the spirit of Python's repr(): a string is quoted as Python
+# quotes it, and a number is written by format_number(). URLs are redacted
+# before the text is shortened, since shortening can cut a URL where its
+# credentials no longer look like credentials.
 format_value <- function(x, width = 60L) {
   number <- is.numeric(x) && length(x) == 1L && !is.object(x) && (!is.na(x) || is.nan(x))
   text <- if (is_string(x)) {
-    encodeString(x, quote = "'")
+    python_quote(x)
   } else if (number) {
     format_number(x)
   } else {
@@ -88,6 +90,7 @@ format_value <- function(x, width = 60L) {
       error = function(e) sprintf("<%s>", class(x)[1L])
     )
   }
+  text <- redact_urls_in_text(text)
   if (nchar(text) > width) {
     text <- paste0(substr(text, 1L, width - 3L), "...")
   }
@@ -95,11 +98,12 @@ format_value <- function(x, width = 60L) {
 }
 
 # A number in a message, written as the Python package writes it: whole
-# numbers without a decimal point or exponent, up to 15 significant digits
-# otherwise, and "nan", "inf" and "-inf" for the values that are not finite.
-# `digits` gives a fixed number of decimal places instead, as Python's
-# `{value:.3f}` does.
-format_number <- function(x, digits = NULL) {
+# numbers without an exponent, other numbers in the fewest digits that read
+# back as the same number (Python's repr), and "nan", "inf" and "-inf" for the
+# values that are not finite. `float = TRUE` writes a whole number as Python
+# writes a float, with ".0"; `digits` gives a fixed number of decimal places
+# instead, as Python's `{value:.3f}` does.
+format_number <- function(x, digits = NULL, float = FALSE) {
   x <- as.double(x)
   if (is.nan(x)) {
     return("nan")
@@ -111,9 +115,37 @@ format_number <- function(x, digits = NULL) {
     return(sprintf("%.*f", as.integer(digits), x))
   }
   if (x == trunc(x) && abs(x) < 1e16) {
-    return(sprintf("%.0f", x))
+    text <- sprintf("%.0f", x)
+    return(if (float) paste0(text, ".0") else text)
   }
-  format(x, digits = 15L)
+  for (precision in 15:17) {
+    text <- formatC(x, digits = precision, format = "g")
+    if (as.double(text) == x) {
+      break
+    }
+  }
+  trimws(text)
+}
+
+# A string quoted as Python's repr() quotes it: in single quotes, or in double
+# quotes when it contains a single quote and no double quote. Unlike
+# encodeString(), the result does not depend on the session's locale.
+python_quote <- function(x) {
+  quote <- if (grepl("'", x, fixed = TRUE) && !grepl("\"", x, fixed = TRUE)) "\"" else "'"
+  x <- gsub("\\", "\\\\", x, fixed = TRUE)
+  if (quote == "'") {
+    x <- gsub("'", "\\'", x, fixed = TRUE)
+  }
+  for (pair in list(c("\n", "\\n"), c("\r", "\\r"), c("\t", "\\t"))) {
+    x <- gsub(pair[[1L]], pair[[2L]], x, fixed = TRUE)
+  }
+  paste0(quote, x, quote)
+}
+
+# A message, or the default when it is NULL or empty: `message or default`, as
+# the Python classes that fall back on an empty message write it.
+message_or <- function(message, default) {
+  if (is.null(message) || !nzchar(message)) default else message
 }
 
 quote_name <- function(x) {
@@ -126,6 +158,19 @@ format_list <- function(x) {
 
 format_keys <- function(x) {
   paste0("[", paste(quote_name(x), collapse = ", "), "]")
+}
+
+# An rlang backtrace as plain text, or NULL when it cannot be formatted. Colour
+# is switched off: cli would otherwise add terminal escape codes in a session
+# that supports colour, and they have no place in JSON.
+format_backtrace <- function(trace) {
+  old <- options(cli.num_colors = 1L)
+  on.exit(options(old), add = TRUE)
+  text <- tryCatch(paste(format(trace), collapse = "\n"), error = function(e) NULL)
+  if (is.null(text) || !nzchar(text)) {
+    return(NULL)
+  }
+  text
 }
 
 # The message of a condition, with the trailing newline that message()

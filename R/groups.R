@@ -241,7 +241,9 @@ wrap_errors <- function(expr, constructor, ..., on = "error", failure = NULL) {
       if (!inherits(cnd, on) || inherits(cnd, "interrupt")) {
         return(invisible())
       }
-      wrapped <- do.call(constructor, c(arguments, list(parent = cnd)))
+      # quote = TRUE: an argument such as `call = sys.call()` is a call object,
+      # to be stored, not evaluated again.
+      wrapped <- do.call(constructor, c(arguments, list(parent = cnd)), quote = TRUE)
       if (!inherits(wrapped, "condition")) {
         stop("`constructor` must return a condition.", call. = FALSE)
       }

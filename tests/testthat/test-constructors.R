@@ -282,6 +282,30 @@ test_that("numbers in messages are written as Python writes them", {
   expect_match(conditionMessage(cross_validation_error(5L)), "on 5 folds$")
 })
 
+test_that("a URL in a value is redacted before the value is shortened", {
+  remote <- paste0(
+    "https://svc:ghp_Zq8vN3pLx7Rt2Wk9Hm4Ys6Jd1Fc5Gb0TaQw3Er7Ty@git.example.com/",
+    strrep("very-long-path/", 5L), "repo.git"
+  )
+  for (cnd in list(hyperparameter_error("remote", remote), validation_error("remote", remote))) {
+    expect_no_match(conditionMessage(cnd), "ghp_|svc")
+    expect_no_match(condition_to_json(cnd), "ghp_|svc")
+  }
+})
+
+test_that("an empty message falls back to the default where Python's does", {
+  expect_identical(
+    conditionMessage(api_error("https://h/v1", message = "")),
+    "API call failed: https://h/v1"
+  )
+  expect_identical(conditionMessage(transaction_error(message = "")), "Database transaction failed")
+  expect_identical(
+    conditionMessage(validation_error("age", -1, message = "")),
+    "Validation failed for field 'age': -1"
+  )
+  expect_identical(conditionMessage(missing_data_error("x", message = "")), "")
+})
+
 test_that("a value in a message is quoted as a name is", {
   expect_identical(
     conditionMessage(validation_error("country", "Atlantis")),

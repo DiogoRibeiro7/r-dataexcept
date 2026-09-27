@@ -50,7 +50,7 @@ not oversights.
 
 ## 5. Testing
 
-- [x] testthat 3e suite: about 1,340 expectations across 14 files
+- [x] testthat 3e suite: about 1,400 expectations across 14 files
 - [x] Coverage 100%, measured by covr in CI with a 95% floor
 - [x] Tests assert behaviour: messages, fields, class chains and envelope
       contents, not only classes

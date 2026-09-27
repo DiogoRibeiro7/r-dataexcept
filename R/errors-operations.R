@@ -55,7 +55,7 @@ external_service_error <- function(service_name, status_code = NULL, response = 
   check_count(status_code, "status_code", allow_null = TRUE)
   check_string(message, "message", allow_null = TRUE)
   service_condition("ExternalServiceError",
-    message %||% sprintf("Call to external service %s failed.", quote_name(service_name)),
+    message_or(message, sprintf("Call to external service %s failed.", quote_name(service_name))),
     service_name = service_name, status_code = status_code, response = response,
     parent = parent, call = call
   )
@@ -85,7 +85,7 @@ service_authentication_error <- function(service_name, message = NULL, parent = 
   check_string(service_name, "service_name")
   check_string(message, "message", allow_null = TRUE)
   service_condition("ServiceAuthenticationError",
-    message %||% sprintf("Authentication failed for service %s.", quote_name(service_name)),
+    message_or(message, sprintf("Authentication failed for service %s.", quote_name(service_name))),
     service_name = service_name,
     parent = parent, call = call
   )
@@ -97,7 +97,7 @@ service_authorization_error <- function(service_name, message = NULL, parent = N
   check_string(service_name, "service_name")
   check_string(message, "message", allow_null = TRUE)
   service_condition("ServiceAuthorizationError",
-    message %||% sprintf("Authorization denied for service %s.", quote_name(service_name)),
+    message_or(message, sprintf("Authorization denied for service %s.", quote_name(service_name))),
     service_name = service_name,
     parent = parent, call = call
   )
@@ -125,10 +125,10 @@ retry_limit_exceeded_error <- function(operation, retries, message = NULL,
   check_count(retries, "retries")
   check_string(message, "message", allow_null = TRUE)
   make_condition("RetryLimitExceededError",
-    message %||% sprintf(
+    message_or(message, sprintf(
       "Retry limit exceeded for operation %s after %s attempts.",
       quote_name(operation), format_number(retries)
-    ),
+    )),
     fields = list(operation = operation, retries = retries),
     parent = parent, call = call
   )
@@ -141,7 +141,9 @@ storage_error <- function(location, operation, message = NULL, parent = NULL, ca
   check_string(operation, "operation")
   check_string(message, "message", allow_null = TRUE)
   make_condition("StorageError",
-    message %||% sprintf("Storage %s failed at location: %s.", operation, quote_name(location)),
+    message_or(message, sprintf(
+      "Storage %s failed at location: %s.", operation, quote_name(location)
+    )),
     fields = list(location = location, operation = operation),
     parent = parent, call = call
   )
@@ -198,7 +200,7 @@ authentication_error <- function(user, message = NULL, parent = NULL, call = NUL
   check_string(user, "user")
   check_string(message, "message", allow_null = TRUE)
   make_condition("AuthenticationError",
-    message %||% sprintf("Authentication failed for user %s", quote_name(user)),
+    message_or(message, sprintf("Authentication failed for user %s", quote_name(user))),
     fields = list(user = user),
     parent = parent, call = call
   )
@@ -222,7 +224,7 @@ configuration_error <- function(option, message = NULL, parent = NULL, call = NU
   check_string(option, "option")
   check_string(message, "message", allow_null = TRUE)
   make_condition("ConfigurationError",
-    message %||% sprintf("Invalid configuration for %s", quote_name(option)),
+    message_or(message, sprintf("Invalid configuration for %s", quote_name(option))),
     fields = list(option = option),
     parent = parent, call = call
   )
@@ -300,7 +302,7 @@ etl_job_error <- function(job_name, message = NULL, parent = NULL, call = NULL) 
   check_string(job_name, "job_name")
   check_string(message, "message", allow_null = TRUE)
   make_condition("ETLJobError",
-    message %||% sprintf("ETL job %s failed", quote_name(job_name)),
+    message_or(message, sprintf("ETL job %s failed", quote_name(job_name))),
     fields = list(job_name = job_name),
     parent = parent, call = call
   )

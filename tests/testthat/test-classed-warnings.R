@@ -226,6 +226,21 @@ test_that("a translated template may reorder and escape its placeholders", {
   expect_null(match_template("fit: 12 done in 0.250 s", format, fields, prefix = FALSE))
 })
 
+test_that("padded, long and out-of-range values are read", {
+  expect_identical(
+    match_template("value  5.25 of  7", "value %5.2f of %3d", c("value", "count"), FALSE),
+    list(value = 5.25, count = 7L)
+  )
+  expect_identical(
+    match_template("used 12 bytes", "used %lld bytes", "bytes", FALSE),
+    list(bytes = 12L)
+  )
+  expect_no_warning(
+    values <- match_template("used 99999999999 bytes", "used %d bytes", "bytes", FALSE)
+  )
+  expect_identical(values, list(bytes = 99999999999))
+})
+
 test_that("classed warnings with values are written with them as attributes", {
   w <- classify_warning(simpleWarning("possible convergence problem: optim gave code = 52"))
   envelope <- condition_to_envelope(w)

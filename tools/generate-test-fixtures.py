@@ -194,6 +194,7 @@ CONSTRUCTOR_CASES = [
         "DataDriftError",
         {"feature": "age", "drift_score": 0.2, "message": "age drifted"},
     ),
+    ("data drift, empty message", "DataDriftError", {"feature": "age", "drift_score": 0.2, "message": ""}),
     ("data leakage", "DataLeakageError", {"feature": "target_mean", "stage": "cross-validation"}),
     ("data imbalance", "DataImbalanceError", {"ratio": 0.0526, "threshold": 0.2}),
     ("outlier detection", "OutlierDetectionError", {"method": "iqr"}),
@@ -212,6 +213,17 @@ CONSTRUCTOR_CASES = [
     ),
     ("hyperparameter, number", "HyperparameterError", {"param": "max_depth", "value": -1}),
     ("hyperparameter, string", "HyperparameterError", {"param": "booster", "value": "gbdt"}),
+    ("hyperparameter, float", "HyperparameterError", {"param": "lr", "value": 0.1 + 0.2}),
+    ("hyperparameter, apostrophe", "HyperparameterError", {"param": "name", "value": "it's"}),
+    ("hyperparameter, non-ASCII", "HyperparameterError", {"param": "name", "value": "caf\u00e9"}),
+    (
+        "hyperparameter, credentials in the value",
+        "HyperparameterError",
+        {
+            "param": "remote",
+            "value": "https://svc:ghp_Zq8vN3pLx7Rt2Wk9Hm4Ys6Jd1Fc5Gb0TaQw3Er7Ty@git.example.com/org/repo.git",
+        },
+    ),
     ("training timeout", "TrainingTimeoutError", {"model_type": "xgboost", "timeout": 3600}),
     ("training timeout, fraction", "TrainingTimeoutError", {"model_type": "glm", "timeout": 90.5}),
     (
@@ -220,10 +232,17 @@ CONSTRUCTOR_CASES = [
         {"path": "models/churn.rds", "original": {"exception": "disk full"}},
     ),
     ("overfitting", "OverfittingError", {"train_metric": 0.99, "val_metric": 0.71}),
+    ("overfitting, whole number", "OverfittingError", {"train_metric": 1, "val_metric": 0.7}),
+    ("overfitting, computed", "OverfittingError", {"train_metric": 20 / 21, "val_metric": 5 / 7}),
     ("underfitting", "UnderfittingError", {"train_metric": 0.52, "threshold": 0.7}),
     ("resource limit, string", "ResourceLimitError", {"resource": "memory", "limit": "16GB"}),
     ("resource limit, number", "ResourceLimitError", {"resource": "cpu", "limit": 8}),
     ("external service", "ExternalServiceError", {"service_name": "rates-api", "status_code": 503}),
+    (
+        "external service, empty message",
+        "ExternalServiceError",
+        {"service_name": "rates-api", "message": ""},
+    ),
     (
         "external service, response",
         "ExternalServiceError",
@@ -255,6 +274,7 @@ CONSTRUCTOR_CASES = [
     ("authentication", "AuthenticationError", {"user": "analyst"}),
     ("authorization", "AuthorizationError", {"user": "analyst", "permission": "write:reports"}),
     ("configuration", "ConfigurationError", {"option": "timeout"}),
+    ("configuration, empty message", "ConfigurationError", {"option": "timeout", "message": ""}),
     (
         "configuration, own message",
         "ConfigurationError",

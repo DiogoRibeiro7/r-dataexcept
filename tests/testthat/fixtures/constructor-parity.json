@@ -121,6 +121,29 @@
     }
   },
   {
+    "name": "data drift, empty message",
+    "type": "DataDriftError",
+    "arguments": {
+      "feature": "age",
+      "drift_score": 0.2,
+      "message": ""
+    },
+    "expected": {
+      "type": "DataDriftError",
+      "message": "",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "feature": "age",
+        "drift_score": 0.2
+      },
+      "cause": null
+    }
+  },
+  {
     "name": "data leakage",
     "type": "DataLeakageError",
     "arguments": {
@@ -339,6 +362,94 @@
     }
   },
   {
+    "name": "hyperparameter, float",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "lr",
+      "value": 0.30000000000000004
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'lr': 0.30000000000000004",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "lr",
+        "value": 0.30000000000000004
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, apostrophe",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "name",
+      "value": "it's"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'name': \"it's\"",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "name",
+        "value": "it's"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, non-ASCII",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "name",
+      "value": "café"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'name': 'café'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "name",
+        "value": "café"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, credentials in the value",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "remote",
+      "value": "https://svc:ghp_Zq8vN3pLx7Rt2Wk9Hm4Ys6Jd1Fc5Gb0TaQw3Er7Ty@git.example.com/org/repo.git"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'remote': 'https://***:***@git.example.com/org/repo.git'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "remote",
+        "value": "https://***:***@git.example.com/***"
+      },
+      "cause": null
+    }
+  },
+  {
     "name": "training timeout",
     "type": "TrainingTimeoutError",
     "arguments": {
@@ -430,6 +541,50 @@
     }
   },
   {
+    "name": "overfitting, whole number",
+    "type": "OverfittingError",
+    "arguments": {
+      "train_metric": 1,
+      "val_metric": 0.7
+    },
+    "expected": {
+      "type": "OverfittingError",
+      "message": "Overfitting detected: train=1.0, val=0.7",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 1.0,
+        "val_metric": 0.7
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "overfitting, computed",
+    "type": "OverfittingError",
+    "arguments": {
+      "train_metric": 0.9523809523809523,
+      "val_metric": 0.7142857142857143
+    },
+    "expected": {
+      "type": "OverfittingError",
+      "message": "Overfitting detected: train=0.9523809523809523, val=0.7142857142857143",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 0.9523809523809523,
+        "val_metric": 0.7142857142857143
+      },
+      "cause": null
+    }
+  },
+  {
     "name": "underfitting",
     "type": "UnderfittingError",
     "arguments": {
@@ -513,6 +668,29 @@
       "attributes": {
         "service_name": "rates-api",
         "status_code": 503,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "external service, empty message",
+    "type": "ExternalServiceError",
+    "arguments": {
+      "service_name": "rates-api",
+      "message": ""
+    },
+    "expected": {
+      "type": "ExternalServiceError",
+      "message": "Call to external service 'rates-api' failed.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": null,
         "response": null
       },
       "cause": null
@@ -748,6 +926,27 @@
     "type": "ConfigurationError",
     "arguments": {
       "option": "timeout"
+    },
+    "expected": {
+      "type": "ConfigurationError",
+      "message": "Invalid configuration for 'timeout'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "option": "timeout"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "configuration, empty message",
+    "type": "ConfigurationError",
+    "arguments": {
+      "option": "timeout",
+      "message": ""
     },
     "expected": {
       "type": "ConfigurationError",

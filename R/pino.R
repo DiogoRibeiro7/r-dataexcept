@@ -149,11 +149,7 @@ rlang_stack <- function(cnd) {
   if (!inherits(cnd$trace, "rlang_trace") || !requireNamespace("rlang", quietly = TRUE)) {
     return(NULL)
   }
-  text <- tryCatch(paste(format(cnd$trace), collapse = "\n"), error = function(e) NULL)
-  if (is.null(text) || !nzchar(text)) {
-    return(NULL)
-  }
-  text
+  format_backtrace(cnd$trace)
 }
 
 is_flag <- function(x) {
