@@ -1,6 +1,6 @@
 Package: dataexcept
 Title: Structured, Classed Failures that Cross Language Boundaries
-Version: 0.1.0.9000
+Version: 0.2.0
 Authors@R: person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt",
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0009-0001-2022-7072"))
@@ -19,7 +19,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Depends: R (>= 4.1)
 Imports:
     jsonlite,

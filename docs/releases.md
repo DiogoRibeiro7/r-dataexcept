@@ -4,7 +4,7 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
-## Development version
+## 0.2.0
 
 ### Observability
 
