@@ -117,6 +117,13 @@ test_that("an rlang backtrace is the stack, and a call is not", {
   expect_null(condition_to_pino(base, include_stack = TRUE)$stack)
 })
 
+test_that("a backtrace that cannot be formatted is left out", {
+  skip_if_not_installed("rlang")
+  cnd <- simpleError("x")
+  cnd$trace <- structure(list(), class = "rlang_trace")
+  expect_null(condition_to_pino(cnd, include_stack = TRUE)$stack)
+})
+
 test_that("a backtrace is redacted like every other exported string", {
   skip_if_not_installed("rlang")
   fetch <- function(url) rlang::abort("fetch failed")

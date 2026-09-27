@@ -56,13 +56,9 @@ check_seconds <- function(x, arg, allow_null = FALSE) {
 # A single real number. NaN and the infinities are allowed -- a metric that
 # could not be computed is NaN, and that is often the failure being reported --
 # but NA, which says nothing, is not.
-check_number <- function(x, arg, allow_null = FALSE) {
-  if (allow_null && is.null(x)) {
-    return(invisible(x))
-  }
+check_number <- function(x, arg) {
   if (!is.numeric(x) || length(x) != 1L || (is.na(x) && !is.nan(x))) {
-    what <- if (allow_null) "a single number or NULL" else "a single number"
-    stop(sprintf("`%s` must be %s.", arg, what), call. = FALSE)
+    stop(sprintf("`%s` must be a single number.", arg), call. = FALSE)
   }
   invisible(x)
 }

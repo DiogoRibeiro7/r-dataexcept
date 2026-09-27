@@ -70,8 +70,9 @@ the build.
 
 ## Fixtures from the Python package
 
-The schema and the reference envelopes in `inst/schema/`, and the redaction
-parity and validation cases in `tests/testthat/fixtures/`, come from the
+The envelope and Pino schemas and the reference envelopes and their Pino
+projections in `inst/schema/`, and the redaction, validation, observability
+and constructor parity cases in `tests/testthat/fixtures/`, come from the
 Python package. To refresh them from a local checkout:
 
 ```bash
@@ -87,10 +88,10 @@ Python side has changed.
 
 | Workflow | Runs |
 | --- | --- |
-| `R-CMD-check.yml` | `R CMD check` on macOS, Windows and Ubuntu, R devel to 4.1. |
+| `R-CMD-check.yml` | `R CMD check` on macOS, Windows and Ubuntu, R devel to 4.1. The R 4.1 job installs the hard dependencies and the test tools only: current lme4 needs a newer Matrix than R 4.1 ships with. |
 | `test-coverage.yml` | Measures coverage with covr, writes a per-file table to the run summary, and fails below 95%. |
 | `lint.yml` | lintr, styler and the spelling check; any finding fails the job. |
-| `envelope-contract.yml` | Writes envelopes from R and validates them with Python's `jsonschema`; weekly, checks for drift from the Python package. |
+| `envelope-contract.yml` | Writes envelopes and their Pino projections from R and validates them with Python's `jsonschema`; weekly, checks for drift from the Python package. |
 | `docs.yml` | Regenerates the reference, builds the site with `--strict`, and deploys it to GitHub Pages from `main`. |
 | `release.yml` | On a `v*.*.*` tag: checks the tag against `DESCRIPTION` and `CITATION.cff`, runs `R CMD check --as-cran`, and publishes a GitHub release with the tarball and the version's `NEWS.md` section. |
 
@@ -98,17 +99,23 @@ Python side has changed.
 
 1. Add the type to the registry in `R/classes.R`. If it exists in Python, use
    the Python type name and default failure metadata.
-2. Add a constructor in `R/errors.R` that validates its arguments and calls
-   `make_condition()`.
+2. Add a constructor in the `R/errors*.R` file for its family that validates
+   its arguments and calls `make_condition()`.
 3. Add it to the reference groups in `tools/build-docs.R` if it gets a new help
    topic.
-4. Add tests, then regenerate the documentation.
+4. Add tests, then regenerate the documentation. For a type Python has, add
+   cases to `CONSTRUCTOR_CASES` in `tools/generate-test-fixtures.py` and
+   regenerate the fixtures, so the parity test compares R with the Python
+   class.
 
 ## Adding a warning rule
 
 1. Find the exact message template: it is the `msgid` in R's catalogue for the
-   domain the warning comes from (`R`, `R-base`, `R-stats`, `stats` ...).
+   domain the warning comes from (`R`, `R-base`, `R-stats`, `stats` ...), or
+   the format string a package passes to `gettextf()`, `sprintf()` or
+   `ngettext()`.
 2. Add a rule to `warning_rules()` in `R/classed-warnings.R`, with a type
-   registered in `R/classes.R`.
+   registered in `R/classes.R`. Name the value of each placeholder in
+   `fields`, and give both forms of a plural message.
 3. Add a test that triggers the real warning. A rule without one is not
    accepted: the template must be proven against what R actually signals.

@@ -64,21 +64,31 @@ R CMD check --as-cran dataexcept_*.tar.gz
 1. Add the type to the registry in `R/classes.R`. If the type exists in the
    Python package, use the Python type name and its default failure metadata:
    leaf types must mean the same thing in both languages.
-2. Add a constructor in `R/errors.R` that validates its arguments and calls
-   `make_condition()`. Wrap fields that are lists by meaning in `I()`, so a
-   single element is still written as an array.
+2. Add a constructor in the `R/errors*.R` file for its family that validates
+   its arguments and calls `make_condition()`. Wrap fields that are lists by
+   meaning in `I()`, so a single element is still written as an array. Where
+   the Python class takes an exception, take `parent`, and append its message
+   where Python appends it.
 3. Give it a help topic, and add the topic to the reference groups in
    `tools/build-docs.R` and to `nav` in `mkdocs.yml`.
-4. Test the message, the fields, the class chain and the envelope.
+4. Test the message, the fields, the class chain and the envelope. For a type
+   the Python package has, add cases to `CONSTRUCTOR_CASES` in
+   `tools/generate-test-fixtures.py` and regenerate the fixtures: the parity
+   test then requires R to agree with the Python class.
 
 ## Adding a warning rule
 
 1. Find the exact message template: the `msgid` in R's message catalogue for
-   the domain the warning comes from (`R`, `R-base`, `R-stats`, `stats`, ...).
+   the domain the warning comes from (`R`, `R-base`, `R-stats`, `stats`,
+   `R-<package>` for a package), or the format string the package passes to
+   `gettextf()`, `sprintf()` or `ngettext()`. Check the wording in every R or
+   package version the rule should cover.
 2. Add a rule to `warning_rules()` in `R/classed-warnings.R`, with a type
-   registered in `R/classes.R`.
+   registered in `R/classes.R`. A template with placeholders names the value
+   of each in `fields`; a plural message gives both forms.
 3. Add a test that triggers the real warning. A rule without one is not
    accepted: the template must be proven against what R actually signals.
+   When a later version stops warning, the test skips rather than fails.
 
 ## The envelope contract
 
