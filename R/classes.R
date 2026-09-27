@@ -54,6 +54,10 @@ class_registry <- function() {
     PipelineError = class_entry("dataexcept_pipeline_error", "DataExceptError"),
     ApiError = class_entry("dataexcept_api_error", "PipelineError"),
 
+    # R-only: several failures reported as one, written as the envelope's
+    # exception group.
+    ConditionGroup = class_entry("dataexcept_condition_group", "DataExceptError", python = FALSE),
+
     # R-only: a payload that is not a valid envelope. Permanent -- reading the
     # same bytes again cannot succeed.
     EnvelopeError = class_entry(

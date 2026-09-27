@@ -19,6 +19,7 @@ groups <- list(
     "modelling_errors", "file_errors", "service_errors", "dataexcept_classes"
   ),
   "Failure metadata" = c("failure_metadata", "condition_failure"),
+  "Groups and wrapping" = c("condition_group", "wrap_errors"),
   "Envelopes" = c(
     "condition_to_envelope", "envelope_to_condition", "validate_envelope",
     "envelope_schema"

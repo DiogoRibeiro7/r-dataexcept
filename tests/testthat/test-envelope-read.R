@@ -1,8 +1,3 @@
-fixture <- function(name) {
-  path <- system.file("schema", "fixtures", name, package = "dataexcept", mustWork = TRUE)
-  paste(readLines(path, encoding = "UTF-8", warn = FALSE), collapse = "\n")
-}
-
 test_that("a Python envelope becomes an R condition with the matching classes", {
   cnd <- envelope_to_condition(fixture("ordinary-exception.json"))
   expect_s3_class(cnd, c(

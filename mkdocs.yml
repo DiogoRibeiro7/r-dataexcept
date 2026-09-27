@@ -79,6 +79,7 @@ nav:
   - User guide:
       - Classed errors: guide/errors.md
       - Failure metadata: guide/failure-metadata.md
+      - Groups and wrapping: guide/groups.md
       - Envelopes: guide/envelopes.md
       - Working with Python: guide/python.md
       - Observability: guide/observability.md
@@ -97,6 +98,9 @@ nav:
       - Failure metadata:
           - failure_metadata(): reference/failure_metadata.md
           - condition_failure(): reference/condition_failure.md
+      - Groups and wrapping:
+          - condition_group(): reference/condition_group.md
+          - wrap_errors(): reference/wrap_errors.md
       - Envelopes:
           - condition_to_json(): reference/condition_to_envelope.md
           - envelope_to_condition(): reference/envelope_to_condition.md

@@ -359,6 +359,12 @@ node_to_condition <- function(node) {
   )
   parent <- if (is.null(node$cause)) NULL else node_to_condition(node$cause)
 
+  # Any node with members is a group, whichever language wrote it: a Python
+  # ExceptionGroup is caught by a handler for R's condition groups.
+  if (!is.null(node$exceptions)) {
+    classes <- c("dataexcept_condition_group", classes)
+  }
+
   structure(
     c(
       list(message = node$message, call = NULL),

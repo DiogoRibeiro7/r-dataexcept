@@ -4,6 +4,25 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
+## Development version
+
+### Groups and wrapping
+
+- `condition_group()` reports several failures as one error, written to the
+  envelope as an exception group -- the `exceptions` array Python's
+  `ExceptionGroup` also produces. Its message counts and lists the members,
+  and its failure metadata is theirs when they agree. `group_members()`
+  returns the members.
+- `collect_errors()` evaluates each of its arguments, catching the errors they
+  signal, so that a validation step can report every problem instead of the
+  first.
+- `wrap_errors()` re-signals an error from an expression as a dataexcept
+  error, with the original as its cause: the R counterpart of the Python
+  package's `wrap()`. It can wrap warnings too, and set failure metadata.
+- An envelope record with an `exceptions` array, a Python `ExceptionGroup`
+  included, is read back with the class `dataexcept_condition_group`. An empty
+  `exceptions` array is now kept when the condition is written back.
+
 ## 0.2.0
 
 ### Observability

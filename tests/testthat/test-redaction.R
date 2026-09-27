@@ -23,6 +23,8 @@ test_that("non-URLs are returned unchanged", {
   expect_null(redact_url(NULL))
   expect_identical(redact_url(NA_character_), NA_character_)
   expect_identical(redact_urls_in_text("plain text"), "plain text")
+  expect_identical(redact_urls_in_text(NA_character_), NA_character_)
+  expect_null(redact_urls_in_text(NULL))
 })
 
 test_that("parameter names are matched by token, not by substring", {

@@ -36,7 +36,8 @@ envelope type. Handlers can catch a single failure or a whole family.
 
 `convergence_error()` also inherits from `dataexcept_model_training_error`, so a
 handler for training failures catches non-convergence too. `dataexcept_error`
-catches everything.
+catches everything, including `dataexcept_condition_group`, which holds several
+failures at once (see [Groups and wrapping](groups.md)).
 
 ```r
 fit_or_fail <- function(formula, data, maxit = 25) {

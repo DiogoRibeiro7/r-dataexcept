@@ -91,11 +91,17 @@ format_keys <- function(x) {
 # The message of a condition, with the trailing newline that message()
 # conditions carry removed. An rlang condition's conditionMessage() appends
 # the messages of its whole parent chain; the envelope renders the chain as
-# `cause` records, so only the condition's own message is taken.
+# `cause` records, so only the condition's own message is taken. Likewise a
+# dataexcept condition's stored message is taken rather than a method's
+# rendering of it: a group's conditionMessage() lists its members, which the
+# envelope records as members.
 condition_text <- function(cnd) {
   text <- NULL
+  if (is.list(cnd$.dataexcept) && is_string(cnd$message)) {
+    text <- cnd$message
+  }
   from_rlang <- inherits(cnd, c("rlang_error", "rlang_warning", "rlang_message"))
-  if (from_rlang && requireNamespace("rlang", quietly = TRUE)) {
+  if (is.null(text) && from_rlang && requireNamespace("rlang", quietly = TRUE)) {
     text <- tryCatch(rlang::cnd_message(cnd, inherit = FALSE), error = function(e) NULL)
   }
   if (is.null(text)) {

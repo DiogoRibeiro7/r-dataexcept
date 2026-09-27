@@ -24,6 +24,13 @@ same text is available with `?function_name`.
 | [Describe whether a failure can be recovered from](failure_metadata.md) | `failure_metadata()`, `with_failure_metadata()` |
 | [Read the failure metadata of a condition](condition_failure.md) | `condition_failure()`, `is_retryable()` |
 
+## Groups and wrapping
+
+| Topic | Functions |
+| --- | --- |
+| [Report several failures as one](condition_group.md) | `condition_group()`, `group_members()`, `collect_errors()` |
+| [Turn errors from an expression into a dataexcept error](wrap_errors.md) | `wrap_errors()` |
+
 ## Envelopes
 
 | Topic | Functions |

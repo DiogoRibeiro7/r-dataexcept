@@ -31,7 +31,8 @@ test_that("every registered error type has a working constructor", {
     query_execution_error("SELECT 1", parent = root),
     host_unreachable_error("api.example.com"),
     connection_timeout_error("api.example.com", 30),
-    api_error("https://api.example.com/v1", status_code = 503L)
+    api_error("https://api.example.com/v1", status_code = 503L),
+    condition_group(list(root))
   )
   types <- vapply(conditions, function(x) x$.dataexcept$type, character(1))
   registered <- dataexcept_classes()
