@@ -1,0 +1,71 @@
+# Prepare a release: Actions > prepare-release > Run workflow, with the
+# version to release.
+#
+# On a new branch release-<version>, it runs
+# `Rscript tools/release.R prepare <version>`, which sets DESCRIPTION,
+# CITATION.cff, the NEWS.md heading and the pinned install lines, commits the
+# result, starts the checks and opens the release pull request. Merging that
+# pull request is the release: the release workflow then tags the merge commit
+# and publishes it.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, such as 0.4.0
+        required: true
+        type: string
+
+name: prepare-release
+
+permissions:
+  contents: read
+
+env:
+  # Commits made by the release workflows are the maintainer's.
+  COMMIT_NAME: Diogo Ribeiro
+  COMMIT_EMAIL: diogo_dj@hotmail.com
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Set every version field
+        run: Rscript tools/release.R prepare "$VERSION"
+
+      - name: Write the pull request description
+        run: |
+          {
+            echo "Prepares the $VERSION release with \`Rscript tools/release.R prepare $VERSION\`."
+            echo
+            echo "Merging this pull request is the release: the release workflow checks the"
+            echo "package, tags the merge commit v$VERSION and publishes it."
+            echo
+            echo "## What $VERSION contains"
+            awk -v heading="# dataexcept $VERSION" '
+              $0 == heading { found = 1; next }
+              found && /^# / { exit }
+              found { print }
+            ' NEWS.md
+          } > pr-body.md
+
+      - name: Open the release pull request
+        run: |
+          bash tools/open-release-pr.sh "release-$VERSION" \
+            "chore(release): prepare $VERSION" \
+            "Release $VERSION" \
+            pr-body.md

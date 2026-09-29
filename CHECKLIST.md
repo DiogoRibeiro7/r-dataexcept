@@ -109,12 +109,13 @@ not oversights.
 
 ## 10. Release & Distribution
 
-- [x] Release workflow: merging a release version into `main` checks it
-      against `CITATION.cff` and `NEWS.md`, runs `R CMD check --as-cran`, tags
-      the commit and publishes a GitHub release with the tarball and the
-      version's `NEWS.md` section
+- [x] Release workflows: `prepare-release` opens the release pull request;
+      merging it checks the version against `CITATION.cff` and `NEWS.md`, runs
+      `R CMD check --as-cran`, tags the commit, publishes a GitHub release with
+      the tarball and the version's `NEWS.md` section, and opens the pull
+      request for the next development cycle
 - [x] Citation metadata: `CITATION.cff` (validated) and `inst/CITATION`
-- [x] Tagged releases: [v0.1.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.1.0) and [v0.2.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.2.0), published by the release workflow
+- [x] Tagged releases: [v0.1.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.1.0), [v0.2.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.2.0) and [v0.3.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.3.0), published by the release workflow
 - [ ] Zenodo DOI
 - [ ] CRAN submission
 - [ ] R-universe listing

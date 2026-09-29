@@ -4,12 +4,13 @@
 #   Rscript tools/release.R check v0.3.0    # the release workflow's check, run locally
 #   Rscript tools/release.R dev             # begin development after a release
 #
+# The workflows run it: prepare-release runs `prepare` and opens the release
+# pull request, and release runs `check` before publishing and `dev` after.
+#
 # `prepare` sets DESCRIPTION, CITATION.cff (version and release date), the
 # NEWS.md heading and the pinned install lines in the README and the getting
-# started page, then regenerates the help pages and the site's reference.
-# Merging that change into main is the release: .github/workflows/release.yml
-# tags the commit and publishes it. `check` is the test the workflow applies
-# first; it exits non-zero if DESCRIPTION, CITATION.cff and NEWS.md disagree.
+# started page, then regenerates the site's releases page. `check` exits
+# non-zero if DESCRIPTION, CITATION.cff and NEWS.md disagree.
 
 dev_heading <- "# dataexcept (development version)"
 pinned_files <- c("README.md", "docs/getting-started.md")
@@ -85,8 +86,8 @@ prepare <- function(version) {
   regenerate()
   check(paste0("v", version))
   message(
-    "\nNext: commit, open a pull request and merge it. The release workflow then tags ",
-    "the merge commit and publishes v", version, "."
+    "\nMerging this change into main is the release: the release workflow tags the ",
+    "merge commit and publishes v", version, "."
   )
 }
 
@@ -125,11 +126,9 @@ dev <- function() {
   message("DESCRIPTION is now ", version, ".9000 and NEWS.md has a development heading.")
 }
 
+# The site's releases page is generated from NEWS.md. The help pages do not
+# change with the version, so roxygen2 is not needed here.
 regenerate <- function() {
-  if (!requireNamespace("roxygen2", quietly = TRUE)) {
-    fail("roxygen2 is needed to regenerate the help pages: install.packages(\"roxygen2\")")
-  }
-  roxygen2::roxygenise()
   status <- system2(file.path(R.home("bin"), "Rscript"), "tools/build-docs.R")
   if (!identical(status, 0L)) fail("tools/build-docs.R failed")
 }
