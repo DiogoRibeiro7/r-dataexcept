@@ -1,6 +1,6 @@
 Package: dataexcept
 Title: Structured, Classed Failures that Cross Language Boundaries
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt",
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0009-0001-2022-7072"))

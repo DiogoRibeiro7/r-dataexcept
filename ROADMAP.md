@@ -37,7 +37,7 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 - [x] A documentation site (MkDocs Material, deployed to GitHub Pages) with
   the reference generated from the help pages.
 - [x] Contributing, security and conduct policies; lint, style, spelling and
-  coverage checks; a tag-driven release workflow.
+  coverage checks; a release workflow that publishes on merge.
 - [ ] A Zenodo DOI for the first tagged release.
 - [ ] Adopt it in heteroTests or attest first. Both carry their own error
   helpers, and replacing those is the test of whether the vocabulary fits.

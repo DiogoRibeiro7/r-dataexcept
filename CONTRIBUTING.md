@@ -129,8 +129,10 @@ chore(deps): bump actions/checkout from 4 to 5
 
 ## Releasing
 
-Maintainers only. Releases are driven by tags, and `tools/release.R` does the
-editing, so the steps are the same in bash, zsh and PowerShell.
+Maintainers only. Merging a release version into `main` is the release: the
+`release` workflow tags the merge commit and publishes it, so no tag is
+pushed by hand. `tools/release.R` does the editing, so the steps are the same
+in bash, zsh and PowerShell.
 
 1. On a branch from an up-to-date `main`, set every version field for the
    release:
@@ -144,24 +146,15 @@ editing, so the steps are the same in bash, zsh and PowerShell.
    and the site's reference, and checks the result. It refuses to release an
    empty development section.
 2. Commit, open a pull request, and merge it once CI is green.
-3. Tag the merge commit and push the tag:
 
-   ```bash
-   git checkout main
-   git pull
-   Rscript tools/release.R check v0.3.0
-   git tag v0.3.0
-   git push origin v0.3.0
-   ```
-
-   `check` is the test the `release` workflow applies to the tag. If it fails
-   locally, the workflow would have failed too.
-
-Pushing the tag runs the `release` workflow. It checks the tag, runs
-`R CMD check --as-cran`, and creates a GitHub release with the source tarball
-attached and that version's `NEWS.md` section as its notes.
-
-4. On a new branch, begin the next development cycle, and merge it through a
+   On `main`, the `release` workflow sees a version with no release yet. It
+   checks that `DESCRIPTION`, `CITATION.cff` and `NEWS.md` agree
+   (`Rscript tools/release.R check v0.3.0` runs the same check locally), runs
+   `R CMD check --as-cran`, tags the merge commit `v0.3.0`, and creates a
+   GitHub release with the source tarball attached and that version's
+   `NEWS.md` section as its notes. If it fails, fix the cause on `main` and
+   run the workflow again from the Actions tab.
+3. On a new branch, begin the next development cycle, and merge it through a
    pull request:
 
    ```bash
@@ -170,9 +163,6 @@ attached and that version's `NEWS.md` section as its notes.
 
    This sets `DESCRIPTION` to `x.y.z.9000` and adds the development heading to
    `NEWS.md`.
-
-If a tag was pushed too early, delete it before tagging again:
-`git tag -d v0.3.0` and `git push --delete origin v0.3.0`.
 
 ## Reporting bugs and asking questions
 
