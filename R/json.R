@@ -151,13 +151,22 @@ json_number <- function(x) {
   if (x == trunc(x) && abs(x) < 1e15) {
     return(formatC(x, format = "f", digits = 0L))
   }
+  shortest_number(x)
+}
+
+# The shortest decimal text that reads back as `x`: what Python's repr() and
+# JavaScript write for a double. The text is read back with the C library's
+# strtod(), through jsonlite, and not with as.double(): R's own number parser
+# is not correctly rounded where long double is no wider than double, as on
+# Apple silicon, and there it rejects texts that are exact.
+shortest_number <- function(x) {
   for (digits in 15:17) {
-    text <- formatC(x, digits = digits, format = "g")
-    if (as.double(text) == x) {
+    text <- trimws(formatC(x, digits = digits, format = "g"))
+    if (isTRUE(jsonlite::parse_json(text) == x)) {
       break
     }
   }
-  sub("^\\s+", "", text)
+  text
 }
 
 write_json <- function(x, pretty = FALSE, indent = 0L) {

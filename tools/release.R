@@ -105,6 +105,14 @@ check <- function(tag) {
     problems <- c(problems, sprintf("NEWS.md has no '# dataexcept %s' section", version))
   }
   if (length(problems) > 0L) {
+    if (grepl("\\.9000$", found$description)) {
+      problems <- c(problems, paste0(
+        "DESCRIPTION is still a development version, so the tag was probably pushed before ",
+        "the release pull request was merged. Delete the tag (git push origin :refs/tags/v",
+        version, " and git tag -d v", version, "), merge the release pull request, ",
+        "then tag its merge commit."
+      ))
+    }
     fail("tag v", version, " does not match the package:\n  ", paste(problems, collapse = "\n  "))
   }
   message("v", version, ": DESCRIPTION, CITATION.cff and NEWS.md agree.")

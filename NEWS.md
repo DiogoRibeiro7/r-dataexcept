@@ -1,4 +1,4 @@
-# dataexcept (development version)
+# dataexcept 0.3.0
 
 ## Groups and wrapping
 
@@ -86,6 +86,13 @@ package writes for the same arguments.
 - `pino_schema()` returns the profile's JSON Schema, which ships with the
   package together with the Python package's projection of every reference
   envelope. The tests require R to reproduce each one exactly.
+
+## Fixes
+
+- On macOS on Apple silicon, numbers in envelopes were sometimes written with
+  a seventeenth digit they did not need (`0.95238095238095233` for 20/21).
+  They are now written in the shortest form that reads back exactly, as on
+  other platforms and as the Python package writes them.
 
 # dataexcept 0.2.0
 
