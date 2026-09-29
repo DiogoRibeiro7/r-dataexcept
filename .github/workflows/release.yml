@@ -10,6 +10,9 @@
 # A development version (x.y.z.9000), or a version already released, is
 # skipped, so every other change to main passes through. No tag is pushed by
 # hand; a tag left by an attempt that never published a release is replaced.
+#
+# After publishing, it opens the pull request that begins the next
+# development cycle (`Rscript tools/release.R dev`).
 on:
   push:
     branches: [main]
@@ -24,6 +27,11 @@ permissions:
 concurrency:
   group: release
   cancel-in-progress: false
+
+env:
+  # Commits made by the release workflows are the maintainer's.
+  COMMIT_NAME: Diogo Ribeiro
+  COMMIT_EMAIL: diogo_dj@hotmail.com
 
 jobs:
   decide:
@@ -112,3 +120,37 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "dataexcept $VERSION" \
             --notes-file release-notes.md
+
+  begin-development:
+    needs: [decide, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VERSION: ${{ needs.decide.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Set the development version
+        run: Rscript tools/release.R dev
+
+      - name: Open the pull request
+        run: |
+          {
+            echo "v$VERSION is released. This sets DESCRIPTION to $VERSION.9000 and adds"
+            echo "the development heading to NEWS.md, so changes can be recorded for the"
+            echo "next release."
+          } > pr-body.md
+          bash tools/open-release-pr.sh "post-release-$VERSION" \
+            "chore: begin development after $VERSION" \
+            "Begin development after $VERSION" \
+            pr-body.md

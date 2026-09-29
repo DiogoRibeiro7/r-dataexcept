@@ -129,40 +129,32 @@ chore(deps): bump actions/checkout from 4 to 5
 
 ## Releasing
 
-Maintainers only. Merging a release version into `main` is the release: the
-`release` workflow tags the merge commit and publishes it, so no tag is
-pushed by hand. `tools/release.R` does the editing, so the steps are the same
-in bash, zsh and PowerShell.
+Maintainers only. Releases are made by the workflows; nothing is tagged or
+edited by hand.
 
-1. On a branch from an up-to-date `main`, set every version field for the
-   release:
+1. In **Actions > prepare-release > Run workflow**, enter the version, such as
+   `0.4.0`. The workflow runs `Rscript tools/release.R prepare 0.4.0` on a new
+   branch `release-0.4.0`, which sets `DESCRIPTION`, `CITATION.cff` (version
+   and release date), the `NEWS.md` heading and the pinned install lines. It
+   refuses to release an empty development section. It then starts the checks
+   on the branch and opens the release pull request.
+2. When the checks are green, merge the pull request. That is the release:
+   the `release` workflow checks that `DESCRIPTION`, `CITATION.cff` and
+   `NEWS.md` agree, runs `R CMD check --as-cran`, tags the merge commit
+   `v0.4.0`, and publishes a GitHub release with the source tarball and that
+   version's `NEWS.md` section. If it fails, fix the cause on `main` and run
+   the workflow again from the Actions tab.
+3. The `release` workflow then opens a pull request that begins the next
+   development cycle (`DESCRIPTION` at `0.4.0.9000`, a development heading in
+   `NEWS.md`). Merge it.
 
-   ```bash
-   Rscript tools/release.R prepare 0.3.0
-   ```
+The workflows open pull requests only if **Settings > Actions > General >
+Allow GitHub Actions to create and approve pull requests** is on. If it is
+off, they still push the branch, and the run's summary links to the page
+that opens the pull request.
 
-   This sets `DESCRIPTION`, `CITATION.cff` (version and release date), the
-   `NEWS.md` heading and the pinned install lines, regenerates the help pages
-   and the site's reference, and checks the result. It refuses to release an
-   empty development section.
-2. Commit, open a pull request, and merge it once CI is green.
-
-   On `main`, the `release` workflow sees a version with no release yet. It
-   checks that `DESCRIPTION`, `CITATION.cff` and `NEWS.md` agree
-   (`Rscript tools/release.R check v0.3.0` runs the same check locally), runs
-   `R CMD check --as-cran`, tags the merge commit `v0.3.0`, and creates a
-   GitHub release with the source tarball attached and that version's
-   `NEWS.md` section as its notes. If it fails, fix the cause on `main` and
-   run the workflow again from the Actions tab.
-3. On a new branch, begin the next development cycle, and merge it through a
-   pull request:
-
-   ```bash
-   Rscript tools/release.R dev
-   ```
-
-   This sets `DESCRIPTION` to `x.y.z.9000` and adds the development heading to
-   `NEWS.md`.
+`tools/release.R` also runs locally (`prepare`, `check` and `dev`), in bash,
+zsh and PowerShell alike.
 
 ## Reporting bugs and asking questions
 
