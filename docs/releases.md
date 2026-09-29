@@ -4,7 +4,7 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
-## Development version
+## 0.3.0
 
 ### Groups and wrapping
 
