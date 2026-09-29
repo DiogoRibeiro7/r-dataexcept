@@ -1,28 +1,67 @@
-# Cut a GitHub release when a version tag is pushed.
+# Publish a GitHub release when a release version reaches main.
 #
-#   git tag v0.2.0 && git push origin v0.2.0
+# Merging the pull request made with `Rscript tools/release.R prepare x.y.z`
+# is the whole release. When DESCRIPTION on main holds a version of three
+# parts that has no GitHub release yet, this workflow checks that
+# CITATION.cff and NEWS.md agree with it, runs R CMD check --as-cran on the
+# built tarball, then tags the commit and publishes the release, with the
+# tarball attached and the version's NEWS.md section as its notes.
 #
-# The workflow refuses to continue unless the tag matches the version in
-# DESCRIPTION and CITATION.cff and NEWS.md has a section for it -- the same
-# check `Rscript tools/release.R check <tag>` runs locally. It then runs
-# R CMD check --as-cran on the built tarball and publishes a release with the
-# tarball attached and that NEWS.md section as the release notes.
+# A development version (x.y.z.9000), or a version already released, is
+# skipped, so every other change to main passes through. No tag is pushed by
+# hand; a tag left by an attempt that never published a release is replaced.
 on:
   push:
-    tags: ['v*.*.*']
+    branches: [main]
+    paths: [DESCRIPTION]
+  workflow_dispatch:
 
 name: release
 
 permissions:
   contents: read
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
+  decide:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Is this a new release version?
+        id: version
+        run: |
+          version="$(sed -n 's/^Version: *//p' DESCRIPTION)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "$version is a development version: nothing to release."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          elif gh release view "v$version" > /dev/null 2>&1; then
+            echo "v$version is already released."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Releasing v$version."
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+
   release:
+    needs: decide
+    if: needs.decide.outputs.release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VERSION: ${{ needs.decide.outputs.version }}
     steps:
       - uses: actions/checkout@v5
 
@@ -30,8 +69,8 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Check the tag matches the package version
-        run: Rscript tools/release.R check "$GITHUB_REF_NAME"
+      - name: Check CITATION.cff and NEWS.md agree with DESCRIPTION
+        run: Rscript tools/release.R check "v$VERSION"
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -55,19 +94,21 @@ jobs:
 
       - name: Extract the release notes
         run: |
-          tag="${GITHUB_REF_NAME#v}"
-          awk -v heading="# dataexcept $tag" '
+          awk -v heading="# dataexcept $VERSION" '
             $0 == heading { found = 1; next }
             found && /^# / { exit }
             found { print }
           ' NEWS.md > release-notes.md
           cat release-notes.md
 
-      - name: Publish the release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag the commit and publish the release
         run: |
-          gh release create "$GITHUB_REF_NAME" dataexcept_*.tar.gz \
-            --title "dataexcept ${GITHUB_REF_NAME#v}" \
-            --notes-file release-notes.md \
-            --verify-tag
+          tag="v$VERSION"
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" > /dev/null 2>&1; then
+            echo "Replacing $tag, left by an attempt that published no release."
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag"
+          fi
+          gh release create "$tag" dataexcept_*.tar.gz \
+            --target "$GITHUB_SHA" \
+            --title "dataexcept $VERSION" \
+            --notes-file release-notes.md

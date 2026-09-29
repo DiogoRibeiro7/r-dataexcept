@@ -109,9 +109,10 @@ not oversights.
 
 ## 10. Release & Distribution
 
-- [x] Tag-driven release workflow: version checks against `DESCRIPTION` and
-      `CITATION.cff`, `R CMD check --as-cran`, GitHub release with the tarball
-      and the version's `NEWS.md` section
+- [x] Release workflow: merging a release version into `main` checks it
+      against `CITATION.cff` and `NEWS.md`, runs `R CMD check --as-cran`, tags
+      the commit and publishes a GitHub release with the tarball and the
+      version's `NEWS.md` section
 - [x] Citation metadata: `CITATION.cff` (validated) and `inst/CITATION`
 - [x] Tagged releases: [v0.1.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.1.0) and [v0.2.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.2.0), published by the release workflow
 - [ ] Zenodo DOI

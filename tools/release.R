@@ -7,8 +7,9 @@
 # `prepare` sets DESCRIPTION, CITATION.cff (version and release date), the
 # NEWS.md heading and the pinned install lines in the README and the getting
 # started page, then regenerates the help pages and the site's reference.
-# `check` is the test .github/workflows/release.yml applies to a tag; it exits
-# non-zero if the tag, DESCRIPTION, CITATION.cff and NEWS.md disagree.
+# Merging that change into main is the release: .github/workflows/release.yml
+# tags the commit and publishes it. `check` is the test the workflow applies
+# first; it exits non-zero if DESCRIPTION, CITATION.cff and NEWS.md disagree.
 
 dev_heading <- "# dataexcept (development version)"
 pinned_files <- c("README.md", "docs/getting-started.md")
@@ -83,12 +84,10 @@ prepare <- function(version) {
 
   regenerate()
   check(paste0("v", version))
-  message("\nNext: commit, open a pull request, merge it, then tag the merge commit:")
-  message("  git checkout main")
-  message("  git pull")
-  message("  Rscript tools/release.R check v", version)
-  message("  git tag v", version)
-  message("  git push origin v", version)
+  message(
+    "\nNext: commit, open a pull request and merge it. The release workflow then tags ",
+    "the merge commit and publishes v", version, "."
+  )
 }
 
 check <- function(tag) {
@@ -105,14 +104,6 @@ check <- function(tag) {
     problems <- c(problems, sprintf("NEWS.md has no '# dataexcept %s' section", version))
   }
   if (length(problems) > 0L) {
-    if (grepl("\\.9000$", found$description)) {
-      problems <- c(problems, paste0(
-        "DESCRIPTION is still a development version, so the tag was probably pushed before ",
-        "the release pull request was merged. Delete the tag (git push origin :refs/tags/v",
-        version, " and git tag -d v", version, "), merge the release pull request, ",
-        "then tag its merge commit."
-      ))
-    }
     fail("tag v", version, " does not match the package:\n  ", paste(problems, collapse = "\n  "))
   }
   message("v", version, ": DESCRIPTION, CITATION.cff and NEWS.md agree.")

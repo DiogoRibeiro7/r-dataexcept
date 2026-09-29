@@ -93,7 +93,7 @@ Python side has changed.
 | `lint.yml` | lintr, styler and the spelling check; any finding fails the job. |
 | `envelope-contract.yml` | Writes envelopes and their Pino projections from R and validates them with Python's `jsonschema`; weekly, checks for drift from the Python package. |
 | `docs.yml` | Regenerates the reference, builds the site with `--strict`, and deploys it to GitHub Pages from `main`. |
-| `release.yml` | On a `v*.*.*` tag: checks the tag against `DESCRIPTION` and `CITATION.cff`, runs `R CMD check --as-cran`, and publishes a GitHub release with the tarball and the version's `NEWS.md` section. |
+| `release.yml` | When a release version (`x.y.z`, not yet released) reaches `main`: checks `DESCRIPTION`, `CITATION.cff` and `NEWS.md` agree, runs `R CMD check --as-cran`, tags the commit, and publishes a GitHub release with the tarball and the version's `NEWS.md` section. |
 
 ## Adding a condition type
 
