@@ -31,7 +31,7 @@ classed_warning_rules()
 `with_classed_warnings()` returns the value of `expr`.
 `classify_warning()` returns the classed warning, or `NULL` when no rule
 matches. `classed_warning_rules()` returns a data frame with one row per
-recognised message template.
+recognised message template, and in `fields` the values it carries.
 
 ## Details
 
@@ -46,10 +46,18 @@ withCallingHandlers(
 Recognition does not depend on the session language. A warning is compared
 with its template translated through R's own message catalogue, the one R
 used to write the warning, so the same code works in an English, German or
-Portuguese session.
+Portuguese session. Templates with values are format strings, matched with
+their placeholders as slots, and plural messages are matched in every form
+of the language.
+
+Besides base R and stats, the rules cover the convergence warnings of
+survival's Cox and parametric models and of lme4's mixed models.
 
 Each classed warning keeps the original message and call, stores the
-original warning in `parent`, and records the matching rule in `rule`.
+original warning in `parent`, and records the matching rule in `rule`. A
+warning that carries values -- the iterations `kmeans()` ran, the code
+`optim()` returned in `arima()`, the gradient lme4 measured -- has them as
+fields too, named in the `fields` column of `classed_warning_rules()`.
 Warnings no rule matches pass through untouched, as does everything else
 `expr` signals. Written to an envelope, a classed warning has a `type` such
 as `"SeparationWarning"` and the original `simpleWarning` as its `cause`.

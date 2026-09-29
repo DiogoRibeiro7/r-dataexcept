@@ -64,21 +64,31 @@ R CMD check --as-cran dataexcept_*.tar.gz
 1. Add the type to the registry in `R/classes.R`. If the type exists in the
    Python package, use the Python type name and its default failure metadata:
    leaf types must mean the same thing in both languages.
-2. Add a constructor in `R/errors.R` that validates its arguments and calls
-   `make_condition()`. Wrap fields that are lists by meaning in `I()`, so a
-   single element is still written as an array.
+2. Add a constructor in the `R/errors*.R` file for its family that validates
+   its arguments and calls `make_condition()`. Wrap fields that are lists by
+   meaning in `I()`, so a single element is still written as an array. Where
+   the Python class takes an exception, take `parent`, and append its message
+   where Python appends it.
 3. Give it a help topic, and add the topic to the reference groups in
    `tools/build-docs.R` and to `nav` in `mkdocs.yml`.
-4. Test the message, the fields, the class chain and the envelope.
+4. Test the message, the fields, the class chain and the envelope. For a type
+   the Python package has, add cases to `CONSTRUCTOR_CASES` in
+   `tools/generate-test-fixtures.py` and regenerate the fixtures: the parity
+   test then requires R to agree with the Python class.
 
 ## Adding a warning rule
 
 1. Find the exact message template: the `msgid` in R's message catalogue for
-   the domain the warning comes from (`R`, `R-base`, `R-stats`, `stats`, ...).
+   the domain the warning comes from (`R`, `R-base`, `R-stats`, `stats`,
+   `R-<package>` for a package), or the format string the package passes to
+   `gettextf()`, `sprintf()` or `ngettext()`. Check the wording in every R or
+   package version the rule should cover.
 2. Add a rule to `warning_rules()` in `R/classed-warnings.R`, with a type
-   registered in `R/classes.R`.
+   registered in `R/classes.R`. A template with placeholders names the value
+   of each in `fields`; a plural message gives both forms.
 3. Add a test that triggers the real warning. A rule without one is not
    accepted: the template must be proven against what R actually signals.
+   When a later version stops warning, the test skips rather than fails.
 
 ## The envelope contract
 
@@ -119,27 +129,50 @@ chore(deps): bump actions/checkout from 4 to 5
 
 ## Releasing
 
-Maintainers only. Releases are driven by tags.
+Maintainers only. Releases are driven by tags, and `tools/release.R` does the
+editing, so the steps are the same in bash, zsh and PowerShell.
 
-1. Set the release version in `DESCRIPTION` and `CITATION.cff`, and rename the
-   `# dataexcept (development version)` heading in `NEWS.md` to
-   `# dataexcept x.y.z`.
-2. Regenerate the documentation (`roxygen2::roxygenise()`,
-   `Rscript tools/build-docs.R`), commit, and merge once CI is green.
-3. Tag the merge commit on `main` and push the tag:
+1. On a branch from an up-to-date `main`, set every version field for the
+   release:
 
    ```bash
-   git tag v0.2.0
-   git push origin v0.2.0
+   Rscript tools/release.R prepare 0.3.0
    ```
 
-Pushing the tag runs the `release` workflow. It refuses to continue if the tag
-does not match the version in `DESCRIPTION` and `CITATION.cff`, runs
+   This sets `DESCRIPTION`, `CITATION.cff` (version and release date), the
+   `NEWS.md` heading and the pinned install lines, regenerates the help pages
+   and the site's reference, and checks the result. It refuses to release an
+   empty development section.
+2. Commit, open a pull request, and merge it once CI is green.
+3. Tag the merge commit and push the tag:
+
+   ```bash
+   git checkout main
+   git pull
+   Rscript tools/release.R check v0.3.0
+   git tag v0.3.0
+   git push origin v0.3.0
+   ```
+
+   `check` is the test the `release` workflow applies to the tag. If it fails
+   locally, the workflow would have failed too.
+
+Pushing the tag runs the `release` workflow. It checks the tag, runs
 `R CMD check --as-cran`, and creates a GitHub release with the source tarball
 attached and that version's `NEWS.md` section as its notes.
 
-4. Bump `DESCRIPTION` to the next development version (`x.y.z.9000`) and add a
-   new `# dataexcept (development version)` heading to `NEWS.md`.
+4. On a new branch, begin the next development cycle, and merge it through a
+   pull request:
+
+   ```bash
+   Rscript tools/release.R dev
+   ```
+
+   This sets `DESCRIPTION` to `x.y.z.9000` and adds the development heading to
+   `NEWS.md`.
+
+If a tag was pushed too early, delete it before tagging again:
+`git tag -d v0.3.0` and `git push --delete origin v0.3.0`.
 
 ## Reporting bugs and asking questions
 

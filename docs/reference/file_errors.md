@@ -51,8 +51,13 @@ tryCatch(
 ## See also
 
 Other dataexcept errors:
+[`data_engineering_errors`](data_engineering_errors.md),
 [`data_frame_errors`](data_frame_errors.md),
+[`data_quality_errors`](data_quality_errors.md),
+[`job_errors`](job_errors.md),
+[`model_quality_errors`](model_quality_errors.md),
 [`modelling_errors`](modelling_errors.md),
+[`pipeline_errors`](pipeline_errors.md),
 [`service_errors`](service_errors.md),
 [`validation_error()`](validation_error.md)
 

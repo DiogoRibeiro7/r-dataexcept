@@ -13,8 +13,13 @@ same text is available with `?function_name`.
 | [Validation failures](validation_error.md) | `validation_error()` |
 | [Data frame failures](data_frame_errors.md) | `missing_column_error()`, `dtype_mismatch_error()`, `merge_key_error()` |
 | [Data and modelling failures](modelling_errors.md) | `data_loading_error()`, `missing_data_error()`, `model_training_error()`, `convergence_error()`, `prediction_error()` |
+| [Data quality failures](data_quality_errors.md) | `data_format_error()`, `schema_mismatch_error()`, `data_drift_error()`, `data_leakage_error()`, `data_imbalance_error()`, `outlier_detection_error()` |
+| [Model evaluation and training failures](model_quality_errors.md) | `model_evaluation_error()`, `cross_validation_error()`, `hyperparameter_error()`, `training_timeout_error()`, `model_serialization_error()`, `overfitting_error()`, `underfitting_error()`, `resource_limit_error()` |
 | [File failures](file_errors.md) | `file_read_error()`, `file_write_error()` |
-| [Database, network and service failures](service_errors.md) | `database_connection_error()`, `query_execution_error()`, `host_unreachable_error()`, `connection_timeout_error()`, `api_error()` |
+| [Database, network and service failures](service_errors.md) | `database_connection_error()`, `query_execution_error()`, `transaction_error()`, `host_unreachable_error()`, `connection_timeout_error()`, `api_error()` |
+| [Pipeline and external service failures](pipeline_errors.md) | `external_service_error()`, `service_timeout_error()`, `service_authentication_error()`, `service_authorization_error()`, `retry_limit_exceeded_error()`, `storage_error()` |
+| [Job failures](job_errors.md) | `authentication_error()`, `authorization_error()`, `configuration_error()`, `resource_not_found_error()`, `operation_timeout_error()` |
+| [Data engineering failures](data_engineering_errors.md) | `data_transformation_error()`, `etl_job_error()`, `batch_processing_error()` |
 | [The dataexcept condition classes](dataexcept_classes.md) | `dataexcept_classes()` |
 
 ## Failure metadata
@@ -23,6 +28,13 @@ same text is available with `?function_name`.
 | --- | --- |
 | [Describe whether a failure can be recovered from](failure_metadata.md) | `failure_metadata()`, `with_failure_metadata()` |
 | [Read the failure metadata of a condition](condition_failure.md) | `condition_failure()`, `is_retryable()` |
+
+## Groups and wrapping
+
+| Topic | Functions |
+| --- | --- |
+| [Report several failures as one](condition_group.md) | `condition_group()`, `group_members()`, `collect_errors()` |
+| [Turn errors from an expression into a dataexcept error](wrap_errors.md) | `wrap_errors()` |
 
 ## Envelopes
 
@@ -42,6 +54,8 @@ same text is available with `?function_name`.
 | [OpenTelemetry attributes for a condition](condition_to_otel_attributes.md) | `condition_to_otel_attributes()` |
 | [Record a condition on an OpenTelemetry span](record_otel_exception.md) | `record_otel_exception()` |
 | [Correlate an operation context with the active OpenTelemetry span](operation_context_from_otel.md) | `operation_context_from_otel()` |
+| [Write a condition in the shape Pino logs errors](condition_to_pino.md) | `condition_to_pino()`, `condition_to_pino_json()`, `envelope_to_pino()` |
+| [The Pino profile JSON Schema](pino_schema.md) | `pino_schema()` |
 
 ## Classed warnings
 

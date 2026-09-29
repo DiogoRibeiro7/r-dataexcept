@@ -16,16 +16,20 @@ out_dir <- file.path("docs", "reference")
 groups <- list(
   "Classed errors" = c(
     "new_dataexcept_error", "validation_error", "data_frame_errors",
-    "modelling_errors", "file_errors", "service_errors", "dataexcept_classes"
+    "modelling_errors", "data_quality_errors", "model_quality_errors",
+    "file_errors", "service_errors", "pipeline_errors", "job_errors",
+    "data_engineering_errors", "dataexcept_classes"
   ),
   "Failure metadata" = c("failure_metadata", "condition_failure"),
+  "Groups and wrapping" = c("condition_group", "wrap_errors"),
   "Envelopes" = c(
     "condition_to_envelope", "envelope_to_condition", "validate_envelope",
     "envelope_schema"
   ),
   "Observability" = c(
     "operation_context", "condition_to_event", "condition_to_otel_attributes",
-    "record_otel_exception", "operation_context_from_otel"
+    "record_otel_exception", "operation_context_from_otel", "condition_to_pino",
+    "pino_schema"
   ),
   "Classed warnings" = "with_classed_warnings",
   "Redaction" = "redact_url",

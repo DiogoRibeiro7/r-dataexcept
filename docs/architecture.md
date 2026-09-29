@@ -26,9 +26,11 @@ flowchart LR
     E --> LOG
 ```
 
-Failure events add an operation context to the envelope, and OpenTelemetry
-attributes project the same envelope onto a span; see
-[Observability](guide/observability.md). Neither changes the envelope.
+Failure events add an operation context to the envelope, OpenTelemetry
+attributes project the same envelope onto a span, and the Pino profile
+projects it onto the error a Node.js logger expects; see
+[Observability](guide/observability.md) and [Logging for Pino](guide/pino.md).
+None of them changes the envelope.
 
 ## A condition, inside
 
@@ -67,7 +69,8 @@ is explicit; jsonlite is used only for parsing.
 
 `envelope_to_condition()` validates the payload, then rebuilds each node. A
 node from a DataExcept module gets the R classes of its type, or the root
-`dataexcept_error` when R has no class for it. The node's attributes are kept
+`dataexcept_error` when R has no class for it, and a node with an
+`exceptions` array, whatever its type, gets `dataexcept_condition_group`. The node's attributes are kept
 verbatim alongside the fields made from them, so writing the condition back
 reproduces the original record, including the cycle and truncation markers,
 exception groups and implicit context that R conditions have no equivalent
@@ -75,14 +78,16 @@ for.
 
 ## Keeping in step with Python
 
-The Python package owns the contract. Four checks keep the R side on it:
+The Python package owns the contract. Six checks keep the R side on it:
 
 | Check | Where |
 | --- | --- |
 | Every reference fixture the Python package generates from its own serializer reads into R and writes back unchanged. | `tests/testthat/test-envelope-write.R` |
 | Redaction gives the Python implementation's exact output on a set of awkward URLs. | `tests/testthat/test-redaction.R` |
 | `validate_envelope()` agrees with a JSON Schema validator on valid and invalid payloads. | `tests/testthat/test-validation.R` |
-| Every envelope R writes validates against the schema under Python's `jsonschema`; weekly, the fixtures are regenerated from DataExcept's `main` branch and the job fails if anything moved. | `.github/workflows/envelope-contract.yml` |
+| Every condition type R shares with Python, built with the same arguments, has the Python class's type, message, failure metadata and attributes. | `tests/testthat/test-constructor-parity.R` |
+| Every reference envelope projects to the Python package's Pino record exactly. | `tests/testthat/test-pino.R` |
+| Every envelope R writes, and its Pino projection, validates against its schema under Python's `jsonschema`; weekly, the fixtures are regenerated from DataExcept's `main` branch and the job fails if anything moved. | `.github/workflows/envelope-contract.yml` |
 
 The fixtures and parity cases are regenerated with
 `tools/generate-test-fixtures.py`; see [Development](development.md).

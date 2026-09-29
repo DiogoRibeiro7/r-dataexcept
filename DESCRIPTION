@@ -1,6 +1,6 @@
 Package: dataexcept
 Title: Structured, Classed Failures that Cross Language Boundaries
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt",
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0009-0001-2022-7072"))
@@ -26,10 +26,12 @@ Imports:
     stats,
     utils
 Suggests:
+    lme4,
     otel (>= 0.2.0),
     otelsdk,
     rlang,
     spelling,
+    survival,
     testthat (>= 3.1.7)
 Config/testthat/edition: 3
 URL: https://github.com/DiogoRibeiro7/r-dataexcept,

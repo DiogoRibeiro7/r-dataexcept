@@ -169,7 +169,7 @@ envelope_record <- function(cnd, include_attributes, max_depth, depth) {
   }
 
   members <- state$exceptions
-  is_group <- is.list(members) && length(members) > 0L &&
+  is_group <- is.list(members) &&
     all(vapply(members, inherits, logical(1), "condition"))
   if (is_group) {
     record$exceptions <- unname(lapply(members, child))

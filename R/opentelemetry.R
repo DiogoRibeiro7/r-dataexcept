@@ -93,10 +93,7 @@ otel_exception_type <- function(cnd) {
 }
 
 otel_stacktrace <- function(cnd) {
-  text <- NULL
-  if (inherits(cnd$trace, "rlang_trace") && requireNamespace("rlang", quietly = TRUE)) {
-    text <- tryCatch(paste(format(cnd$trace), collapse = "\n"), error = function(e) NULL)
-  }
+  text <- rlang_stack(cnd)
   if (is.null(text)) {
     call <- tryCatch(conditionCall(cnd), error = function(e) NULL)
     if (!is.null(call)) {

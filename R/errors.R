@@ -26,8 +26,10 @@
 validation_error <- function(field, value, message = NULL, parent = NULL, call = NULL) {
   check_string(field, "field")
   check_string(message, "message", allow_null = TRUE)
-  message <- message %||%
+  message <- message_or(
+    message,
     sprintf("Validation failed for field %s: %s", quote_name(field), format_value(value))
+  )
   make_condition("ValidationError", message,
     fields = list(field = field, value = value),
     parent = parent, call = call
@@ -292,6 +294,7 @@ file_error <- function(type, prefix, path, parent, call) {
 #'
 #' @param db_url The database connection URL.
 #' @param query The SQL that failed.
+#' @param transaction_id Optional identifier of the transaction.
 #' @param host The host that could not be reached.
 #' @param timeout The timeout that elapsed, in seconds.
 #' @param endpoint The API endpoint URL.
@@ -299,6 +302,8 @@ file_error <- function(type, prefix, path, parent, call) {
 #' @inheritParams validation_error
 #' @return A condition inheriting from `dataexcept_database_error`,
 #'   `dataexcept_network_error` or `dataexcept_pipeline_error`.
+#' @seealso [pipeline_errors] for the other failures of calls to external
+#'   services.
 #' @family dataexcept errors
 #' @name service_errors
 #' @examples
@@ -317,7 +322,7 @@ database_connection_error <- function(db_url, message = NULL, parent = NULL, cal
   check_string(message, "message", allow_null = TRUE)
   db_url <- redact_url(db_url)
   make_condition("DatabaseConnectionError",
-    message %||% sprintf("Failed to connect to database at %s", quote_name(db_url)),
+    message_or(message, sprintf("Failed to connect to database at %s", quote_name(db_url))),
     fields = list(db_url = db_url),
     parent = parent, call = call
   )
@@ -340,11 +345,28 @@ query_execution_error <- function(query, parent = NULL, call = NULL) {
 
 #' @rdname service_errors
 #' @export
+transaction_error <- function(transaction_id = NULL, message = NULL, parent = NULL, call = NULL) {
+  check_string(transaction_id, "transaction_id", allow_null = TRUE)
+  check_string(message, "message", allow_null = TRUE)
+  if (is.null(message) || !nzchar(message)) {
+    message <- "Database transaction failed"
+    if (!is.null(transaction_id) && nzchar(transaction_id)) {
+      message <- sprintf("%s (id=%s)", message, transaction_id)
+    }
+  }
+  make_condition("TransactionError", message,
+    fields = list(transaction_id = transaction_id),
+    parent = parent, call = call
+  )
+}
+
+#' @rdname service_errors
+#' @export
 host_unreachable_error <- function(host, message = NULL, parent = NULL, call = NULL) {
   check_string(host, "host")
   check_string(message, "message", allow_null = TRUE)
   make_condition("HostUnreachableError",
-    message %||% sprintf("Host %s is unreachable", quote_name(host)),
+    message_or(message, sprintf("Host %s is unreachable", quote_name(host))),
     fields = list(host = host),
     parent = parent, call = call
   )
@@ -373,7 +395,7 @@ api_error <- function(endpoint, status_code = NULL, message = NULL,
   check_count(status_code, "status_code", allow_null = TRUE)
   check_string(message, "message", allow_null = TRUE)
   endpoint <- redact_url(endpoint)
-  if (is.null(message)) {
+  if (is.null(message) || !nzchar(message)) {
     message <- sprintf("API call failed: %s", endpoint)
     if (!is.null(status_code)) {
       message <- sprintf("%s (status %s)", message, format(status_code))

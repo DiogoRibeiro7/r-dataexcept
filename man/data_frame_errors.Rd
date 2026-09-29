@@ -58,8 +58,13 @@ tryCatch(
 }
 \seealso{
 Other dataexcept errors: 
+\code{\link{data_engineering_errors}},
+\code{\link{data_quality_errors}},
 \code{\link{file_errors}},
+\code{\link{job_errors}},
+\code{\link{model_quality_errors}},
 \code{\link{modelling_errors}},
+\code{\link{pipeline_errors}},
 \code{\link{service_errors}},
 \code{\link{validation_error}()}
 }

@@ -1,0 +1,16 @@
+{
+  "type": "ServiceTimeoutError",
+  "module": "dataexcept.pipeline_exceptions",
+  "message": "Operation timed out after 30.0s on service 'payments'.",
+  "attributes": {
+    "timeout_seconds": 30.0,
+    "service_name": "payments",
+    "status_code": null,
+    "response": null
+  },
+  "failure": {
+    "kind": "transient",
+    "retryable": true,
+    "retry_after_seconds": 2.5
+  }
+}

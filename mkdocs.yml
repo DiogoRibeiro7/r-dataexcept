@@ -79,9 +79,11 @@ nav:
   - User guide:
       - Classed errors: guide/errors.md
       - Failure metadata: guide/failure-metadata.md
+      - Groups and wrapping: guide/groups.md
       - Envelopes: guide/envelopes.md
       - Working with Python: guide/python.md
       - Observability: guide/observability.md
+      - Logging for Pino: guide/pino.md
       - Classed warnings: guide/warnings.md
       - Redaction: guide/redaction.md
   - API reference:
@@ -91,12 +93,20 @@ nav:
           - validation_error(): reference/validation_error.md
           - Data frame errors: reference/data_frame_errors.md
           - Data and modelling errors: reference/modelling_errors.md
+          - Data quality errors: reference/data_quality_errors.md
+          - Model quality errors: reference/model_quality_errors.md
           - File errors: reference/file_errors.md
           - Service errors: reference/service_errors.md
+          - Pipeline errors: reference/pipeline_errors.md
+          - Job errors: reference/job_errors.md
+          - Data engineering errors: reference/data_engineering_errors.md
           - dataexcept_classes(): reference/dataexcept_classes.md
       - Failure metadata:
           - failure_metadata(): reference/failure_metadata.md
           - condition_failure(): reference/condition_failure.md
+      - Groups and wrapping:
+          - condition_group(): reference/condition_group.md
+          - wrap_errors(): reference/wrap_errors.md
       - Envelopes:
           - condition_to_json(): reference/condition_to_envelope.md
           - envelope_to_condition(): reference/envelope_to_condition.md
@@ -108,6 +118,8 @@ nav:
           - condition_to_otel_attributes(): reference/condition_to_otel_attributes.md
           - record_otel_exception(): reference/record_otel_exception.md
           - operation_context_from_otel(): reference/operation_context_from_otel.md
+          - condition_to_pino(): reference/condition_to_pino.md
+          - pino_schema(): reference/pino_schema.md
       - Classed warnings:
           - with_classed_warnings(): reference/with_classed_warnings.md
       - Redaction:

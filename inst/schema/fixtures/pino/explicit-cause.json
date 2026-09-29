@@ -1,0 +1,20 @@
+{
+  "type": "DataLoadingError",
+  "module": "dataexcept.datascience_exceptions.ingestion",
+  "message": "[DataLoadingError:orders.csv] Failed to load data from 'orders.csv': disk unavailable",
+  "attributes": {
+    "source": "orders.csv",
+    "original": "disk unavailable",
+    "message": "Failed to load data from 'orders.csv': disk unavailable"
+  },
+  "failure": {
+    "kind": "unknown",
+    "retryable": null,
+    "retry_after_seconds": null
+  },
+  "cause": {
+    "type": "OSError",
+    "module": "builtins",
+    "message": "disk unavailable"
+  }
+}

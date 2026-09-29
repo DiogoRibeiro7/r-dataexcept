@@ -5,7 +5,7 @@ package and `jsonschema` installed:
 
     python tools/generate-test-fixtures.py /path/to/DataExcept
 
-It writes two files under tests/testthat/fixtures/:
+It writes these files under tests/testthat/fixtures/:
 
 * redaction-parity.json -- inputs and the Python package's output for
   redact_url() and redact_urls_in_text(), with and without the path. The R
@@ -17,8 +17,13 @@ It writes two files under tests/testthat/fixtures/:
   the Python package produces for a set of exceptions and operation
   contexts. The R tests read each envelope back and require
   condition_to_event() and condition_to_otel_attributes() to agree.
+* constructor-parity.json -- exceptions built with the Python classes the R
+  package also defines, with the arguments given and the envelope written.
+  The R tests call the matching R constructor with the same arguments and
+  require the same type, message, failure metadata and attributes.
 
-It also copies the schema and the reference envelope fixtures into
+It also copies the envelope and Pino schemas and the reference fixtures --
+each envelope, and the Python package's Pino projection of it -- into
 inst/schema/, so the R package tests against what the Python package emits.
 """
 
@@ -172,6 +177,188 @@ def observability_cases():
     }
 
 
+# (name, class name, keyword arguments). An argument written as
+# {"exception": text} is an exception with that message -- the R side passes a
+# condition as `parent` -- and {"float": "nan"} is a float JSON cannot hold.
+CONSTRUCTOR_CASES = [
+    ("data format", "DataFormatError", {"expected_formats": ["csv", "parquet"], "found_format": "xlsx"}),
+    ("data format, one expected", "DataFormatError", {"expected_formats": ["csv"], "found_format": "json"}),
+    (
+        "schema mismatch",
+        "SchemaMismatchError",
+        {"expected": "id: int, amount: float", "found": "id: int, amount: str"},
+    ),
+    ("data drift", "DataDriftError", {"feature": "income", "drift_score": 0.41726}),
+    (
+        "data drift, own message",
+        "DataDriftError",
+        {"feature": "age", "drift_score": 0.2, "message": "age drifted"},
+    ),
+    ("data drift, empty message", "DataDriftError", {"feature": "age", "drift_score": 0.2, "message": ""}),
+    ("data leakage", "DataLeakageError", {"feature": "target_mean", "stage": "cross-validation"}),
+    ("data imbalance", "DataImbalanceError", {"ratio": 0.0526, "threshold": 0.2}),
+    ("outlier detection", "OutlierDetectionError", {"method": "iqr"}),
+    (
+        "outlier detection, details",
+        "OutlierDetectionError",
+        {"method": "isolation_forest", "details": "contamination must be in (0, 0.5]"},
+    ),
+    ("model evaluation", "ModelEvaluationError", {"metric": "auc", "value": 0.5}),
+    ("model evaluation, nan", "ModelEvaluationError", {"metric": "rmse", "value": {"float": "nan"}}),
+    ("cross-validation", "CrossValidationError", {"folds": 5}),
+    (
+        "cross-validation, detail",
+        "CrossValidationError",
+        {"folds": 10, "cause": "fold 3 had a single class"},
+    ),
+    ("hyperparameter, number", "HyperparameterError", {"param": "max_depth", "value": -1}),
+    ("hyperparameter, string", "HyperparameterError", {"param": "booster", "value": "gbdt"}),
+    ("hyperparameter, float", "HyperparameterError", {"param": "lr", "value": 0.1 + 0.2}),
+    ("hyperparameter, apostrophe", "HyperparameterError", {"param": "name", "value": "it's"}),
+    ("hyperparameter, non-ASCII", "HyperparameterError", {"param": "name", "value": "caf\u00e9"}),
+    (
+        "hyperparameter, credentials in the value",
+        "HyperparameterError",
+        {
+            "param": "remote",
+            "value": "https://svc:ghp_Zq8vN3pLx7Rt2Wk9Hm4Ys6Jd1Fc5Gb0TaQw3Er7Ty@git.example.com/org/repo.git",
+        },
+    ),
+    ("training timeout", "TrainingTimeoutError", {"model_type": "xgboost", "timeout": 3600}),
+    ("training timeout, fraction", "TrainingTimeoutError", {"model_type": "glm", "timeout": 90.5}),
+    (
+        "model serialization",
+        "ModelSerializationError",
+        {"path": "models/churn.rds", "original": {"exception": "disk full"}},
+    ),
+    ("overfitting", "OverfittingError", {"train_metric": 0.99, "val_metric": 0.71}),
+    ("overfitting, whole number", "OverfittingError", {"train_metric": 1, "val_metric": 0.7}),
+    ("overfitting, computed", "OverfittingError", {"train_metric": 20 / 21, "val_metric": 5 / 7}),
+    ("underfitting", "UnderfittingError", {"train_metric": 0.52, "threshold": 0.7}),
+    ("resource limit, string", "ResourceLimitError", {"resource": "memory", "limit": "16GB"}),
+    ("resource limit, number", "ResourceLimitError", {"resource": "cpu", "limit": 8}),
+    ("external service", "ExternalServiceError", {"service_name": "rates-api", "status_code": 503}),
+    (
+        "external service, empty message",
+        "ExternalServiceError",
+        {"service_name": "rates-api", "message": ""},
+    ),
+    (
+        "external service, response",
+        "ExternalServiceError",
+        {
+            "service_name": "rates-api",
+            "status_code": 502,
+            "response": "bad gateway",
+            "message": "rates-api returned 502",
+        },
+    ),
+    ("service timeout", "ServiceTimeoutError", {"service_name": "payments", "timeout_seconds": 30}),
+    (
+        "service timeout, fraction",
+        "ServiceTimeoutError",
+        {"service_name": "payments", "timeout_seconds": 2.5},
+    ),
+    ("service authentication", "ServiceAuthenticationError", {"service_name": "rates-api"}),
+    ("service authorization", "ServiceAuthorizationError", {"service_name": "rates-api"}),
+    ("retry limit", "RetryLimitExceededError", {"operation": "fetch_rates", "retries": 5}),
+    ("storage", "StorageError", {"location": "s3://reports/q3.parquet", "operation": "write"}),
+    (
+        "storage, credentials in the location",
+        "StorageError",
+        {
+            "location": "https://user:pw@storage.example.com/bucket/q3.parquet?sig=abc",
+            "operation": "read",
+        },
+    ),
+    ("authentication", "AuthenticationError", {"user": "analyst"}),
+    ("authorization", "AuthorizationError", {"user": "analyst", "permission": "write:reports"}),
+    ("configuration", "ConfigurationError", {"option": "timeout"}),
+    ("configuration, empty message", "ConfigurationError", {"option": "timeout", "message": ""}),
+    (
+        "configuration, own message",
+        "ConfigurationError",
+        {"option": "retries", "message": "retries must be positive"},
+    ),
+    (
+        "resource not found",
+        "ResourceNotFoundError",
+        {"resource_type": "Dataset", "identifier": "sales-2026-q3"},
+    ),
+    ("operation timeout", "OperationTimeoutError", {"operation": "nightly_refresh", "timeout": 600}),
+    (
+        "operation timeout, cause",
+        "OperationTimeoutError",
+        {"operation": "export", "timeout": 1.5, "cause": {"exception": "socket closed"}},
+    ),
+    ("transaction", "TransactionError", {}),
+    ("transaction, id", "TransactionError", {"transaction_id": "tx-42"}),
+    (
+        "transaction, cause",
+        "TransactionError",
+        {"transaction_id": "tx-43", "cause": {"exception": "deadlock detected"}},
+    ),
+    ("data transformation", "DataTransformationError", {"step": "normalise_amounts"}),
+    (
+        "data transformation, details",
+        "DataTransformationError",
+        {"step": "normalise_amounts", "details": "12 rows had no currency"},
+    ),
+    ("etl job", "ETLJobError", {"job_name": "daily_sales"}),
+    ("batch processing", "BatchProcessingError", {"batch_id": "2026-09-27"}),
+    (
+        "batch processing, cause",
+        "BatchProcessingError",
+        {"batch_id": "b-7", "original": {"exception": "bad row"}},
+    ),
+]
+
+# Attributes the Python classes keep that are not fields in R: the message,
+# which the envelope already carries, and the cause, which it writes as the
+# `cause` record.
+PYTHON_ONLY_ATTRIBUTES = ("message", "original", "original_exception", "cause")
+
+
+def constructor_cases():
+    import dataexcept
+    from dataexcept.serialization import exception_to_dict
+
+    def argument(value):
+        if isinstance(value, dict) and "exception" in value:
+            return RuntimeError(value["exception"])
+        if isinstance(value, dict) and "float" in value:
+            return float(value["float"])
+        return value
+
+    cases = []
+    for name, class_name, kwargs in CONSTRUCTOR_CASES:
+        exc = getattr(dataexcept, class_name)(**{k: argument(v) for k, v in kwargs.items()})
+        envelope = exception_to_dict(exc)
+        attributes = {
+            key: value
+            for key, value in envelope.get("attributes", {}).items()
+            if key not in PYTHON_ONLY_ATTRIBUTES
+        }
+        cases.append(
+            {
+                "name": name,
+                "type": class_name,
+                "arguments": kwargs,
+                "expected": {
+                    "type": envelope["type"],
+                    # The envelope message is str(exc), which the Python
+                    # classes prefix with "[Type:...]"; the message itself is
+                    # the first argument.
+                    "message": exc.args[0],
+                    "failure": envelope["failure"],
+                    "attributes": attributes,
+                    "cause": envelope["cause"]["message"] if "cause" in envelope else None,
+                },
+            }
+        )
+    return cases
+
+
 def main(python_repo: str) -> None:
     python_root = Path(python_repo).resolve()
     sys.path.insert(0, str(python_root))
@@ -179,8 +366,13 @@ def main(python_repo: str) -> None:
 
     schema_dir = python_root / "docs" / "schema"
     shutil.copy(schema_dir / "envelope-1.0.0.json", ROOT / "inst" / "schema")
+    shutil.copy(schema_dir / "pino-1.0.0.json", ROOT / "inst" / "schema")
     for fixture in sorted((schema_dir / "fixtures").glob("*.json")):
         shutil.copy(fixture, ROOT / "inst" / "schema" / "fixtures")
+    pino_fixtures = ROOT / "inst" / "schema" / "fixtures" / "pino"
+    pino_fixtures.mkdir(exist_ok=True)
+    for fixture in sorted((schema_dir / "fixtures" / "pino").glob("*.json")):
+        shutil.copy(fixture, pino_fixtures)
 
     OUT.mkdir(parents=True, exist_ok=True)
     redaction = [
@@ -234,6 +426,11 @@ def main(python_repo: str) -> None:
         )
     (OUT / "observability-parity.json").write_text(
         json.dumps(observability, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+    (OUT / "constructor-parity.json").write_text(
+        json.dumps(constructor_cases(), indent=2, ensure_ascii=False, allow_nan=False) + "\n",
+        encoding="utf-8",
     )
 
 

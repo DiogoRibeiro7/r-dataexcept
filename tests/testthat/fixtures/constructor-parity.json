@@ -1,0 +1,1222 @@
+[
+  {
+    "name": "data format",
+    "type": "DataFormatError",
+    "arguments": {
+      "expected_formats": [
+        "csv",
+        "parquet"
+      ],
+      "found_format": "xlsx"
+    },
+    "expected": {
+      "type": "DataFormatError",
+      "message": "Expected data format csv, parquet; got xlsx",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "expected_formats": [
+          "csv",
+          "parquet"
+        ],
+        "found_format": "xlsx"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data format, one expected",
+    "type": "DataFormatError",
+    "arguments": {
+      "expected_formats": [
+        "csv"
+      ],
+      "found_format": "json"
+    },
+    "expected": {
+      "type": "DataFormatError",
+      "message": "Expected data format csv; got json",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "expected_formats": [
+          "csv"
+        ],
+        "found_format": "json"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "schema mismatch",
+    "type": "SchemaMismatchError",
+    "arguments": {
+      "expected": "id: int, amount: float",
+      "found": "id: int, amount: str"
+    },
+    "expected": {
+      "type": "SchemaMismatchError",
+      "message": "Schema mismatch. Expected: id: int, amount: float, Found: id: int, amount: str",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "expected": "id: int, amount: float",
+        "found": "id: int, amount: str"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data drift",
+    "type": "DataDriftError",
+    "arguments": {
+      "feature": "income",
+      "drift_score": 0.41726
+    },
+    "expected": {
+      "type": "DataDriftError",
+      "message": "Data drift detected on 'income', score=0.4173",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "feature": "income",
+        "drift_score": 0.41726
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data drift, own message",
+    "type": "DataDriftError",
+    "arguments": {
+      "feature": "age",
+      "drift_score": 0.2,
+      "message": "age drifted"
+    },
+    "expected": {
+      "type": "DataDriftError",
+      "message": "age drifted",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "feature": "age",
+        "drift_score": 0.2
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data drift, empty message",
+    "type": "DataDriftError",
+    "arguments": {
+      "feature": "age",
+      "drift_score": 0.2,
+      "message": ""
+    },
+    "expected": {
+      "type": "DataDriftError",
+      "message": "",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "feature": "age",
+        "drift_score": 0.2
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data leakage",
+    "type": "DataLeakageError",
+    "arguments": {
+      "feature": "target_mean",
+      "stage": "cross-validation"
+    },
+    "expected": {
+      "type": "DataLeakageError",
+      "message": "Data leakage detected for 'target_mean' during cross-validation",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "feature": "target_mean",
+        "stage": "cross-validation"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data imbalance",
+    "type": "DataImbalanceError",
+    "arguments": {
+      "ratio": 0.0526,
+      "threshold": 0.2
+    },
+    "expected": {
+      "type": "DataImbalanceError",
+      "message": "Data imbalance detected: ratio=0.053 < threshold=0.200",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "ratio": 0.0526,
+        "threshold": 0.2
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "outlier detection",
+    "type": "OutlierDetectionError",
+    "arguments": {
+      "method": "iqr"
+    },
+    "expected": {
+      "type": "OutlierDetectionError",
+      "message": "Outlier detection failed using method 'iqr'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "method": "iqr",
+        "details": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "outlier detection, details",
+    "type": "OutlierDetectionError",
+    "arguments": {
+      "method": "isolation_forest",
+      "details": "contamination must be in (0, 0.5]"
+    },
+    "expected": {
+      "type": "OutlierDetectionError",
+      "message": "Outlier detection failed using method 'isolation_forest': contamination must be in (0, 0.5]",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "method": "isolation_forest",
+        "details": "contamination must be in (0, 0.5]"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "model evaluation",
+    "type": "ModelEvaluationError",
+    "arguments": {
+      "metric": "auc",
+      "value": 0.5
+    },
+    "expected": {
+      "type": "ModelEvaluationError",
+      "message": "Failed to compute metric 'auc', got 0.5",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "metric": "auc",
+        "value": 0.5
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "model evaluation, nan",
+    "type": "ModelEvaluationError",
+    "arguments": {
+      "metric": "rmse",
+      "value": {
+        "float": "nan"
+      }
+    },
+    "expected": {
+      "type": "ModelEvaluationError",
+      "message": "Failed to compute metric 'rmse', got nan",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "metric": "rmse",
+        "value": "nan"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "cross-validation",
+    "type": "CrossValidationError",
+    "arguments": {
+      "folds": 5
+    },
+    "expected": {
+      "type": "CrossValidationError",
+      "message": "Cross-validation failed on 5 folds",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "folds": 5
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "cross-validation, detail",
+    "type": "CrossValidationError",
+    "arguments": {
+      "folds": 10,
+      "cause": "fold 3 had a single class"
+    },
+    "expected": {
+      "type": "CrossValidationError",
+      "message": "Cross-validation failed on 10 folds: fold 3 had a single class",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "folds": 10
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, number",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "max_depth",
+      "value": -1
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'max_depth': -1",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "max_depth",
+        "value": -1
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, string",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "booster",
+      "value": "gbdt"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'booster': 'gbdt'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "booster",
+        "value": "gbdt"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, float",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "lr",
+      "value": 0.30000000000000004
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'lr': 0.30000000000000004",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "lr",
+        "value": 0.30000000000000004
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, apostrophe",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "name",
+      "value": "it's"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'name': \"it's\"",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "name",
+        "value": "it's"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, non-ASCII",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "name",
+      "value": "café"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'name': 'café'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "name",
+        "value": "café"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "hyperparameter, credentials in the value",
+    "type": "HyperparameterError",
+    "arguments": {
+      "param": "remote",
+      "value": "https://svc:ghp_Zq8vN3pLx7Rt2Wk9Hm4Ys6Jd1Fc5Gb0TaQw3Er7Ty@git.example.com/org/repo.git"
+    },
+    "expected": {
+      "type": "HyperparameterError",
+      "message": "Invalid hyperparameter 'remote': 'https://***:***@git.example.com/org/repo.git'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "param": "remote",
+        "value": "https://***:***@git.example.com/***"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "training timeout",
+    "type": "TrainingTimeoutError",
+    "arguments": {
+      "model_type": "xgboost",
+      "timeout": 3600
+    },
+    "expected": {
+      "type": "TrainingTimeoutError",
+      "message": "Training 'xgboost' exceeded timeout of 3600 seconds",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "timeout": 3600.0,
+        "model_type": "xgboost",
+        "epoch": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "training timeout, fraction",
+    "type": "TrainingTimeoutError",
+    "arguments": {
+      "model_type": "glm",
+      "timeout": 90.5
+    },
+    "expected": {
+      "type": "TrainingTimeoutError",
+      "message": "Training 'glm' exceeded timeout of 90.5 seconds",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "timeout": 90.5,
+        "model_type": "glm",
+        "epoch": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "model serialization",
+    "type": "ModelSerializationError",
+    "arguments": {
+      "path": "models/churn.rds",
+      "original": {
+        "exception": "disk full"
+      }
+    },
+    "expected": {
+      "type": "ModelSerializationError",
+      "message": "Failed to serialize to 'models/churn.rds': disk full",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "path": "models/churn.rds"
+      },
+      "cause": "disk full"
+    }
+  },
+  {
+    "name": "overfitting",
+    "type": "OverfittingError",
+    "arguments": {
+      "train_metric": 0.99,
+      "val_metric": 0.71
+    },
+    "expected": {
+      "type": "OverfittingError",
+      "message": "Overfitting detected: train=0.99, val=0.71",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 0.99,
+        "val_metric": 0.71
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "overfitting, whole number",
+    "type": "OverfittingError",
+    "arguments": {
+      "train_metric": 1,
+      "val_metric": 0.7
+    },
+    "expected": {
+      "type": "OverfittingError",
+      "message": "Overfitting detected: train=1.0, val=0.7",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 1.0,
+        "val_metric": 0.7
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "overfitting, computed",
+    "type": "OverfittingError",
+    "arguments": {
+      "train_metric": 0.9523809523809523,
+      "val_metric": 0.7142857142857143
+    },
+    "expected": {
+      "type": "OverfittingError",
+      "message": "Overfitting detected: train=0.9523809523809523, val=0.7142857142857143",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 0.9523809523809523,
+        "val_metric": 0.7142857142857143
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "underfitting",
+    "type": "UnderfittingError",
+    "arguments": {
+      "train_metric": 0.52,
+      "threshold": 0.7
+    },
+    "expected": {
+      "type": "UnderfittingError",
+      "message": "Underfitting detected: training metric 0.52 < threshold 0.7",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "train_metric": 0.52,
+        "threshold": 0.7
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "resource limit, string",
+    "type": "ResourceLimitError",
+    "arguments": {
+      "resource": "memory",
+      "limit": "16GB"
+    },
+    "expected": {
+      "type": "ResourceLimitError",
+      "message": "Resource limit exceeded: memory at '16GB'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "resource": "memory",
+        "limit": "16GB"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "resource limit, number",
+    "type": "ResourceLimitError",
+    "arguments": {
+      "resource": "cpu",
+      "limit": 8
+    },
+    "expected": {
+      "type": "ResourceLimitError",
+      "message": "Resource limit exceeded: cpu at 8",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "resource": "cpu",
+        "limit": 8
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "external service",
+    "type": "ExternalServiceError",
+    "arguments": {
+      "service_name": "rates-api",
+      "status_code": 503
+    },
+    "expected": {
+      "type": "ExternalServiceError",
+      "message": "Call to external service 'rates-api' failed.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": 503,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "external service, empty message",
+    "type": "ExternalServiceError",
+    "arguments": {
+      "service_name": "rates-api",
+      "message": ""
+    },
+    "expected": {
+      "type": "ExternalServiceError",
+      "message": "Call to external service 'rates-api' failed.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": null,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "external service, response",
+    "type": "ExternalServiceError",
+    "arguments": {
+      "service_name": "rates-api",
+      "status_code": 502,
+      "response": "bad gateway",
+      "message": "rates-api returned 502"
+    },
+    "expected": {
+      "type": "ExternalServiceError",
+      "message": "rates-api returned 502",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": 502,
+        "response": "bad gateway"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "service timeout",
+    "type": "ServiceTimeoutError",
+    "arguments": {
+      "service_name": "payments",
+      "timeout_seconds": 30
+    },
+    "expected": {
+      "type": "ServiceTimeoutError",
+      "message": "Operation timed out after 30s on service 'payments'.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "timeout_seconds": 30,
+        "service_name": "payments",
+        "status_code": null,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "service timeout, fraction",
+    "type": "ServiceTimeoutError",
+    "arguments": {
+      "service_name": "payments",
+      "timeout_seconds": 2.5
+    },
+    "expected": {
+      "type": "ServiceTimeoutError",
+      "message": "Operation timed out after 2.5s on service 'payments'.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "timeout_seconds": 2.5,
+        "service_name": "payments",
+        "status_code": null,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "service authentication",
+    "type": "ServiceAuthenticationError",
+    "arguments": {
+      "service_name": "rates-api"
+    },
+    "expected": {
+      "type": "ServiceAuthenticationError",
+      "message": "Authentication failed for service 'rates-api'.",
+      "failure": {
+        "kind": "permanent",
+        "retryable": false,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": null,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "service authorization",
+    "type": "ServiceAuthorizationError",
+    "arguments": {
+      "service_name": "rates-api"
+    },
+    "expected": {
+      "type": "ServiceAuthorizationError",
+      "message": "Authorization denied for service 'rates-api'.",
+      "failure": {
+        "kind": "permanent",
+        "retryable": false,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "service_name": "rates-api",
+        "status_code": null,
+        "response": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "retry limit",
+    "type": "RetryLimitExceededError",
+    "arguments": {
+      "operation": "fetch_rates",
+      "retries": 5
+    },
+    "expected": {
+      "type": "RetryLimitExceededError",
+      "message": "Retry limit exceeded for operation 'fetch_rates' after 5 attempts.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "operation": "fetch_rates",
+        "retries": 5
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "storage",
+    "type": "StorageError",
+    "arguments": {
+      "location": "s3://reports/q3.parquet",
+      "operation": "write"
+    },
+    "expected": {
+      "type": "StorageError",
+      "message": "Storage write failed at location: 's3://reports/q3.parquet'.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "location": "s3://reports/***",
+        "operation": "write"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "storage, credentials in the location",
+    "type": "StorageError",
+    "arguments": {
+      "location": "https://user:pw@storage.example.com/bucket/q3.parquet?sig=abc",
+      "operation": "read"
+    },
+    "expected": {
+      "type": "StorageError",
+      "message": "Storage read failed at location: 'https://***:***@storage.example.com/bucket/q3.parquet?sig=***'.",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "location": "https://***:***@storage.example.com/***?sig=***",
+        "operation": "read"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "authentication",
+    "type": "AuthenticationError",
+    "arguments": {
+      "user": "analyst"
+    },
+    "expected": {
+      "type": "AuthenticationError",
+      "message": "Authentication failed for user 'analyst'",
+      "failure": {
+        "kind": "permanent",
+        "retryable": false,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "user": "analyst"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "authorization",
+    "type": "AuthorizationError",
+    "arguments": {
+      "user": "analyst",
+      "permission": "write:reports"
+    },
+    "expected": {
+      "type": "AuthorizationError",
+      "message": "User 'analyst' lacks permission 'write:reports'",
+      "failure": {
+        "kind": "permanent",
+        "retryable": false,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "user": "analyst",
+        "permission": "write:reports"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "configuration",
+    "type": "ConfigurationError",
+    "arguments": {
+      "option": "timeout"
+    },
+    "expected": {
+      "type": "ConfigurationError",
+      "message": "Invalid configuration for 'timeout'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "option": "timeout"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "configuration, empty message",
+    "type": "ConfigurationError",
+    "arguments": {
+      "option": "timeout",
+      "message": ""
+    },
+    "expected": {
+      "type": "ConfigurationError",
+      "message": "Invalid configuration for 'timeout'",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "option": "timeout"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "configuration, own message",
+    "type": "ConfigurationError",
+    "arguments": {
+      "option": "retries",
+      "message": "retries must be positive"
+    },
+    "expected": {
+      "type": "ConfigurationError",
+      "message": "retries must be positive",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "option": "retries"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "resource not found",
+    "type": "ResourceNotFoundError",
+    "arguments": {
+      "resource_type": "Dataset",
+      "identifier": "sales-2026-q3"
+    },
+    "expected": {
+      "type": "ResourceNotFoundError",
+      "message": "Dataset with identifier 'sales-2026-q3' not found",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "resource_type": "Dataset",
+        "identifier": "sales-2026-q3"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "operation timeout",
+    "type": "OperationTimeoutError",
+    "arguments": {
+      "operation": "nightly_refresh",
+      "timeout": 600
+    },
+    "expected": {
+      "type": "OperationTimeoutError",
+      "message": "Operation 'nightly_refresh' timed out after 600 seconds",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "operation": "nightly_refresh",
+        "timeout": 600
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "operation timeout, cause",
+    "type": "OperationTimeoutError",
+    "arguments": {
+      "operation": "export",
+      "timeout": 1.5,
+      "cause": {
+        "exception": "socket closed"
+      }
+    },
+    "expected": {
+      "type": "OperationTimeoutError",
+      "message": "Operation 'export' timed out after 1.5 seconds",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "operation": "export",
+        "timeout": 1.5
+      },
+      "cause": "socket closed"
+    }
+  },
+  {
+    "name": "transaction",
+    "type": "TransactionError",
+    "arguments": {},
+    "expected": {
+      "type": "TransactionError",
+      "message": "Database transaction failed",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "transaction_id": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "transaction, id",
+    "type": "TransactionError",
+    "arguments": {
+      "transaction_id": "tx-42"
+    },
+    "expected": {
+      "type": "TransactionError",
+      "message": "Database transaction failed (id=tx-42)",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "transaction_id": "tx-42"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "transaction, cause",
+    "type": "TransactionError",
+    "arguments": {
+      "transaction_id": "tx-43",
+      "cause": {
+        "exception": "deadlock detected"
+      }
+    },
+    "expected": {
+      "type": "TransactionError",
+      "message": "Database transaction failed (id=tx-43)",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "transaction_id": "tx-43"
+      },
+      "cause": "deadlock detected"
+    }
+  },
+  {
+    "name": "data transformation",
+    "type": "DataTransformationError",
+    "arguments": {
+      "step": "normalise_amounts"
+    },
+    "expected": {
+      "type": "DataTransformationError",
+      "message": "Data transformation 'normalise_amounts' failed",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "step": "normalise_amounts",
+        "details": null
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "data transformation, details",
+    "type": "DataTransformationError",
+    "arguments": {
+      "step": "normalise_amounts",
+      "details": "12 rows had no currency"
+    },
+    "expected": {
+      "type": "DataTransformationError",
+      "message": "Data transformation 'normalise_amounts' failed: 12 rows had no currency",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "step": "normalise_amounts",
+        "details": "12 rows had no currency"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "etl job",
+    "type": "ETLJobError",
+    "arguments": {
+      "job_name": "daily_sales"
+    },
+    "expected": {
+      "type": "ETLJobError",
+      "message": "ETL job 'daily_sales' failed",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "job_name": "daily_sales"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "batch processing",
+    "type": "BatchProcessingError",
+    "arguments": {
+      "batch_id": "2026-09-27"
+    },
+    "expected": {
+      "type": "BatchProcessingError",
+      "message": "Batch '2026-09-27' processing failed",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "batch_id": "2026-09-27"
+      },
+      "cause": null
+    }
+  },
+  {
+    "name": "batch processing, cause",
+    "type": "BatchProcessingError",
+    "arguments": {
+      "batch_id": "b-7",
+      "original": {
+        "exception": "bad row"
+      }
+    },
+    "expected": {
+      "type": "BatchProcessingError",
+      "message": "Batch 'b-7' processing failed: bad row",
+      "failure": {
+        "kind": "unknown",
+        "retryable": null,
+        "retry_after_seconds": null
+      },
+      "attributes": {
+        "batch_id": "b-7"
+      },
+      "cause": "bad row"
+    }
+  }
+]

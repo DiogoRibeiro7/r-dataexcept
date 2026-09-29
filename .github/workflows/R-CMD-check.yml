@@ -24,7 +24,12 @@ jobs:
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
-          - {os: ubuntu-latest,  r: '4.1'}
+          # The oldest R supported. Current lme4 builds against a newer
+          # Matrix than the one R 4.1 ships with, which is fragile to install
+          # there, so this job installs the hard dependencies and the test
+          # tools only; the tests that need lme4 or otel skip.
+          - {os: ubuntu-latest,  r: '4.1', dependencies: '"hard"',
+             extra: 'any::testthat any::spelling any::rlang'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +48,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          dependencies: ${{ matrix.config.dependencies || '"all"' }}
+          extra-packages: any::rcmdcheck ${{ matrix.config.extra }}
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2

@@ -1,4 +1,5 @@
-"""Validate every envelope in a directory against envelope-1.0.0.json.
+"""Validate every envelope in a directory against envelope-1.0.0.json, and
+every Pino projection in its pino/ folder against pino-1.0.0.json.
 
     python tools/validate-envelopes.py <envelope-directory>
 
@@ -22,12 +23,12 @@ def reject_constant(name: str) -> None:
     raise ValueError(f"non-strict JSON constant {name}")
 
 
-def main(directory: str) -> int:
-    schema = json.loads((ROOT / "inst" / "schema" / "envelope-1.0.0.json").read_text())
+def check(directory: Path, schema_name: str, what: str) -> int:
+    schema = json.loads((ROOT / "inst" / "schema" / schema_name).read_text())
     validator = Draft202012Validator(schema)
-    files = sorted(Path(directory).glob("*.json"))
+    files = sorted(directory.glob("*.json"))
     if not files:
-        print(f"no envelopes found in {directory}")
+        print(f"no {what} found in {directory}")
         return 1
     failures = 0
     for path in files:
@@ -38,7 +39,14 @@ def main(directory: str) -> int:
             print(f"INVALID {path.name}")
             for error in errors[:5]:
                 print(f"  {list(error.path)}: {error.message}")
-    print(f"{len(files)} envelopes checked, {failures} invalid")
+    print(f"{len(files)} {what} checked against {schema_name}, {failures} invalid")
+    return failures
+
+
+def main(directory: str) -> int:
+    root = Path(directory)
+    failures = check(root, "envelope-1.0.0.json", "envelopes")
+    failures += check(root / "pino", "pino-1.0.0.json", "Pino projections")
     return 1 if failures else 0
 
 

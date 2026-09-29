@@ -28,15 +28,25 @@ envelope type. Handlers can catch a single failure or a whole family.
 | --- | --- | --- |
 | `dataexcept_validation_error` | `validation_error()` | `ValidationError` |
 | `dataexcept_data_frame_error` | `missing_column_error()`, `dtype_mismatch_error()`, `merge_key_error()` | `MissingColumnError`, `DtypeMismatchError`, `MergeKeyError` |
-| `dataexcept_data_science_error` | `data_loading_error()`, `missing_data_error()`, `model_training_error()`, `convergence_error()`, `prediction_error()` | `DataLoadingError`, `MissingDataError`, `ModelTrainingError`, `ConvergenceError`, `PredictionError` |
+| `dataexcept_data_science_error` | Loading and modelling: `data_loading_error()`, `missing_data_error()`, `model_training_error()`, `convergence_error()`, `training_timeout_error()`, `prediction_error()` | `DataLoadingError`, `MissingDataError`, `ModelTrainingError`, `ConvergenceError`, `TrainingTimeoutError`, `PredictionError` |
+| | Data quality: `data_format_error()`, `schema_mismatch_error()`, `data_drift_error()`, `data_leakage_error()`, `data_imbalance_error()`, `outlier_detection_error()` | `DataFormatError`, `SchemaMismatchError`, `DataDriftError`, `DataLeakageError`, `DataImbalanceError`, `OutlierDetectionError` |
+| | Model quality: `model_evaluation_error()`, `cross_validation_error()`, `hyperparameter_error()`, `overfitting_error()`, `underfitting_error()`, `model_serialization_error()`, `resource_limit_error()` | `ModelEvaluationError`, `CrossValidationError`, `HyperparameterError`, `OverfittingError`, `UnderfittingError`, `ModelSerializationError`, `ResourceLimitError` |
 | `dataexcept_file_error` | `file_read_error()`, `file_write_error()` | `FileReadError`, `FileWriteError` |
-| `dataexcept_database_error` | `database_connection_error()`, `query_execution_error()` | `DatabaseConnectionError`, `QueryExecutionError` |
+| `dataexcept_database_error` | `database_connection_error()`, `query_execution_error()`, `transaction_error()` | `DatabaseConnectionError`, `QueryExecutionError`, `TransactionError` |
 | `dataexcept_network_error` | `host_unreachable_error()`, `connection_timeout_error()` | `HostUnreachableError`, `ConnectionTimeoutError` |
-| `dataexcept_pipeline_error` | `api_error()` | `ApiError` |
+| `dataexcept_pipeline_error` | `api_error()`, `retry_limit_exceeded_error()`, `storage_error()` | `ApiError`, `RetryLimitExceededError`, `StorageError` |
+| `dataexcept_external_service_error` | `external_service_error()`, `service_timeout_error()`, `service_authentication_error()`, `service_authorization_error()` | `ExternalServiceError`, `ServiceTimeoutError`, `ServiceAuthenticationError`, `ServiceAuthorizationError` |
+| `dataexcept_job_error` | `authentication_error()`, `authorization_error()`, `configuration_error()`, `resource_not_found_error()`, `operation_timeout_error()` | `AuthenticationError`, `AuthorizationError`, `ConfigurationError`, `ResourceNotFoundError`, `OperationTimeoutError` |
+| `dataexcept_data_engineering_error` | `data_transformation_error()`, `etl_job_error()`, `batch_processing_error()` | `DataTransformationError`, `ETLJobError`, `BatchProcessingError` |
 
-`convergence_error()` also inherits from `dataexcept_model_training_error`, so a
-handler for training failures catches non-convergence too. `dataexcept_error`
-catches everything.
+`convergence_error()` and `training_timeout_error()` also inherit from
+`dataexcept_model_training_error`, so a handler for training failures catches
+them too. The external service errors are pipeline errors as well. Every type
+in the table has the same name, fields and default failure classification as
+in the Python package; `validation_error()`, which is a `JobError` in Python,
+is the one difference in the hierarchy. `dataexcept_error`
+catches everything, including `dataexcept_condition_group`, which holds several
+failures at once (see [Groups and wrapping](groups.md)).
 
 ```r
 fit_or_fail <- function(formula, data, maxit = 25) {

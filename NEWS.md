@@ -1,3 +1,92 @@
+# dataexcept (development version)
+
+## Groups and wrapping
+
+- `condition_group()` reports several failures as one error, written to the
+  envelope as an exception group -- the `exceptions` array Python's
+  `ExceptionGroup` also produces. Its message counts and lists the members,
+  and its failure metadata is theirs when they agree. `group_members()`
+  returns the members.
+- `collect_errors()` evaluates each of its arguments, catching the errors they
+  signal, so that a validation step can report every problem instead of the
+  first.
+- `wrap_errors()` re-signals an error from an expression as a dataexcept
+  error, with the original as its cause: the R counterpart of the Python
+  package's `wrap()`. It can wrap warnings too, and set failure metadata.
+- An envelope record with an `exceptions` array, a Python `ExceptionGroup`
+  included, is read back with the class `dataexcept_condition_group`. An empty
+  `exceptions` array is now kept when the condition is written back.
+
+## More condition types
+
+Twenty-nine types from the Python package, with its names, fields, messages
+and default failure metadata. Each is tested against the envelope the Python
+package writes for the same arguments.
+
+- Data quality: `data_format_error()`, `schema_mismatch_error()`,
+  `data_drift_error()`, `data_leakage_error()`, `data_imbalance_error()`,
+  `outlier_detection_error()`.
+- Model quality: `model_evaluation_error()`, `cross_validation_error()`,
+  `hyperparameter_error()`, `training_timeout_error()`, `overfitting_error()`,
+  `underfitting_error()`, `model_serialization_error()`,
+  `resource_limit_error()`.
+- Pipelines and external services: `external_service_error()`,
+  `service_timeout_error()`, `service_authentication_error()`,
+  `service_authorization_error()`, `retry_limit_exceeded_error()`,
+  `storage_error()`, and `transaction_error()` for databases.
+- Jobs, a new family caught by `dataexcept_job_error`:
+  `authentication_error()`, `authorization_error()`, `configuration_error()`,
+  `resource_not_found_error()`, `operation_timeout_error()`.
+- Data engineering, a new family caught by
+  `dataexcept_data_engineering_error`: `data_transformation_error()`,
+  `etl_job_error()`, `batch_processing_error()`.
+- Refused credentials and permissions are permanent and not retryable, as in
+  Python; the other new types are `"unknown"`.
+- An envelope of one of these types, written by Python, is now read back with
+  the type's R classes instead of plain `dataexcept_error`.
+- Values in default messages are written as the Python package writes them:
+  a string in quotes (`Validation failed for field 'country': 'Atlantis'`), in
+  any locale; an integer without its `L` suffix; a fraction in the fewest
+  digits that read back exactly. A URL in a value is redacted before a long
+  value is shortened, so shortening cannot hide credentials from redaction.
+- An empty `message` falls back to the default message in the constructors
+  whose Python class does the same (`validation_error()`, `api_error()`,
+  `database_connection_error()`, `host_unreachable_error()` and most of the
+  new job and pipeline errors).
+
+## More classed warnings
+
+- Templates can carry values. A rule's template may be a format string, such
+  as `"did not converge in %d iterations"`; the values its placeholders match
+  are stored on the classed warning and written to the envelope as
+  attributes. Plural messages are matched in every form of the session
+  language, and translations that reorder their values are read in their own
+  order. `classed_warning_rules()` gains a `fields` column.
+- New rules: `kmeans()` and `medpolish()` stopping at the iteration limit,
+  `arima()` when `optim()` does not converge, rank tests that cannot compute
+  an exact p-value because of ties or zeroes (`cor.test()`, `wilcox.test()`,
+  `ansari.test()`, `ks.test()`), survival's Cox model warnings (an infinite
+  coefficient, running out of iterations), and lme4's convergence checks and
+  singular fits.
+- Each rule is tested against the real warning, raised by the function that
+  raises it; lme4 and survival join `Suggests` for those tests.
+
+## Pino
+
+- `condition_to_pino()` and `condition_to_pino_json()` write a condition in
+  the shape Pino logs errors: the Pino profile the Python package publishes,
+  a projection of the envelope in which group members are `errors`,
+  attributes stay nested, and `stack` appears only when there is a real one
+  -- an rlang backtrace, with `include_stack = TRUE`.
+- Backtraces are written without terminal colour codes, here and in
+  `record_otel_exception()`'s `exception.stacktrace`, whatever colour support
+  the session has.
+- `envelope_to_pino()` projects an envelope already in hand, as JSON or as a
+  list.
+- `pino_schema()` returns the profile's JSON Schema, which ships with the
+  package together with the Python package's projection of every reference
+  envelope. The tests require R to reproduce each one exactly.
+
 # dataexcept 0.2.0
 
 ## Observability

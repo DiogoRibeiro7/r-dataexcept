@@ -1,0 +1,15 @@
+{
+  "type": "ValidationError",
+  "module": "dataexcept.exceptions.validation",
+  "message": "Validation failed for field 'age': -1",
+  "attributes": {
+    "field": "age",
+    "value": -1,
+    "message": "Validation failed for field 'age': -1"
+  },
+  "failure": {
+    "kind": "permanent",
+    "retryable": false,
+    "retry_after_seconds": null
+  }
+}
