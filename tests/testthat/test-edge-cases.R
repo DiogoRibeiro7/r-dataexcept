@@ -1,3 +1,15 @@
+test_that("numbers are written in the fewest digits that read back exactly", {
+  cases <- c(20 / 21, 5 / 7, 0.1 + 0.2, 1e15 + 0.5, 1e-7, 123.456, 1 / 3, 2 / 3, pi, exp(1))
+  expected <- c(
+    "0.9523809523809523", "0.7142857142857143", "0.30000000000000004",
+    "1000000000000000.5", "1e-07", "123.456", "0.3333333333333333",
+    "0.6666666666666666", "3.141592653589793", "2.718281828459045"
+  )
+  expect_identical(vapply(cases, shortest_number, character(1)), expected)
+  expect_identical(vapply(cases, json_number, character(1)), expected)
+  expect_identical(vapply(cases, format_number, character(1)), expected)
+})
+
 test_that("invalid UTF-8 in a message still produces valid JSON", {
   msg <- rawToChar(as.raw(c(0x62, 0x61, 0x64, 0x20, 0xff, 0xfe)))
   json <- condition_to_json(simpleError(msg))

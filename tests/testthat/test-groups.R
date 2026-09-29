@@ -405,15 +405,14 @@ test_that("nested wrap_errors() calls build a chain", {
 })
 
 test_that("wrap_errors() leaves interrupts alone", {
+  # Caught by an exiting handler, so the interrupt never reaches testthat.
   interrupt <- structure(class = c("interrupt", "condition"), list(message = "", call = NULL))
-  seen <- withCallingHandlers(
-    tryCatch(
-      wrap_errors(signalCondition(interrupt), file_read_error, path = "x", on = "condition"),
-      error = function(e) "wrapped"
-    ),
-    interrupt = function(cnd) NULL
+  seen <- tryCatch(
+    wrap_errors(signalCondition(interrupt), file_read_error, path = "x", on = "condition"),
+    interrupt = function(cnd) "passed through",
+    error = function(e) "wrapped"
   )
-  expect_null(seen)
+  expect_identical(seen, "passed through")
 })
 
 test_that("wrap_errors() checks its arguments", {

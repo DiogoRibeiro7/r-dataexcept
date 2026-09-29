@@ -118,13 +118,7 @@ format_number <- function(x, digits = NULL, float = FALSE) {
     text <- sprintf("%.0f", x)
     return(if (float) paste0(text, ".0") else text)
   }
-  for (precision in 15:17) {
-    text <- formatC(x, digits = precision, format = "g")
-    if (as.double(text) == x) {
-      break
-    }
-  }
-  trimws(text)
+  shortest_number(x)
 }
 
 # A string quoted as Python's repr() quotes it: in single quotes, or in double
