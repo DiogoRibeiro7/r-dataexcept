@@ -1,5 +1,8 @@
 # dataexcept (development version)
 
+- Read Rust DataExcept envelopes with `dataexcept::` module paths as classed R
+  conditions, preserving known error families and the original module name.
+
 - Added an installed-package vignette introducing classed errors, retry
   metadata, Python-compatible envelopes and failure events. Open it with
   `browseVignettes("dataexcept")`.
