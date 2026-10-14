@@ -1,5 +1,9 @@
 # dataexcept (development version)
 
+- Added an installed-package vignette introducing classed errors, retry
+  metadata, Python-compatible envelopes and failure events. Open it with
+  `browseVignettes("dataexcept")`.
+
 # dataexcept 0.3.0
 
 ## Groups and wrapping
