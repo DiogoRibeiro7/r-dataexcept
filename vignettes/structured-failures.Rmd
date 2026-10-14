@@ -1,0 +1,129 @@
+---
+title: "Structured failures across R and Python"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Structured failures across R and Python}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+R already has classed conditions. `dataexcept` adds a shared vocabulary of
+failure classes, machine-readable recovery metadata and a JSON envelope
+compatible with Python DataExcept. These examples run locally without Python
+or an external service.
+
+## Catch a specific failure
+
+Each constructor returns a condition, which is signalled by `stop()`.
+Handlers can catch a specific class or a broader family.
+
+```{r classed-errors}
+library(dataexcept)
+
+validate_orders <- function(orders) {
+  if (!"customer_id" %in% names(orders)) {
+    stop(missing_column_error("customer_id", dataframe = "orders"))
+  }
+  invisible(orders)
+}
+
+orders <- data.frame(amount = c(10, 20, 30))
+caught <- tryCatch(
+  validate_orders(orders),
+  dataexcept_data_frame_error = identity
+)
+
+stopifnot(inherits(caught, "dataexcept_missing_column_error"))
+conditionMessage(caught)
+caught$column
+```
+
+The column name stays structured. Consumers need not parse an error message.
+
+## Record retryability
+
+Failure metadata describes whether retrying might help. Scheduling retries
+remains the application's responsibility. An unclassified failure retains
+unknown retryability rather than falsely claiming it is permanent.
+
+```{r failure-metadata}
+remote_failure <- api_error(
+  "https://api.example.com/v1/orders?api_key=SECRET_VALUE",
+  status_code = 503L
+)
+remote_failure <- with_failure_metadata(
+  remote_failure,
+  failure_metadata("transient", retryable = TRUE, retry_after_seconds = 15)
+)
+
+stopifnot(isTRUE(is_retryable(remote_failure)))
+condition_failure(remote_failure)$retry_after_seconds
+```
+
+## Produce a JSON envelope
+
+`condition_to_json()` serialises conditions in the language-neutral
+DataExcept format. URL credentials are redacted before export.
+
+```{r write-envelope}
+payload <- condition_to_json(remote_failure, pretty = TRUE)
+stopifnot(is_envelope(payload))
+stopifnot(!grepl("SECRET_VALUE", payload, fixed = TRUE))
+cat(payload)
+```
+
+The same payload can be read back into an R condition.
+
+```{r read-envelope}
+restored <- envelope_to_condition(payload)
+stopifnot(inherits(restored, "dataexcept_api_error"))
+is_retryable(restored)
+condition_type(restored)
+```
+
+## Read an envelope written by Python
+
+Python reference envelopes ship with the package, so this example does
+not require a Python installation.
+
+```{r python-envelope}
+fixture <- system.file(
+  "schema", "fixtures", "ordinary-exception.json",
+  package = "dataexcept"
+)
+stopifnot(nzchar(fixture))
+
+python_payload <- paste(readLines(fixture, warn = FALSE), collapse = "\n")
+python_error <- envelope_to_condition(python_payload)
+stopifnot(inherits(python_error, "dataexcept_validation_error"))
+condition_type(python_error)
+condition_failure(python_error)$kind
+```
+
+For multiple failures, use one envelope per line of JSON. Consumers can
+inspect `type` and `failure` without knowing R condition classes.
+
+## Add operational context
+
+An observability event combines the envelope with a stable operation name
+and execution identifiers. Avoid using run identifiers as metric dimensions.
+
+```{r observability}
+context <- operation_context(
+  system = "batch",
+  component = "orders",
+  operation = "validate_orders",
+  job_id = "job-42"
+)
+cat(condition_to_event_json(caught, operation_context = context))
+```
+
+## Further reading
+
+The [online documentation](https://diogoribeiro7.github.io/r-dataexcept/)
+covers grouped errors, classed warnings, Pino, OpenTelemetry and
+the shared protocol.
