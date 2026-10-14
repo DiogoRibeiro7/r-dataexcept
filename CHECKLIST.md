@@ -118,5 +118,7 @@ not oversights.
 - [x] Citation metadata: `CITATION.cff` (validated) and `inst/CITATION`
 - [x] Tagged releases: [v0.1.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.1.0), [v0.2.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.2.0) and [v0.3.0](https://github.com/DiogoRibeiro7/r-dataexcept/releases/tag/v0.3.0), published by the release workflow
 - [ ] Zenodo DOI
+- [x] Manual release-candidate workflow builds and checks the source archive,
+      provides its checksum and documents external Windows R-devel validation
 - [ ] CRAN submission
 - [ ] R-universe listing
