@@ -1,0 +1,93 @@
+name: CRAN candidate
+
+# Manual only: this workflow does not publish a release or submit to CRAN.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    name: Build and check a source candidate
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Validate candidate version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.9000)?$ ]]; then
+            echo "Unsupported candidate version: $version" >&2
+            exit 1
+          fi
+          if [[ "$version" == *.9000 ]]; then
+            echo '::notice::Development build; prepare a three-part release version for the final win-builder check.'
+          else
+            Rscript tools/release.R check "v$version"
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build source tarball
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          R CMD build .
+          archive="dataexcept_${{ steps.version.outputs.value }}.tar.gz"
+          test -s "$archive"
+          sha256sum "$archive" > "$archive.sha256"
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+
+      - name: Check the exact candidate tarball
+        shell: Rscript {0}
+        env:
+          ARCHIVE: ${{ steps.package.outputs.archive }}
+        run: |
+          rcmdcheck::rcmdcheck(
+            Sys.getenv("ARCHIVE"),
+            args = c("--as-cran", "--no-manual"),
+            error_on = "warning",
+            check_dir = "check"
+          )
+
+      - name: Upload checked source tarball and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: cran-candidate-${{ steps.version.outputs.value }}
+          path: |
+            ${{ steps.package.outputs.archive }}
+            ${{ steps.package.outputs.archive }}.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Explain external verification
+        shell: bash
+        run: |
+          {
+            echo '### Next: Windows R-devel'
+            echo
+            echo 'Download the tarball from the artifact, verify its SHA-256 checksum, and upload the tar.gz (not the artifact ZIP) to:'
+            echo
+            echo 'https://win-builder.r-project.org/upload.aspx'
+            echo
+            echo 'Record the actual win-builder result in cran-comments.md before submitting to CRAN.'
+            echo 'This workflow has not submitted anything to win-builder or CRAN.'
+          } >> "$GITHUB_STEP_SUMMARY"
