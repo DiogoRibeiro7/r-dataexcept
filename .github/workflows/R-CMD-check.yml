@@ -29,7 +29,7 @@ jobs:
           # there, so this job installs the hard dependencies and the test
           # tools only; the tests that need lme4 or otel skip.
           - {os: ubuntu-latest,  r: '4.1', dependencies: '"hard"',
-             extra: 'any::testthat any::spelling any::rlang'}
+             extra: 'any::testthat any::spelling any::rlang any::knitr any::rmarkdown'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
