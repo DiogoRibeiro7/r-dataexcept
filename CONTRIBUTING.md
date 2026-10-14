@@ -31,6 +31,7 @@ Run the same checks CI runs:
 | `spelling::spell_check_package()` | spelling | British English; accepted words live in `inst/WORDLIST` |
 | `covr::package_coverage()` | covr | Coverage, which CI requires to stay at or above 95% |
 | `R CMD check --as-cran` | R | Everything CRAN checks |
+| `devtools::build_vignettes()` | knitr and rmarkdown | Build the installed-package vignette |
 
 `styler::style_pkg()` applies the formatting for you. Run the full check from
 a built tarball:
