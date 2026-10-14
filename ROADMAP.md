@@ -36,6 +36,8 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 - [ ] win-builder (R-devel on Windows).
 - [x] A documentation site (MkDocs Material, deployed to GitHub Pages) with
   the reference generated from the help pages.
+- [x] A package vignette for classed conditions, recovery metadata,
+  Python interoperability and observable failure events.
 - [x] Contributing, security and conduct policies; lint, style, spelling and
   coverage checks; a release workflow that publishes on merge.
 - [ ] A Zenodo DOI for the first tagged release.
