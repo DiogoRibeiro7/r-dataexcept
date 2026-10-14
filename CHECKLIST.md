@@ -45,8 +45,9 @@ not oversights.
       the condition hierarchy for programming mistakes
 - [x] No `eval()`/`parse()` of external input; envelopes are data only
 - [x] Internal helpers are not exported
-- [ ] A vignette. The documentation lives on the MkDocs site instead; CRAN
-      does not require one, but R users look for `browseVignettes()`
+- [x] A package vignette for classed errors, recovery metadata, Python
+      envelopes and failure events, discoverable through
+      `browseVignettes("dataexcept")` alongside the MkDocs site.
 
 ## 5. Testing
 
