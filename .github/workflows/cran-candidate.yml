@@ -86,9 +86,9 @@ jobs:
           {
             echo '### Checked source archive'
             echo
-            echo '\`\`\`'
+            echo '```'
             cat "${{ steps.package.outputs.archive }}.sha256"
-            echo '\`\`\`'
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Explain external verification
@@ -140,7 +140,7 @@ jobs:
           $archive = $archives[0]
           $checksumFile = "$($archive.FullName).sha256"
           if (!(Test-Path $checksumFile)) { throw 'Source archive checksum is missing' }
-          $expected = ((Get-Content $checksumFile -Raw).Trim() -split '\\s+')[0]
+          $expected = ((Get-Content $checksumFile -Raw).Trim() -split '\s+')[0]
           $actual = (Get-FileHash $archive.FullName -Algorithm SHA256).Hash
           if ($actual -ine $expected) { throw 'Source archive checksum mismatch' }
 
