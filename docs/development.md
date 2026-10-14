@@ -84,6 +84,12 @@ A weekly CI job does the same against DataExcept's `main` branch and fails if
 the result differs from what is committed, which is the signal that the
 Python side has changed.
 
+## CRAN candidate verification
+
+Use the manual `CRAN candidate` workflow to build and check a source tarball.
+The [CRAN readiness guide](cran-readiness.md) explains how to verify its
+checksum, run the external Windows R-devel check and record the result.
+
 ## Continuous integration
 
 | Workflow | Runs |
