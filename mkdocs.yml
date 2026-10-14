@@ -128,6 +128,7 @@ nav:
           - Package overview: reference/dataexcept-package.md
   - Architecture: architecture.md
   - Development: development.md
+  - CRAN readiness: cran-readiness.md
   - Releases: releases.md
 
 extra:
