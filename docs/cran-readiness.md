@@ -22,6 +22,11 @@ against Windows R-devel using win-builder.
    `Get-FileHash dataexcept_<version>.tar.gz -Algorithm SHA256` and compare
    the result with the accompanying checksum file.
 
+The workflow also verifies the same source archive and SHA-256 checksum on
+Windows R-devel, then runs `R CMD check --as-cran` there. Both checks must pass
+for the manual workflow to succeed. This is an additional CI check, not an
+external win-builder result.
+
 The workflow can run against a development version for early diagnostics;
 a `.9000` development build is **not** the final release candidate.
 
