@@ -26,14 +26,17 @@ Imports:
     stats,
     utils
 Suggests:
+    knitr,
     lme4,
     otel (>= 0.2.0),
     otelsdk,
     rlang,
+    rmarkdown,
     spelling,
     survival,
     testthat (>= 3.1.7)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
 URL: https://github.com/DiogoRibeiro7/r-dataexcept,
     https://diogoribeiro7.github.io/r-dataexcept/
 BugReports: https://github.com/DiogoRibeiro7/r-dataexcept/issues
