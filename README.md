@@ -49,6 +49,10 @@ pak::pak("DiogoRibeiro7/r-dataexcept")          # the development version
 
 dataexcept depends on base R (>= 4.1) and jsonlite.
 
+After installation, open the local worked example with
+`vignette("structured-failures", package = "dataexcept")` or find it with
+`browseVignettes("dataexcept")`. The complete reference remains on MkDocs.
+
 ## Classed errors with fields
 
 Constructors return a condition; `stop()` signals it. Handlers catch by class,
