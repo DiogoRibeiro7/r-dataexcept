@@ -11,6 +11,8 @@ jobs:
   candidate:
     name: Build and check a source candidate
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.value }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
@@ -78,6 +80,17 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Record checked artifact digest
+        shell: bash
+        run: |
+          {
+            echo '### Checked source archive'
+            echo
+            echo '\`\`\`'
+            cat "${{ steps.package.outputs.archive }}.sha256"
+            echo '\`\`\`'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Explain external verification
         shell: bash
         run: |
@@ -91,3 +104,54 @@ jobs:
             echo 'Record the actual win-builder result in cran-comments.md before submitting to CRAN.'
             echo 'This workflow has not submitted anything to win-builder or CRAN.'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  windows-devel:
+    name: Windows R-devel candidate check
+    needs: candidate
+    runs-on: windows-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: devel
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Download the Linux-checked candidate
+        uses: actions/download-artifact@v4
+        with:
+          name: cran-candidate-${{ needs.candidate.outputs.version }}
+          path: candidate
+
+      - name: Verify SHA-256 on Windows
+        shell: pwsh
+        run: |
+          $archives = @(Get-ChildItem candidate -Filter '*.tar.gz')
+          if ($archives.Count -ne 1) { throw 'Expected exactly one source archive' }
+          $archive = $archives[0]
+          $checksumFile = "$($archive.FullName).sha256"
+          if (!(Test-Path $checksumFile)) { throw 'Source archive checksum is missing' }
+          $expected = ((Get-Content $checksumFile -Raw).Trim() -split '\\s+')[0]
+          $actual = (Get-FileHash $archive.FullName -Algorithm SHA256).Hash
+          if ($actual -ine $expected) { throw 'Source archive checksum mismatch' }
+
+      - name: Check exact candidate on Windows R-devel
+        shell: Rscript {0}
+        run: |
+          archives <- list.files("candidate", pattern = "[.]tar[.]gz$", full.names = TRUE)
+          stopifnot(length(archives) == 1L)
+          rcmdcheck::rcmdcheck(
+            archives,
+            args = c("--as-cran", "--no-manual"),
+            error_on = "warning",
+            check_dir = "check-win-devel"
+          )
