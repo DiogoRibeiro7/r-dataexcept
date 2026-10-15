@@ -103,6 +103,17 @@ test_that("only dataexcept modules map onto dataexcept classes", {
   expect_s3_class(envelope_to_condition(json), "dataexcept_validation_error")
 })
 
+test_that("non-DataExcept module namespaces do not acquire R error classes", {
+  for (module in c("dataexcept::schema", "dataexcept_extra::schema", "other.module")) {
+    json <- sprintf(
+      '{"type":"ValidationError","module":"%s","message":"x"}', module
+    )
+    cnd <- envelope_to_condition(json)
+    expect_false(inherits(cnd, "dataexcept_error"))
+    expect_identical(condition_to_envelope(cnd)$module, module)
+  }
+})
+
 test_that("an R warning written to an envelope is read back as a warning", {
   w <- classify_warning(simpleWarning("NaNs produced"))
   cnd <- envelope_to_condition(condition_to_json(w))
