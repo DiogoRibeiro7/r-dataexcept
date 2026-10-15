@@ -30,6 +30,11 @@ external win-builder result.
 The workflow can run against a development version for early diagnostics;
 a `.9000` development build is **not** the final release candidate.
 
+The manual workflow retains the Linux and Windows R-devel check directories
+as separate diagnostic artifacts, including their check logs when generated.
+Review both alongside the source tarball and checksum. A missing diagnostic
+artifact does not count as a successful check.
+
 ## Windows R-devel
 
 Upload **the extracted `.tar.gz`**, not the downloaded GitHub artifact ZIP,
