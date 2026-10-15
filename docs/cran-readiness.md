@@ -27,6 +27,11 @@ Windows R-devel, then runs `R CMD check --as-cran` there. Both checks must pass
 for the manual workflow to succeed. This is an additional CI check, not an
 external win-builder result.
 
+When the workflow definition itself changes, its pull request also runs
+the Linux and Windows checks against that branch. This catches workflow
+regressions before merge. Regular release-candidate checks remain manually
+triggered and neither mode publishes a release or submits to CRAN.
+
 The workflow can run against a development version for early diagnostics;
 a `.9000` development build is **not** the final release candidate.
 
