@@ -179,6 +179,14 @@ test_that("reading is bounded on deeply nested input", {
   expect_error(is_envelope(deep_chain(2), max_depth = -1), "non-negative")
 })
 
+test_that("envelope depth boundaries remain valid R integer values", {
+  json <- '{"type":"E","module":"m","message":"ok"}'
+  expect_error(envelope_to_condition(json, max_depth = 2147483648), "integer limit")
+  expect_error(validate_envelope(json, max_depth = 2147483648), "integer limit")
+  expect_error(is_envelope(json, max_depth = 2147483648), "integer limit")
+  expect_true(is_envelope(json, max_depth = .Machine$integer.max))
+})
+
 test_that("the nesting count ignores brackets inside strings", {
   json <- '{"type": "E", "module": "m", "message": "[[[[{{{{\\"]]]]"}'
   expect_identical(json_nesting(json), 1L)
