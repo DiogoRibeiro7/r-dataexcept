@@ -38,8 +38,9 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 ## Before CRAN
 
 - [x] `R CMD check --as-cran` clean on every CI flavour.
-- [ ] win-builder (R-devel on Windows); a manual candidate workflow prepares
-  the checked source archive, but the external result must still be reviewed.
+- [ ] External win-builder (R-devel on Windows); the manual candidate workflow
+  now checks the same archive on Linux and Windows R-devel, but the external
+  win-builder result must still be reviewed.
 - [x] A documentation site (MkDocs Material, deployed to GitHub Pages) with
   the reference generated from the help pages.
 - [x] A package vignette for classed conditions, recovery metadata,
