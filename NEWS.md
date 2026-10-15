@@ -1,3 +1,5 @@
+# dataexcept (development version)
+
 # dataexcept 0.4.0
 
 - Read Rust DataExcept envelopes with `dataexcept::` module paths as classed R
