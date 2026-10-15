@@ -287,12 +287,10 @@ envelope_problems <- function(node, path, depth, max_depth) {
   problems
 }
 
-# Rust uses crate paths such as dataexcept::schema, while Python uses dotted
-# module paths. Both identify the shared DataExcept error vocabulary.
+# Only the R package namespace or a dotted Python DataExcept module
+# identifies an error as part of the shared DataExcept vocabulary.
 is_dataexcept_module <- function(module) {
-  identical(module, "dataexcept") ||
-    startsWith(module, "dataexcept.") ||
-    startsWith(module, "dataexcept::")
+  identical(module, "dataexcept") || startsWith(module, "dataexcept.")
 }
 
 remote_kind <- function(type, entry) {
@@ -335,8 +333,8 @@ node_to_condition <- function(node) {
   classes <- if (!is.null(entry)) {
     type_classes(node$type)
   } else if (from_dataexcept) {
-    # Some Python and Rust DataExcept types have no R-specific class.
-    # Preserve their DataExcept origin so the generic handler catches them.
+    # Some Python DataExcept types have no R-specific class.
+    # Preserve their origin so the generic handler catches them.
     "dataexcept_error"
   } else {
     character()

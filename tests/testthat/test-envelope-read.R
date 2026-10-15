@@ -44,64 +44,6 @@ test_that("a DataExcept type R has no class for is still a dataexcept error", {
   expect_identical(condition_failure(cnd)$retry_after_seconds, 60)
 })
 
-test_that("Rust DataExcept namespaces map to known R error classes", {
-  json <- paste0(
-    '{"type":"DtypeMismatchError","module":"dataexcept::schema",',
-    '"message":"Column age has dtype string; expected integer",',
-    '"attributes":{"column":"age","expected":["integer"],"found":"string"},',
-    '"failure":{"kind":"unknown","retryable":null,"retry_after_seconds":null}}'
-  )
-  cnd <- envelope_to_condition(json)
-  expect_s3_class(cnd, "dataexcept_dtype_mismatch_error")
-  expect_s3_class(cnd, "dataexcept_data_frame_error")
-  expect_identical(cnd$column, "age")
-  expect_identical(cnd$found, "string")
-  expect_identical(condition_type(cnd), "DtypeMismatchError")
-  expect_identical(condition_to_envelope(cnd)$module, "dataexcept::schema")
-  expect_identical(condition_to_envelope(cnd)$attributes$expected, list("integer"))
-  expect_identical(is_retryable(cnd), NA)
-  expect_true(is_envelope(condition_to_json(cnd)))
-})
-
-test_that("Rust DataExcept types without an R class retain their origin", {
-  json <- paste0(
-    '{"type":"IndexAlignmentError","module":"dataexcept::schema",',
-    '"message":"DataFrame indices are misaligned",',
-    '"attributes":{"details":"left index is longer"},',
-    '"failure":{"kind":"permanent","retryable":false,',
-    '"retry_after_seconds":null}}'
-  )
-  cnd <- envelope_to_condition(json)
-  expect_s3_class(cnd, c(
-    "dataexcept_error", "dataexcept_remote_condition", "error", "condition"
-  ), exact = TRUE)
-  expect_identical(cnd$details, "left index is longer")
-  expect_false(is_retryable(cnd))
-  expect_identical(condition_type(cnd), "IndexAlignmentError")
-  expect_identical(condition_to_envelope(cnd)$module, "dataexcept::schema")
-})
-
-test_that("Rust module recognition remains scoped to the DataExcept crate", {
-  for (module in c("dataexcept_extra::schema", "other::dataexcept", "dataexceptness")) {
-    json <- sprintf(
-      '{"type":"DtypeMismatchError","module":"%s","message":"x"}', module
-    )
-    cnd <- envelope_to_condition(json)
-    expect_false(inherits(cnd, "dataexcept_error"))
-    expect_false(inherits(cnd, "dataexcept_dtype_mismatch_error"))
-  }
-
-  json <- paste0(
-    '{"type":"DataLoadingError","module":"dataexcept::data","message":"outer",',
-    '"cause":{"type":"DtypeMismatchError","module":"dataexcept::schema",',
-    '"message":"inner"}}'
-  )
-  cnd <- envelope_to_condition(json)
-  expect_s3_class(cnd, "dataexcept_data_loading_error")
-  expect_s3_class(cnd$parent, "dataexcept_dtype_mismatch_error")
-  expect_identical(condition_to_envelope(cnd)$cause$module, "dataexcept::schema")
-})
-
 test_that("an envelope's cause becomes the parent", {
   cnd <- envelope_to_condition(fixture("explicit-cause.json"))
   expect_s3_class(cnd, "dataexcept_data_loading_error")
@@ -159,6 +101,17 @@ test_that("only dataexcept modules map onto dataexcept classes", {
   json <- '{"type": "ValidationError", "module": "dataexcept", "message": "x",
             "failure": {"kind": "permanent", "retryable": false, "retry_after_seconds": null}}'
   expect_s3_class(envelope_to_condition(json), "dataexcept_validation_error")
+})
+
+test_that("non-DataExcept module namespaces do not acquire R error classes", {
+  for (module in c("dataexcept::schema", "dataexcept_extra::schema", "other.module")) {
+    json <- sprintf(
+      '{"type":"ValidationError","module":"%s","message":"x"}', module
+    )
+    cnd <- envelope_to_condition(json)
+    expect_false(inherits(cnd, "dataexcept_error"))
+    expect_identical(condition_to_envelope(cnd)$module, module)
+  }
 })
 
 test_that("an R warning written to an envelope is read back as a warning", {
