@@ -6,6 +6,9 @@ The changes in each version, from the package's `NEWS.md`.
 
 ## Development version
 
+- Reject envelope depth limits beyond R's integer range and avoid overflow
+  when calculating JSON nesting limits.
+
 - Removed special classification for Rust-style module paths. The R package
   retains native R conditions and Python DataExcept envelope compatibility.
 
