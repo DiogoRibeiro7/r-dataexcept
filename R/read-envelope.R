@@ -139,7 +139,7 @@ parse_envelope <- function(x, max_depth) {
     if (length(x) != 1L || is.na(x)) {
       stop(envelope_error("the JSON text must be a single string"))
     }
-    limit <- 2L * max_depth + 16L
+    limit <- 2 * max_depth + 16
     if (json_nesting(x) > limit) {
       stop(envelope_error(sprintf(
         "the JSON text is nested more than %d levels deep, deeper than max_depth = %d allows",
