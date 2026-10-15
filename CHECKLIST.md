@@ -121,5 +121,7 @@ not oversights.
 - [x] Manual release-candidate workflow checks the same source archive on
       Linux and Windows R-devel, verifies its SHA-256 checksum, and documents
       the separate external win-builder validation
+- [x] Draft CRAN submission notes and retained check diagnostics for the
+      Linux and Windows candidate workflow
 - [ ] CRAN submission
 - [ ] R-universe listing
