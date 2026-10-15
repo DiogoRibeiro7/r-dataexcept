@@ -30,6 +30,11 @@ external win-builder result.
 The workflow can run against a development version for early diagnostics;
 a `.9000` development build is **not** the final release candidate.
 
+The manual workflow retains the Linux and Windows R-devel check directories
+as separate diagnostic artifacts, including their check logs when generated.
+Review both alongside the source tarball and checksum. A missing diagnostic
+artifact does not count as a successful check.
+
 ## Windows R-devel
 
 Upload **the extracted `.tar.gz`**, not the downloaded GitHub artifact ZIP,
@@ -43,7 +48,8 @@ win-builder, publish releases or submit anything to CRAN.
 
 ## Submission record
 
-Create `cran-comments.md` locally for the release candidate. Record:
+The repository includes a draft `cran-comments.md` with results explicitly
+marked as unverified. Complete it for the actual release candidate. Record:
 - the source version, SHA-256 checksum and Git commit;
 - the operating systems and R versions checked by CI;
 - the date and outcome of win-builder R-devel;

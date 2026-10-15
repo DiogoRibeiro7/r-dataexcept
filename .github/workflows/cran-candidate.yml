@@ -70,6 +70,16 @@ jobs:
             check_dir = "check"
           )
 
+      - name: Upload Linux check evidence
+        if: always() && steps.package.outputs.archive != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: cran-linux-check-${{ steps.version.outputs.value }}
+          path: |
+            check/
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Upload checked source tarball and checksum
         uses: actions/upload-artifact@v4
         with:
@@ -155,3 +165,13 @@ jobs:
             error_on = "warning",
             check_dir = "check-win-devel"
           )
+
+      - name: Upload Windows R-devel check evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cran-windows-devel-check-${{ needs.candidate.outputs.version }}
+          path: |
+            check-win-devel/
+          if-no-files-found: warn
+          retention-days: 30
