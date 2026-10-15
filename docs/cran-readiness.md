@@ -48,7 +48,8 @@ win-builder, publish releases or submit anything to CRAN.
 
 ## Submission record
 
-Create `cran-comments.md` locally for the release candidate. Record:
+The repository includes a draft `cran-comments.md` with results explicitly
+marked as unverified. Complete it for the actual release candidate. Record:
 - the source version, SHA-256 checksum and Git commit;
 - the operating systems and R versions checked by CI;
 - the date and outcome of win-builder R-devel;
