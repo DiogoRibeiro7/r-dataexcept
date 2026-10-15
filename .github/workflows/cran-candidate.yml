@@ -1,8 +1,12 @@
 name: CRAN candidate
 
-# Manual only: this workflow does not publish a release or submit to CRAN.
+# Changes to this workflow are self-tested on pull requests.
+# A release candidate is checked manually; neither event publishes or submits.
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/cran-candidate.yml'
 
 permissions:
   contents: read
