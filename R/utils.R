@@ -37,6 +37,9 @@ check_count <- function(x, arg, allow_null = FALSE) {
     what <- if (allow_null) "a non-negative whole number or NULL" else "a non-negative whole number"
     stop(sprintf("`%s` must be %s.", arg, what), call. = FALSE)
   }
+  if (x > .Machine$integer.max) {
+    stop(sprintf("`%s` exceeds the R integer limit.", arg), call. = FALSE)
+  }
   invisible(x)
 }
 
