@@ -30,11 +30,6 @@ order below is by what makes the R side useful to a mixed pipeline soonest.
 - [x] **Pino.** `condition_to_pino()` and `envelope_to_pino()`, tested
   against the Python package's projection of every reference envelope.
 
-## Interoperability
-
-- [x] Recognise DataExcept Rust crate module paths when reading shared
-  error envelopes; retain exact module names and recovery metadata.
-
 ## Before CRAN
 
 - [x] `R CMD check --as-cran` clean on every CI flavour.

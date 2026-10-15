@@ -1,3 +1,8 @@
+# dataexcept (development version)
+
+- Removed special classification for Rust-style module paths. The R package
+  retains native R conditions and Python DataExcept envelope compatibility.
+
 # dataexcept 0.4.0
 
 - Read Rust DataExcept envelopes with `dataexcept::` module paths as classed R

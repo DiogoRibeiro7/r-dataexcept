@@ -160,12 +160,6 @@ Written back, a condition read this way reproduces its envelope exactly, and
 `validate_envelope()` checks a payload against the schema's rules without
 needing a JSON Schema validator.
 
-Rust [dataexcept-rs](https://github.com/DiogoRibeiro7/dataexcept-rs) also
-uses the same envelope schema. Rust module names such as `dataexcept::schema`
-are recognised by `envelope_to_condition()`, so shared error types can be
-caught by the same R handlers as local or Python errors. Types not registered
-in R retain the generic `dataexcept_error` class.
-
 ## Observability
 
 An operation context records where a failure happened, separately from what
