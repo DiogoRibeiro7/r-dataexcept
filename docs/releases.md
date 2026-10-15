@@ -4,7 +4,7 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
-## Development version
+## 0.4.0
 
 - Read Rust DataExcept envelopes with `dataexcept::` module paths as classed R
   conditions, preserving known error families and the original module name.
