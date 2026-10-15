@@ -142,6 +142,13 @@ test_that("a chain beyond max_depth ends in the truncation marker", {
   expect_error(condition_to_envelope(cnd, max_depth = -1), "non-negative")
 })
 
+test_that("envelope writer rejects depth outside the R integer range", {
+  expect_error(
+    condition_to_envelope(simpleError("x"), max_depth = 2147483648),
+    "integer limit"
+  )
+})
+
 test_that("text is redacted on the way out, including paths", {
   cnd <- simpleError("GET https://user:pw@h.example.com/private/path?token=t failed")
   env <- condition_to_envelope(cnd)
