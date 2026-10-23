@@ -8,7 +8,7 @@
 [![docs](https://github.com/DiogoRibeiro7/r-dataexcept/actions/workflows/docs.yml/badge.svg)](https://diogoribeiro7.github.io/r-dataexcept/)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R >= 4.1](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3.svg)](https://www.r-project.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/LICENSE.md)
 <!-- badges: end -->
 
 Structured, classed failures for R data and modelling code, in a format shared
@@ -253,12 +253,12 @@ adds the cross-language format and the vocabulary.
 ## Contributing
 
 Bug reports, condition types and warning rules are welcome. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for the development setup and the checks a
-pull request needs, and [SECURITY.md](SECURITY.md) for reporting a
+[CONTRIBUTING.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CONTRIBUTING.md) for the development setup and the checks a
+pull request needs, and [SECURITY.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/SECURITY.md) for reporting a
 vulnerability privately.
 
 Please note that this project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in it you
+[Contributor Code of Conduct](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CODE_OF_CONDUCT.md). By participating in it you
 agree to abide by its terms.
 
 ## Citation
@@ -267,7 +267,7 @@ agree to abide by its terms.
 citation("dataexcept")
 ```
 
-Citation metadata is also available in [CITATION.cff](CITATION.cff).
+Citation metadata is also available in [CITATION.cff](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CITATION.cff).
 
 ## License
 
