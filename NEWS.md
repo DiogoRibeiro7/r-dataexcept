@@ -1,4 +1,4 @@
-# dataexcept (development version)
+# dataexcept 0.4.1
 
 - Reject envelope depth limits beyond R's integer range and avoid overflow
   when calculating JSON nesting limits.
