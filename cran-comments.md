@@ -54,6 +54,8 @@ vignette rebuilding, and PDF and HTML manuals. Its only NOTE is
 
 The exact source archive above was uploaded and its submission requested
 through CRAN's web form on 23 October 2026 at 09:41 UTC (record 359950).
-CRAN acknowledged the request and reported sending a confirmation email
-to `dfr@esmad.ipp.pt`. Maintainer email confirmation is still required before
-CRAN review; the package has not yet been accepted or published on CRAN.
+The maintainer confirmed the email. The archive was subsequently observed
+in CRAN's [pretest queue](https://cran.r-project.org/incoming/pretest/).
+The archive downloaded from that queue has the same SHA-256 as the checked
+candidate above. CRAN processing and review are pending; the package has
+not yet been accepted or published on CRAN.
