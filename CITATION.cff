@@ -13,8 +13,8 @@ authors:
     email: dfr@esmad.ipp.pt
     orcid: "https://orcid.org/0009-0001-2022-7072"
     affiliation: "Faculty of Media Arts and Design, Technical University of Porto"
-version: 0.4.0
-date-released: "2026-10-15"
+version: 0.4.1
+date-released: "2026-10-23"
 license: MIT
 repository-code: "https://github.com/DiogoRibeiro7/r-dataexcept"
 url: "https://diogoribeiro7.github.io/r-dataexcept/"
