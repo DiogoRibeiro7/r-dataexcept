@@ -19,8 +19,11 @@ Checked on 23 October 2026:
   0 errors, 0 warnings, 1 NOTE.
 - Windows Server 2022, R-devel (2026-10-22 r90748 ucrt):
   `R CMD check --as-cran --no-manual`; 0 errors, 0 warnings, 1 NOTE.
+- External win-builder, Windows Server 2022, R-devel
+  (2026-10-22 r90748 ucrt): full check including PDF and HTML manuals;
+  0 errors, 0 warnings, 1 NOTE.
 
-Both checks report only the expected incoming-feasibility NOTE:
+All three checks report only the expected incoming-feasibility NOTE:
 
     Maintainer: 'Diogo Ribeiro <dfr@esmad.ipp.pt>'
     New submission
@@ -37,17 +40,20 @@ Python is not required to install or use the R package. Tests and examples
 use local fixtures and do not require live external services or credentials.
 The only non-base hard dependency is jsonlite, available on CRAN.
 
-## External win-builder result: pending
+## External win-builder result
 
 The exact archive above was uploaded to win-builder's R-devel service on
 23 October 2026 at 09:23 UTC. The upload receipt records the same filename
-and 114,414-byte size. The result is sent to `dfr@esmad.ipp.pt` and has not
-yet been reviewed.
+and 114,414-byte size. The [check report](https://win-builder.r-project.org/E6w1FL9U5T2p/00check.log)
+and installation report were reviewed and saved locally before their expiry.
+The check started at 09:35 UTC and passed installation, examples, tests,
+vignette rebuilding, and PDF and HTML manuals. Its only NOTE is
+`New submission`; no invalid file URIs remain.
 
-The earlier win-builder report identified relative README links to files
-excluded from the package. These now use public repository URLs with
-descriptive labels; the final archive passes both URL and spelling checks.
+## Submission status
 
-Complete this section from the actual report before CRAN submission, as
-required by the repository's [candidate verification procedure](docs/cran-readiness.md).
-The package has not yet been submitted to CRAN.
+The exact source archive above was uploaded and its submission requested
+through CRAN's web form on 23 October 2026 at 09:41 UTC (record 359950).
+CRAN acknowledged the request and reported sending a confirmation email
+to `dfr@esmad.ipp.pt`. Maintainer email confirmation is still required before
+CRAN review; the package has not yet been accepted or published on CRAN.
