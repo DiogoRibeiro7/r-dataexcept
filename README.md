@@ -253,8 +253,8 @@ adds the cross-language format and the vocabulary.
 ## Contributing
 
 Bug reports, condition types and warning rules are welcome. See
-[CONTRIBUTING.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CONTRIBUTING.md) for the development setup and the checks a
-pull request needs, and [SECURITY.md](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/SECURITY.md) for reporting a
+[contributing guide](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CONTRIBUTING.md) for the development setup and the checks a
+pull request needs, and [security policy](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/SECURITY.md) for reporting a
 vulnerability privately.
 
 Please note that this project is released with a
@@ -267,7 +267,7 @@ agree to abide by its terms.
 citation("dataexcept")
 ```
 
-Citation metadata is also available in [CITATION.cff](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CITATION.cff).
+[Citation metadata](https://github.com/DiogoRibeiro7/r-dataexcept/blob/main/CITATION.cff) is also available in the repository.
 
 ## License
 
