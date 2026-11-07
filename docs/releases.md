@@ -4,7 +4,7 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
-## Development version
+## 0.4.2
 
 - The example for `operation_context_from_otel()` now runs its traced case:
   with otelsdk installed, it records a trace in memory and shows the trace
