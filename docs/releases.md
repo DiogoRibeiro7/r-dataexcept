@@ -4,6 +4,15 @@
 
 The changes in each version, from the package's `NEWS.md`.
 
+## Development version
+
+- The example for `operation_context_from_otel()` now runs its traced case:
+  with otelsdk installed, it records a trace in memory and shows the trace
+  and span identifiers filled in from the active span.
+
+- The tests pass with otelsdk 0.3.0, which leaves a span that ends without an
+  error at the `"unset"` status instead of `"ok"`.
+
 ## 0.4.1
 
 - Reject envelope depth limits beyond R's integer range and avoid overflow
