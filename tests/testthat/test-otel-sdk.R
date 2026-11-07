@@ -99,7 +99,9 @@ test_that("a recovered failure can be recorded without failing the span", {
   recording <- otelsdk::with_otel_record(what = "traces", settle())
   expect_identical(recording$value, "fallback")
   span <- recording$traces[[1]]
-  expect_identical(span$status, "ok")
+  # Not failed. A span that ends without an error is "ok" before otelsdk
+  # 0.3.0, and from 0.3.0 keeps the default "unset" status (r-lib/otel#30).
+  expect_true(span$status %in% c("unset", "ok"))
   expect_length(span$events, 1L)
 })
 
