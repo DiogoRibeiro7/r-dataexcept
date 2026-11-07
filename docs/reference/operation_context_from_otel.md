@@ -44,9 +44,19 @@ context <- operation_context(system = "batch", operation = "settle_invoices")
 # With tracing off there is no active span, so nothing is added.
 operation_context_from_otel(context)
 
-# Inside a traced operation, the trace and span identifiers are filled in:
-# otel::start_local_active_span("settle_invoices")
-# operation_context_from_otel(context)
+# Inside a traced operation, the trace and span identifiers are filled in.
+# otelsdk records the trace in memory here, so no collector is needed.
+if (requireNamespace("otelsdk", quietly = TRUE)) {
+  settle_invoices <- function() {
+    otel::start_local_active_span("settle_invoices")
+    operation_context_from_otel(context)
+  }
+  traced <- otelsdk::with_otel_record(settle_invoices(), what = "traces")
+  print(traced$value)
+
+  # The identifiers are the recorded span's.
+  identical(traced$value$trace_id, traced$traces[[1]]$trace_id)
+}
 ```
 
 
