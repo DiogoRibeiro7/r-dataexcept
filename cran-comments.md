@@ -33,9 +33,11 @@ Checked on 7 November 2026:
   0 errors, 0 warnings, 1 NOTE.
 - Windows Server 2025, R-devel (2026-11-06 r90845 ucrt):
   `R CMD check --as-cran --no-manual`; 0 errors, 0 warnings, 1 NOTE.
-- External win-builder, R-devel: uploaded, result pending.
+- External win-builder, Windows Server 2022, R-devel
+  (2026-11-06 r90845 ucrt): full check including PDF and HTML manuals;
+  0 errors, 0 warnings, 1 NOTE.
 
-Both completed checks report only the expected incoming-feasibility NOTE:
+All three checks report only the expected incoming-feasibility NOTE:
 
     Maintainer: 'Diogo Ribeiro <dfr@esmad.ipp.pt>'
     New submission
@@ -57,7 +59,11 @@ The only non-base hard dependency is jsonlite, available on CRAN.
 
 The exact archive above was uploaded to win-builder's R-devel service on
 7 November 2026 at 22:33 UTC, after its checksum was verified again. The
-report has not yet been reviewed.
+[check report](https://win-builder.r-project.org/p1c3muYoD7mK/00check.log)
+and installation report were reviewed and saved locally before their expiry.
+The check started at 22:50 UTC and passed installation, examples, tests,
+vignette rebuilding, and PDF and HTML manuals. Its only NOTE is
+`New submission`.
 
 ## Submission status
 
