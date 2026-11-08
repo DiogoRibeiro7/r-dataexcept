@@ -70,7 +70,10 @@ vignette rebuilding, and PDF and HTML manuals. Its only NOTE is
 The exact source archive above, with its checksum verified again, was
 submitted through CRAN's submission service on 8 November 2026 at
 09:55 UTC (record 361999), with the resubmission notes above as its
-comment. The service acknowledged the submission; maintainer email
-confirmation is pending. CRAN reviewed the 0.4.1 submission
+comment. The maintainer confirmed the email. The archive was subsequently
+observed in CRAN's [pretest queue](https://cran.r-project.org/incoming/pretest/).
+The archive downloaded from that queue has the same SHA-256 as the checked
+candidate above. CRAN processing and review are pending; the package has
+not yet been accepted or published on CRAN. CRAN reviewed the 0.4.1 submission
 (record 359950) and asked for the example change above before
 resubmission.
