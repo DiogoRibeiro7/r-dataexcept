@@ -67,5 +67,10 @@ vignette rebuilding, and PDF and HTML manuals. Its only NOTE is
 
 ## Submission status
 
-Not yet submitted. The 0.4.1 submission (record 359950) was reviewed by
-CRAN, which asked for the example change above before resubmission.
+The exact source archive above, with its checksum verified again, was
+submitted through CRAN's submission service on 8 November 2026 at
+09:55 UTC (record 361999), with the resubmission notes above as its
+comment. The service acknowledged the submission; maintainer email
+confirmation is pending. CRAN reviewed the 0.4.1 submission
+(record 359950) and asked for the example change above before
+resubmission.
