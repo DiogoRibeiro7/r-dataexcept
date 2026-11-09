@@ -1,3 +1,5 @@
+# dataexcept (development version)
+
 # dataexcept 0.4.2
 
 - The example for `operation_context_from_otel()` now runs its traced case:
